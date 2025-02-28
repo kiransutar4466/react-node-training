@@ -13,17 +13,17 @@ import { verifyToken } from "../middleware/jwt.js";
 const router = Router();
 
 // Retrieves the list of all users.
-router.get("/", getUsersData);
+router.get("/", verifyToken, getUsersData);
 
 // Fetches a single user by ID.
-router.get("/:id", getUserById);
+router.get("/:id", verifyToken, getUserById);
 
 // Adds a new user to the array.
-router.post("/", postUserData);
+router.post("/", verifyToken, postUserData);
 
 // Updates an existing user's details.
-router.put("/:id", putUserById);
-router.patch("/:id", patchUserById);
+router.put("/:id", verifyToken, putUserById);
+router.patch("/:id", verifyToken, patchUserById);
 
 // Removes a user from the array.
 router.delete("/:id", verifyToken, deleteUserById);
