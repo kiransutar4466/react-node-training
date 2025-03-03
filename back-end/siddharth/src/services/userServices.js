@@ -103,7 +103,7 @@ export async function saveUserData(userData) {
 
     return {
       statusCode: 201,
-      response: { message: "user  created successfully", userData },
+      response: { message: "user created successfully", userData },
     };
   } catch (error) {
     console.log("Error in saveUserData function:", error.message);
@@ -129,20 +129,8 @@ export async function updateUserById(id, body) {
       }
     }
 
-    // email and password is required to update the user
-    if (
-      !(
-        Object.keys(body).includes("email") &&
-        Object.keys(body).includes("password")
-      )
-    ) {
-      const error = new Error("please provide email and password");
-      error.statusCode = 400;
-      error.response = { message: "please provide email and password" };
-      throw error;
-    }
     const userIndex = users.findIndex((user) => user.id === id);
-    if (userIndex=== -1) {
+    if (userIndex === -1) {
       const error = new Error("user not found");
       error.statusCode = 404;
       error.response = { message: "user not found" };
@@ -150,18 +138,35 @@ export async function updateUserById(id, body) {
     }
 
     // check if this update is not having other users email id
-    users.map((user) => {
-      if (user.email === body.email.toLowerCase() && user.id !== id) {
+    if (Object.keys(body).includes("email")) {
+      const user = users.find((user) => {
+        user.email === body.email.toLowerCase() && user.id !== id;
+      });
+      if (user) {
         const error = new Error("email id already exists");
         error.statusCode = 409;
         error.response = { message: "email id already exists" };
         throw error;
       }
-    });
+    }
 
-    const hashedPassoword = bcrypt.hashSync(body["password"], 10);
-    users[userIndex] = { id: id, ...body, password: hashedPassoword };
+    // check if password is provided for updation
+    if (Object.keys(body).includes("password")) {
+      const hashedPassoword = bcrypt.hashSync(body["password"], 10);
+      users[userIndex] = {
+        id: id,
+        email: users[userIndex].email,
+        ...body,
+        password: hashedPassoword,
+      };
+    }
 
+    users[userIndex] = {
+      id: id,
+      email: users[userIndex].email,
+      password: users[userIndex].password,
+      ...body,
+    };
     return {
       statusCode: 200,
       response: { message: "user updated successfully!" },
