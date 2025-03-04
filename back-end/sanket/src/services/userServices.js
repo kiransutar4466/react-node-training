@@ -147,11 +147,18 @@ export const putUsersById = async (userParams, userData) => {
         throw error;
       }
     }
+    const id = isuserFound.id;
+
+    Object.assign(isuserFound, {
+      firstName: "",
+      lastName: "",
+      gender: "",
+    });
 
     const findForExistingUser = users.find(
       (item) => item.email == userBody.email
     );
-    if (findForExistingUser && findForExistingUser.id != isuserFound.id) {
+    if (findForExistingUser && findForExistingUser.id != id) {
       const error = new Error("Given email is already exist");
       error.code = 409;
       throw error;
