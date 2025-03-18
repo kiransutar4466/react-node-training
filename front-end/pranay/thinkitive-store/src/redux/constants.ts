@@ -1,0 +1,4 @@
+export const FETCH_PRODUCTS = 'FETCH_PRODUCTS';
+export const FETCH_CURRENT_PRODUCTS = 'FETCH_CURRENT_PRODUCTS';
+export const POST_USER = "POST_USER";
+export const CHECK_AUTH = "CHECK_AUTH"
