@@ -1,0 +1,13 @@
+@reference "../../index.css";
+
+.nav li {
+  @apply mx-12 text-[20px] font-bold;
+}
+
+.icons {
+  @apply mx-12 text-4xl;
+}
+
+.icons div {
+  @apply p-6;
+}

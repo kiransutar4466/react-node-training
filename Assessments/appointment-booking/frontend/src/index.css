@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+.sx-react-calendar-wrapper {
+  height: 700px;
+  width: 100%;
+}
+.sx__time-grid-event {
+  @apply !h-auto cursor-pointer;
+}
+
+@theme {
+  --color-primary: #0c8599;
+}

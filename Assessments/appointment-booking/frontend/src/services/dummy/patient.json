@@ -1,0 +1,92 @@
+{
+  "status": 200,
+  "message": "Data fatch successfully ",
+  "result": [
+    {
+      "id": "aa0a1b96-cc46-4aff-a2ca-9752c67d2a88",
+      "createdAt": "2025-03-29T12:17:07.462Z",
+      "updatedAt": "2025-03-29T12:17:07.462Z",
+      "firstName": "shivani",
+      "lastName": "walunj",
+      "email": "abcd@gmail.com",
+      "gender": "female",
+      "contactNo": "2134587960",
+      "dateOfBirth": "2025-03-14T00:00:00.000Z",
+      "remark": "Nothing",
+      "address": "pune",
+      "providerId": "a9ceb410-a5d5-43cd-a7de-b23632b74100"
+    },
+    {
+      "id": "6462033f-1a6a-447a-8474-603576f068a4",
+      "createdAt": "2025-03-28T12:40:24.548Z",
+      "updatedAt": "2025-03-28T12:40:24.548Z",
+      "firstName": "anurag",
+      "lastName": "shirsath",
+      "email": "anurag@gmail.com",
+      "gender": "male",
+      "contactNo": "9134561674",
+      "dateOfBirth": "1998-03-20T00:00:00.000Z",
+      "remark": "dhju dnjhw njd",
+      "address": "pune",
+      "providerId": "3a07a417-38b8-4ad3-b064-1d6e7cf94673"
+    },
+    {
+      "id": "0a9d181f-5e58-4637-ba2a-90ac41807307",
+      "createdAt": "2025-03-28T12:40:15.927Z",
+      "updatedAt": "2025-03-28T12:40:15.927Z",
+      "firstName": "vaibhav",
+      "lastName": "kolse",
+      "email": "vaibhav@gmail.com",
+      "gender": "male",
+      "contactNo": "9134561677",
+      "dateOfBirth": "1995-06-15T00:00:00.000Z",
+      "remark": "This is a sample remark.",
+      "address": "pune",
+      "providerId": null
+    },
+    {
+      "id": "7cc4bce8-6a33-4bc2-a735-b4af8c8f5e05",
+      "createdAt": "2025-03-28T12:40:05.211Z",
+      "updatedAt": "2025-03-28T12:40:05.211Z",
+      "firstName": "rohit",
+      "lastName": "daghe",
+      "email": "rohit@gmail.com",
+      "gender": "male",
+      "contactNo": "9134561477",
+      "dateOfBirth": "2000-05-12T00:00:00.000Z",
+      "remark": "jd dnjsd dj.",
+      "address": "nashik",
+      "providerId": "760af731-5b98-4b95-a89b-e7f65c67e172"
+    },
+    {
+      "id": "e2c8767b-bbfb-44fb-8853-c700668d0e44",
+      "createdAt": "2025-03-28T12:39:55.778Z",
+      "updatedAt": "2025-03-28T12:39:55.778Z",
+      "firstName": "avinash",
+      "lastName": "solunkhe",
+      "email": "avainash@gmail.com",
+      "gender": "male",
+      "contactNo": "9134561674",
+      "dateOfBirth": "1995-06-15T00:00:00.000Z",
+      "remark": "This is a sample remark.",
+      "address": "pune",
+      "providerId": "a2be3a0d-f11d-465e-b698-001fa6bf9a0e"
+    },
+    {
+      "id": "af835802-a277-4c63-97cd-b622f3451526",
+      "createdAt": "2025-03-28T12:39:42.048Z",
+      "updatedAt": "2025-03-28T12:39:42.048Z",
+      "firstName": "swapnil",
+      "lastName": "tambe",
+      "email": "swapnil@gmail.com",
+      "gender": "male",
+      "contactNo": "9134561674",
+      "dateOfBirth": "1995-06-15T00:00:00.000Z",
+      "remark": "This is a sample remark.",
+      "address": "pune",
+      "providerId": "a2be3a0d-f11d-465e-b698-001fa6bf9a0e"
+    }
+  ],
+  "page": 1,
+  "total": 6
+}

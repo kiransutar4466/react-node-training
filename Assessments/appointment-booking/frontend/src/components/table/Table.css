@@ -1,0 +1,12 @@
+@reference "../../index.css";
+
+.table-compo th {
+  @apply px-2 py-5 text-center text-white text-lg uppercase;
+}
+
+.table-compo td {
+  @apply text-center px-2 py-6 text-lg font-[500];
+}
+.table-compo::-webkit-scrollbar {
+  @apply hidden;
+}
