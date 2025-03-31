@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Controller,
   Get,
@@ -9,33 +10,38 @@ import {
   HttpStatus,
   Query,
   ParseUUIDPipe,
-} from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+  UseGuards,
+} from "@nestjs/common";
+import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 
-import { VendorsService } from './vendors.service';
+import { VendorsService } from "./vendors.service";
 import {
   CreateVendorDto,
   UpdateVendorDto,
   QueryFindVendorsDto,
-} from './dto/vendors.dto';
+} from "./dto/vendors.dto";
 import {
   ResponseCreateVendorDto,
   ResponseDeleteVendorDto,
-  ResponseFindVendorDto,
+  ResponseFindAllVendorDto,
+  ResponseFindSingleVendorDto,
   ResponseUpdateVendorDto,
-} from './dto/response.dto';
+} from "./dto/response.dto";
+import { VendorExistsGuard } from "src/guards/vendor-exists.guard";
+import { AuthGuard } from "src/guards/auth.guard";
 
-@Controller('vendors')
+@UseGuards(AuthGuard)
+@Controller("vendors")
 export class VendorsController {
   constructor(private readonly vendorsService: VendorsService) {}
 
   @Post()
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'user created successfully',
+    description: "user created successfully",
     type: ResponseCreateVendorDto,
   })
-  @ApiOperation({ summary: 'Create Vendor' })
+  @ApiOperation({ summary: "Create Vendor" })
   create(@Body() createVendorDto: CreateVendorDto) {
     return this.vendorsService.create(createVendorDto);
   }
@@ -43,44 +49,47 @@ export class VendorsController {
   @Get()
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'users found successfully',
-    type: [ResponseFindVendorDto],
+    description: "users found successfully",
+    type: ResponseFindAllVendorDto,
   })
-  @ApiOperation({ summary: 'Get All the Vendors' })
+  @ApiOperation({ summary: "Get All the Vendors" })
   findAll(@Query() queryFindVendorsDto: QueryFindVendorsDto) {
     return this.vendorsService.findAll(queryFindVendorsDto);
   }
 
-  @Get(':id')
+  @Get(":id")
+  @UseGuards(VendorExistsGuard)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'user found successfully',
-    type: ResponseFindVendorDto,
+    description: "user found successfully",
+    type: ResponseFindSingleVendorDto,
   })
-  @ApiOperation({ summary: 'Get Sigle Vendor by id' })
-  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+  @ApiOperation({ summary: "Get Sigle Vendor by id" })
+  async findOne(@Param("id", ParseUUIDPipe) id: string) {
     return await this.vendorsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Patch(":id")
+  @UseGuards(VendorExistsGuard)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'user updated successfully',
+    description: "user updated successfully",
     type: ResponseUpdateVendorDto,
   })
-  @ApiOperation({ summary: 'Update Vendor' })
-  update(@Param('id') id: string, @Body() updateVendorDto: UpdateVendorDto) {
+  @ApiOperation({ summary: "Update Vendor" })
+  update(@Param("id") id: string, @Body() updateVendorDto: UpdateVendorDto) {
     return this.vendorsService.update(id, updateVendorDto);
   }
 
-  @Delete(':id')
+  @Delete(":id")
+  @UseGuards(VendorExistsGuard)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'user deleted successfully',
+    description: "user deleted successfully",
     type: ResponseDeleteVendorDto,
   })
-  @ApiOperation({ summary: 'Delete Vendor' })
-  remove(@Param('id') id: string) {
+  @ApiOperation({ summary: "Delete Vendor" })
+  remove(@Param("id") id: string) {
     return this.vendorsService.remove(id);
   }
 }

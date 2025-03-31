@@ -1,20 +1,27 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
+/* eslint-disable @typescript-eslint/no-base-to-string */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
+import * as bcrypt from "bcrypt";
 
 import {
   CreateVendorDto,
   QueryFindVendorsDto,
   UpdateVendorDto,
-} from './dto/vendors.dto';
+} from "./dto/vendors.dto";
+import { SaveCredentialsService } from "src/save-credentials/save-credentials.service";
+import { generatePassword } from "./utils/password";
 
 @Injectable()
 export class VendorsService {
   constructor(
     private readonly logger: Logger,
     private readonly prisma: PrismaClient,
+    private readonly saveCredentialsService: SaveCredentialsService,
   ) {
     this.logger = new Logger(VendorsService.name);
   }
@@ -22,26 +29,61 @@ export class VendorsService {
   async create(createVendorDto: CreateVendorDto) {
     try {
       this.logger.debug(createVendorDto);
-      createVendorDto.email = createVendorDto.email.toLowerCase();
-      const user = await this.prisma.user.findUnique({
+      const {
+        firstName,
+        lastName,
+        email,
+        companyName,
+        contactNumber,
+        city,
+        pinCode,
+        inventoryName,
+      } = createVendorDto;
+      const vendor = await this.prisma.vendor.findUnique({
         where: {
-          email: createVendorDto.email,
+          email,
         },
       });
-      if (user) {
-        throw new HttpException('email already exists', HttpStatus.CONFLICT);
+      if (vendor) {
+        throw new HttpException("email already exists", HttpStatus.CONFLICT);
       }
+      let password = generatePassword(12);
+      await this.saveCredentialsService.appendToJsonFile({ email, password });
 
-      createVendorDto.password = bcrypt.hashSync(createVendorDto.password, 10);
-      await this.prisma.user.create({
-        data: createVendorDto,
+      password = bcrypt.hashSync(password, 10);
+      await this.prisma.vendor.create({
+        data: {
+          firstName,
+          lastName,
+          email,
+          password,
+          companyName,
+          contactNumber,
+          address: {
+            create: {
+              city,
+              pinCode,
+            },
+          },
+          inventory: {
+            create: {
+              name: inventoryName,
+              address: {
+                create: {
+                  city,
+                  pinCode,
+                },
+              },
+            },
+          },
+        },
       });
 
       return {
-        message: 'user created successfully',
+        message: "vendor created successfully",
       };
     } catch (error) {
-      this.logger.error(`Error in create user | ${error}`);
+      this.logger.error(`Error in create vendor | ${error}`);
       throw error;
     }
   }
@@ -51,49 +93,56 @@ export class VendorsService {
       const { page, perPage, firstName, email, lastName, companyName } =
         queryFindVendorsDto;
 
-      const where: any = { role: 'VENDOR', isDeleted: false };
+      const where: any = { role: "VENDOR", isDeleted: false };
       if (email) {
         where.email = {
           equals: email,
-          mode: 'insensitive',
+          mode: "insensitive",
         };
       }
       if (firstName) {
         where.firstName = {
           contains: firstName,
-          mode: 'insensitive',
+          mode: "insensitive",
         };
       }
       if (lastName) {
         where.lastName = {
           contains: lastName,
-          mode: 'insensitive',
+          mode: "insensitive",
         };
       }
       if (companyName) {
         where.companyName = {
           contains: companyName,
-          mode: 'insensitive',
+          mode: "insensitive",
         };
       }
 
-      this.logger.debug(`perPage | ${perPage}`);
-      this.logger.debug(`page | ${page}`);
+      const skip = (page - 1) * perPage;
 
-      let skip = 0;
-      if (page) {
-        skip = (page - 1) * perPage;
-      }
-
-      return await this.prisma.user.findMany({
-        take: perPage,
-        skip,
+      const data = await this.prisma.vendor.findMany({
         where,
-        omit: {
-          password: true,
-          isDeleted: true,
+        skip,
+        take: perPage,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          companyName: true,
+          contactNumber: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
+
+      const totalCount = await this.prisma.vendor.count({ where });
+      const totalPages = Math.ceil(totalCount / perPage);
+      const prev = page > 1 ? page - 1 : null;
+      const next = page < totalPages ? page + 1 : null;
+
+      return { page, totalPages, prev, next, data };
     } catch (error) {
       this.logger.error(`Error in findAll | ${error}`);
       throw error;
@@ -102,20 +151,22 @@ export class VendorsService {
 
   async findOne(id: string) {
     try {
-      const user = await this.prisma.user.findUnique({
+      return await this.prisma.vendor.findUnique({
         where: {
           id,
           isDeleted: false,
         },
-        omit: {
-          password: true,
-          isDeleted: true,
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          companyName: true,
+          contactNumber: true,
+          createdAt: true,
+          updatedAt: true,
         },
       });
-      if (!user) {
-        throw new HttpException(`user not found`, HttpStatus.UNAUTHORIZED);
-      }
-      return user;
     } catch (error) {
       this.logger.error(`Error in findOne | ${error}`);
       throw error;
@@ -124,46 +175,49 @@ export class VendorsService {
 
   async update(id: string, updateVendorDto: UpdateVendorDto) {
     try {
-      const foundUser = await this.prisma.user.findUnique({
-        where: {
-          id,
-          isDeleted: false,
-        },
-      });
-      this.logger.debug(foundUser);
-      if (!foundUser) {
-        throw new HttpException('user not found', HttpStatus.UNAUTHORIZED);
-      }
-
-      this.logger.log('updateUserDto:', updateVendorDto);
-      if (Object.keys(updateVendorDto).includes('email')) {
-        const user = await this.prisma.user.findUnique({
-          where: {
-            email: updateVendorDto.email,
-            NOT: { id },
-          },
+      if (updateVendorDto.email) {
+        const existingVendor = await this.prisma.vendor.findUnique({
+          where: { email: updateVendorDto.email, NOT: { id } },
         });
-        if (user) {
-          throw new HttpException('Email already taken', HttpStatus.CONFLICT);
+        if (existingVendor) {
+          throw new HttpException("email already taken", HttpStatus.CONFLICT);
         }
       }
 
-      if (
-        Object.keys(updateVendorDto).includes('password') &&
-        updateVendorDto.password
-      ) {
-        updateVendorDto.password = bcrypt.hashSync(
-          updateVendorDto.password,
-          10,
-        );
+      const data = { ...updateVendorDto };
+
+      this.logger.debug(`data for update | ${data} `);
+      if (updateVendorDto.password) {
+        data.password = bcrypt.hashSync(updateVendorDto.password, 10);
       }
 
-      await this.prisma.user.update({
+      if (updateVendorDto.city || updateVendorDto.pinCode) {
+        const addressData = {};
+        if (updateVendorDto.city) addressData["city"] = updateVendorDto.city;
+        if (updateVendorDto.pinCode)
+          addressData["pinCode"] = updateVendorDto.pinCode;
+        data["address"] = {
+          upsert: {
+            where: { vendorId: id },
+            update: { ...addressData },
+            create: { ...addressData },
+          },
+        };
+      }
+
+      delete data.city;
+      delete data.pinCode;
+      delete data.inventoryName;
+      await this.prisma.vendor.update({
         where: { id },
-        data: updateVendorDto,
+        data,
+        include: {
+          address: true,
+          inventory: true,
+        },
       });
 
-      return { message: 'user updated successfully' };
+      return { message: "vendor updated successfully" };
     } catch (error) {
       this.logger.error(`Error in update | ${error}`);
       throw error;
@@ -172,19 +226,13 @@ export class VendorsService {
 
   async remove(id: string) {
     try {
-      const user = await this.prisma.user.findUnique({
-        where: { id, isDeleted: false },
-      });
-      if (!user) {
-        throw new HttpException('user not found', HttpStatus.UNAUTHORIZED);
-      }
-      await this.prisma.user.update({
+      await this.prisma.vendor.update({
         where: { id },
         data: {
           isDeleted: true,
         },
       });
-      return { message: 'user deleted successfully' };
+      return { message: "vendor deleted successfully" };
     } catch (error) {
       this.logger.error(`Error in remove | ${error}`);
       throw error;
