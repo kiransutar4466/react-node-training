@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
+import { JwtService } from "@nestjs/jwt";
+import * as bcrypt from "bcrypt";
 
-import { LoginUserDto } from './dto/auth.dto';
+import { LoginUserDto } from "./dto/auth.dto";
 
 @Injectable()
 export class AuthService {
@@ -19,9 +21,9 @@ export class AuthService {
 
   async login(loginUserDto: LoginUserDto) {
     try {
-      const user = await this.prisma.user.findUnique({
+      const user = await this.prisma.vendor.findUnique({
         where: {
-          email: loginUserDto.email.toLowerCase(),
+          email: loginUserDto.email,
           isDeleted: false,
         },
         select: {
@@ -40,18 +42,18 @@ export class AuthService {
         },
       });
       if (!user) {
-        throw new HttpException('user not found', HttpStatus.UNAUTHORIZED);
+        throw new HttpException("user not found", HttpStatus.UNAUTHORIZED);
       }
       const isPasswordValid = await bcrypt.compare(
         loginUserDto.password,
         user.password,
       );
       if (!isPasswordValid) {
-        throw new HttpException('invalid password', HttpStatus.UNAUTHORIZED);
+        throw new HttpException("invalid password", HttpStatus.UNAUTHORIZED);
       }
 
       return {
-        message: 'login succesfully',
+        message: "login succesfully",
         token: await this.jwtService.signAsync(
           {
             id: user.id,

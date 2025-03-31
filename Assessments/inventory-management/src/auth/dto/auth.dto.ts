@@ -1,8 +1,10 @@
-import { PickType } from '@nestjs/swagger';
+import { IntersectionType, PickType } from "@nestjs/swagger";
+import {
+  AdditionalVendorDto,
+  CreateVendorDto,
+} from "src/vendors/dto/vendors.dto";
 
-import { CreateVendorDto } from 'src/vendors/dto/vendors.dto';
-
-export class LoginUserDto extends PickType(CreateVendorDto, [
-  'email',
-  'password',
-] as const) {}
+export class LoginUserDto extends IntersectionType(
+  PickType(CreateVendorDto, ["email"] as const),
+  AdditionalVendorDto,
+) {}
