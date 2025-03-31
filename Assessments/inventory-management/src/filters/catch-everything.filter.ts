@@ -7,8 +7,8 @@ import {
   HttpStatus,
   Logger,
   Catch,
-} from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+} from "@nestjs/common";
+import { HttpAdapterHost } from "@nestjs/core";
 
 @Catch()
 export class CatchEverythingFilter implements ExceptionFilter {
@@ -35,7 +35,7 @@ export class CatchEverythingFilter implements ExceptionFilter {
 
     const responseBody = {
       statusCode: httpStatus,
-      message: exception.response.message ?? exception.message,
+      message: exception.response.message ?? [exception.message],
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest()),
     };
