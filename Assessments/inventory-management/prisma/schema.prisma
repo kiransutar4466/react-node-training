@@ -7,85 +7,126 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model Vendor {
   id            String   @id @default(uuid())
   firstName     String   @map("first_name") @db.VarChar(20)
   lastName      String   @map("last_name") @db.VarChar(20)
   email         String   @unique @db.VarChar(50)
   password      String
   role          String   @default("VENDOR") @db.VarChar(20)
-  companyName   String?  @map("company_name") @db.VarChar(50)
+  companyName   String?  @map("company_name") @db.VarChar(100)
   contactNumber String?  @map("contact_number") @db.VarChar(15)
   isDeleted     Boolean  @default(false) @map("is_deleted")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
 
-  inventory Inventory?
-  address   Address?
-  products  Product[]
-  orders    Order[]
+  inventory    Inventory?
+  address      Address?
+  cart         Cart[]
+  products     Product[]
+  buyerOrders  Order[]    @relation("BuyerVendor")
+  sellerOrders Order[]    @relation("SellerVendor")
 }
 
 model Inventory {
   id        String   @id @default(uuid())
-  name      String   @db.VarChar(256)
+  name      String   @default("My Inventory") @db.VarChar(100)
   isDeleted Boolean  @default(false) @map("is_deleted")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  userId   String?   @unique @map("user_id)")
-  user     User?     @relation(fields: [userId], references: [id])
-  address  Address?
-  products Product[]
+  vendorId  String?     @unique @map("vendor_id")
+  vendor    Vendor?     @relation(fields: [vendorId], references: [id])
+  address   Address?
+  products  Product[]
+  orderItem OrderItem[]
 }
 
 model Address {
   id        String   @id @default(uuid())
-  city      String   @db.VarChar(256)
-  pinCode   String   @map("pin_code") @db.VarChar(6)
+  city      String?  @db.VarChar(50)
+  pinCode   String?  @map("pin_code") @db.VarChar(6)
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  userId      String?    @unique @map("user_id)")
-  user        User?      @relation(fields: [userId], references: [id])
+  vendorId    String?    @unique @map("vendor_id")
+  vendor      Vendor?    @relation(fields: [vendorId], references: [id])
   inventoryId String?    @unique @map("inventory_id")
   inventory   Inventory? @relation(fields: [inventoryId], references: [id])
 }
 
 model Product {
-  id          String  @id @default(uuid())
-  name        String  @db.VarChar(256)
+  id          String   @id @default(uuid())
+  name        String   @db.VarChar(256)
   description String
-  prize       Float
-  quantity    Int
-  stockStatus String  @default("OUT_OF_STOCK") @map("stock_status")
-  isDeleted   Boolean @default(false) @map("is_deleted")
+  price       Float    @default(0)
+  quantity    Int      @default(0)
+  soldCount   Int      @default(0) @map("sold_count")
+  stockStatus String   @default("OUT_OF_STOCK") @map("stock_status")
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  user        User?      @relation(fields: [userId], references: [id])
-  userId      String?    @map("user_id")
-  inventory   Inventory? @relation(fields: [inventoryId], references: [id])
-  inventoryId String?    @map("inventory_id")
-  order       Order[]
+  vendor      Vendor?     @relation(fields: [vendorId], references: [id])
+  vendorId    String?     @map("vendor_id")
+  inventory   Inventory?  @relation(fields: [inventoryId], references: [id])
+  inventoryId String?     @map("inventory_id")
   categories  Category[]
+  cart        Cart[]
+  orderItem   OrderItem[]
 }
 
 model Category {
   id   String @id @default(uuid())
-  name String @unique
+  name String @unique @db.VarChar(20)
 
   products Product[]
 }
 
 model Order {
-  id            String  @id @default(uuid())
-  quantity      Int
-  totalPrice    Float   @map("total_price")
-  orderStatus   String  @default("PENDING") @map("order_status")
-  paymentStatus String  @default("PENDING") @map("payment_status")
-  isDeleted     Boolean @default(false) @map("is_deleted")
+  id            String   @id @default(uuid())
+  orderStatus   String   @default("PENDING") @map("order_status")
+  paymentStatus String   @default("PENDING") @map("payment_status")
+  totalPrice    Float    @map("total_price")
+  isDeleted     Boolean  @default(false) @map("is_deleted")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    String?  @map("user_id")
+  buyerVendor    Vendor?     @relation("BuyerVendor", fields: [buyerVendorId], references: [id])
+  buyerVendorId  String?     @map("buyer_vendor_id")
+  sellerVendor   Vendor?     @relation("SellerVendor", fields: [sellerVendorId], references: [id])
+  sellerVendorId String?     @map("seller_vendor_id")
+  orderItems     OrderItem[]
+}
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  quantity   Int
+  price      Float    @map("price_at_purchase")
+  totalPrice Float    @map("total_price")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  order       Order     @relation(fields: [orderId], references: [id])
+  orderId     String    @map("order_id")
+  product     Product   @relation(fields: [productId], references: [id])
+  productId   String    @map("product_id")
+  inventory   Inventory @relation(fields: [inventoryId], references: [id])
+  inventoryId String    @map("inventory_id")
+}
+
+model Cart {
+  id         String   @id @default(uuid())
+  isDeleted  Boolean  @default(false) @map("is_deleted")
+  quantity   Int      @default(1)
+  cartStatus String?  @default("ACTIVE") @map("cart_status")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  vendor    Vendor?  @relation(fields: [vendorId], references: [id])
+  vendorId  String?  @map("vendor_id")
   product   Product? @relation(fields: [productId], references: [id])
-  productId String?
+  productId String?  @map("product_id")
+
+  @@unique([vendorId, productId])
 }
