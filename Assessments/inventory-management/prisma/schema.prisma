@@ -116,10 +116,10 @@ model OrderItem {
 }
 
 model Cart {
-  id         String   @id @default(uuid())
-  isDeleted  Boolean  @default(false) @map("is_deleted")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id        String   @id @default(uuid())
+  isDeleted Boolean  @default(false) @map("is_deleted")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   vendorId  String?    @unique @map("vendor_id")
   vendor    Vendor?    @relation(fields: [vendorId], references: [id])
@@ -127,10 +127,11 @@ model Cart {
 }
 
 model CartItem {
-  id        String   @id @default(uuid())
-  quantity  Int      @default(1)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id             String   @id @default(uuid())
+  quantity       Int      @default(1)
+  cartItemStatus String?  @default("ACTIVE") @map("cart_item_status") @db.VarChar(20)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
 
   cartId    String  @map("cart_id")
   cart      Cart    @relation(fields: [cartId], references: [id])
