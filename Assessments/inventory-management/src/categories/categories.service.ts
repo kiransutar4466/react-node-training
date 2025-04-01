@@ -16,7 +16,7 @@ export class CategoriesService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     try {
-      const category = await this.prisma.category.upsert({
+      await this.prisma.category.upsert({
         where: { name: createCategoryDto.name },
         create: { name: createCategoryDto.name },
         update: {},
@@ -24,7 +24,6 @@ export class CategoriesService {
 
       return {
         message: "category created successfully",
-        data: category,
       };
     } catch (error) {
       this.logger.error(`Error in create category | ${error}`);

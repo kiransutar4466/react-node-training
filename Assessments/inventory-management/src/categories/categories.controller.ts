@@ -5,17 +5,25 @@ import {
   Get,
   HttpStatus,
   Param,
-  Patch,
+  Put,
   Post,
   Query,
 } from "@nestjs/common";
+import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+
 import { CategoriesService } from "./categories.service";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import {
   CreateCategoryDto,
   QueryFindCategoriesDto,
 } from "./dto/categories.dto";
+import {
+  ResponseCreateCategoryDto,
+  ResponseDeleteCategoryDto,
+  ResponseFindAllCategoryDto,
+  ResponseUpdateCategoryDto,
+} from "./dto/response.dto";
 
+@ApiBearerAuth()
 @Controller("categories")
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
@@ -23,7 +31,8 @@ export class CategoriesController {
   @Post()
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: "product created successfully",
+    description: "category created successfully",
+    type: ResponseCreateCategoryDto,
   })
   @ApiOperation({ summary: "Create Category" })
   create(@Body() createCategoryDto: CreateCategoryDto) {
@@ -34,18 +43,20 @@ export class CategoriesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "categories found successfully",
+    type: ResponseFindAllCategoryDto,
   })
   @ApiOperation({ summary: "Get All the Categories" })
   findAll(@Query() queryFindCategoriesDto: QueryFindCategoriesDto) {
     return this.categoriesService.findAll(queryFindCategoriesDto);
   }
 
-  @Patch(":id")
+  @Put(":id")
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "product updated successfully",
+    description: "category updated successfully",
+    type: ResponseUpdateCategoryDto,
   })
-  @ApiOperation({ summary: "Update Product" })
+  @ApiOperation({ summary: "Update Category" })
   update(
     @Param("id") id: string,
     @Body() updateCategoryDto: CreateCategoryDto,
@@ -57,6 +68,7 @@ export class CategoriesController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "category deleted successfully",
+    type: ResponseDeleteCategoryDto,
   })
   @ApiOperation({ summary: "Delete Category" })
   remove(@Param("id") id: string) {
