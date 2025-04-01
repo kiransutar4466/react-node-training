@@ -8,6 +8,7 @@ import {
   Put,
   Post,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
@@ -22,8 +23,10 @@ import {
   ResponseFindAllCategoryDto,
   ResponseUpdateCategoryDto,
 } from "./dto/response.dto";
+import { AuthGuard } from "src/guards/auth.guard";
 
 @ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller("categories")
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}

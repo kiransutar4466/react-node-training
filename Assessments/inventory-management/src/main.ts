@@ -9,7 +9,7 @@ async function bootstrap() {
   app.setGlobalPrefix("/api");
   app.enableCors({
     origin: "*",
-    // methods: "GET, PUT, POST, DELETE, OPTIONS, PATCH",
+    methods: "GET, PUT, POST, DELETE, OPTIONS, PATCH",
     allowedHeaders: [
       "Content-Type",
       "Authorization",
@@ -17,12 +17,6 @@ async function bootstrap() {
     ],
     credentials: true,
   });
-  // app.enableCors({
-  //   origin: "*",
-  //   methods: "GET, PUT, POST, DELETE, OPTIONS, PATCH",
-  // allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"],
-  //   credentials: true,
-  // });
 
   app.useGlobalPipes(
     new ValidationPipe({

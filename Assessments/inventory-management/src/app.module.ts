@@ -1,7 +1,7 @@
 import { Logger, MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
-import { PrismaClient } from "@prisma/client";
 import { APP_FILTER } from "@nestjs/core";
+import { PrismaClient } from "@prisma/client";
 
 import { AuthModule } from "./auth/auth.module";
 import { VendorModule } from "./vendors/vendors.module";
@@ -11,6 +11,8 @@ import { LoginMiddleware } from "./middleware/login.middleware";
 import { CategoriesModule } from "./categories/categories.module";
 import { VendorsController } from "./vendors/vendors.controller";
 import { ProductsController } from "./products/products.controller";
+import { InventoryController } from "./inventory/inventory.controller";
+import { CategoriesController } from "./categories/categories.controller";
 import { CatchEverythingFilter } from "./filters/catch-everything.filter";
 import { SaveCredentialsModule } from "./save-credentials/save-credentials.module";
 
@@ -39,6 +41,11 @@ export class AppModule implements NestModule {
     consumer
       .apply(LoginMiddleware)
       .exclude("auth/login")
-      .forRoutes(VendorsController, ProductsController);
+      .forRoutes(
+        VendorsController,
+        ProductsController,
+        InventoryController,
+        CategoriesController,
+      );
   }
 }

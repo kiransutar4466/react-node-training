@@ -5,7 +5,7 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
-  Patch,
+  Put,
   Query,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
@@ -48,7 +48,7 @@ export class InventoryController {
     return await this.inventoryService.findOne(id);
   }
 
-  @Patch(":id")
+  @Put(":id")
   @ApiResponse({
     status: HttpStatus.OK,
     description: "inventory updated successfully",
