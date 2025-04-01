@@ -1,7 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-base-to-string */
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
@@ -121,7 +120,7 @@ export class VendorsService {
 
       const skip = (page - 1) * perPage;
 
-      const data = await this.prisma.vendor.findMany({
+      const rawData = await this.prisma.vendor.findMany({
         where,
         skip,
         take: perPage,
@@ -132,9 +131,28 @@ export class VendorsService {
           email: true,
           companyName: true,
           contactNumber: true,
-          createdAt: true,
-          updatedAt: true,
+          address: {
+            select: {
+              city: true,
+              pinCode: true,
+            },
+          },
+          inventory: {
+            select: {
+              name: true,
+            },
+          },
         },
+      });
+
+      const data = rawData.map((vendor) => {
+        const { address, inventory, ...filteredVendor } = {
+          ...vendor,
+          city: vendor.address?.city,
+          pinCode: vendor.address?.pinCode,
+          inventoryName: vendor.inventory?.name,
+        };
+        return filteredVendor;
       });
 
       const totalCount = await this.prisma.vendor.count({ where });
@@ -151,7 +169,7 @@ export class VendorsService {
 
   async findOne(id: string) {
     try {
-      return await this.prisma.vendor.findUnique({
+      const rawData = await this.prisma.vendor.findUnique({
         where: {
           id,
           isDeleted: false,
@@ -163,10 +181,29 @@ export class VendorsService {
           email: true,
           companyName: true,
           contactNumber: true,
-          createdAt: true,
-          updatedAt: true,
+          address: {
+            select: {
+              city: true,
+              pinCode: true,
+            },
+          },
+          inventory: {
+            select: {
+              name: true,
+            },
+          },
         },
       });
+
+      if (rawData) {
+        const { address, inventory, ...filteredVendor } = {
+          ...rawData,
+          city: rawData.address?.city,
+          pinCode: rawData.address?.pinCode,
+          inventoryName: rawData.inventory?.name,
+        };
+        return filteredVendor;
+      }
     } catch (error) {
       this.logger.error(`Error in findOne | ${error}`);
       throw error;

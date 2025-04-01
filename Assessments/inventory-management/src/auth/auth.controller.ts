@@ -16,7 +16,7 @@ export class AuthController {
     description: "login successfully",
     type: ResponseLoginUserDto,
   })
-  @ApiOperation({ summary: "Login User" })
+  @ApiOperation({ summary: "Login" })
   async loginUser(@Body() loginUserDto: LoginUserDto) {
     return await this.authService.login(loginUserDto);
   }

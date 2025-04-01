@@ -4,7 +4,7 @@ import {
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   HttpStatus,
@@ -12,7 +12,7 @@ import {
   ParseUUIDPipe,
   UseGuards,
 } from "@nestjs/common";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 import { VendorsService } from "./vendors.service";
 import {
@@ -31,6 +31,7 @@ import { VendorExistsGuard } from "src/guards/vendor-exists.guard";
 import { AuthGuard } from "src/guards/auth.guard";
 
 @UseGuards(AuthGuard)
+@ApiBearerAuth()
 @Controller("vendors")
 export class VendorsController {
   constructor(private readonly vendorsService: VendorsService) {}
@@ -38,7 +39,7 @@ export class VendorsController {
   @Post()
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: "user created successfully",
+    description: "vendor created successfully",
     type: ResponseCreateVendorDto,
   })
   @ApiOperation({ summary: "Create Vendor" })
@@ -49,7 +50,7 @@ export class VendorsController {
   @Get()
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "users found successfully",
+    description: "vendors found successfully",
     type: ResponseFindAllVendorDto,
   })
   @ApiOperation({ summary: "Get All the Vendors" })
@@ -61,7 +62,7 @@ export class VendorsController {
   @UseGuards(VendorExistsGuard)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "user found successfully",
+    description: "vendor found successfully",
     type: ResponseFindSingleVendorDto,
   })
   @ApiOperation({ summary: "Get Sigle Vendor by id" })
@@ -69,11 +70,11 @@ export class VendorsController {
     return await this.vendorsService.findOne(id);
   }
 
-  @Patch(":id")
+  @Put(":id")
   @UseGuards(VendorExistsGuard)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "user updated successfully",
+    description: "vendor updated successfully",
     type: ResponseUpdateVendorDto,
   })
   @ApiOperation({ summary: "Update Vendor" })
@@ -85,7 +86,7 @@ export class VendorsController {
   @UseGuards(VendorExistsGuard)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: "user deleted successfully",
+    description: "vendor deleted successfully",
     type: ResponseDeleteVendorDto,
   })
   @ApiOperation({ summary: "Delete Vendor" })

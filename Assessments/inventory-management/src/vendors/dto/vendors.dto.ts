@@ -57,7 +57,7 @@ export class CreateVendorDto {
   @MaxLength(6)
   pinCode: string;
 
-  @ApiProperty({ example: "Pune", default: "My Inventory" })
+  @ApiProperty({ example: "My Inventory", default: "My Inventory" })
   @IsString()
   @MinLength(1)
   @MaxLength(100)
@@ -77,14 +77,14 @@ export class UpdateVendorDto extends IntersectionType(
 ) {}
 
 export class QueryFindVendorsDto {
-  @ApiProperty({ required: false, example: 1 })
+  @ApiProperty({ required: false, example: 1, default: "1" })
   @IsOptional()
   @IsInt()
   @Min(1)
   @Type(() => Number)
   page: number = 1;
 
-  @ApiProperty({ required: false, example: 10 })
+  @ApiProperty({ required: false, example: 10, default: "10" })
   @IsOptional()
   @IsInt()
   @Min(1)

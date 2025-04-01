@@ -12,6 +12,7 @@ import {
   UpdateProductDto,
 } from "./dto/products.dto";
 import { PrismaClient } from "@prisma/client";
+import { connect } from "http2";
 
 @Injectable()
 export class ProductsService {
@@ -41,7 +42,7 @@ export class ProductsService {
         create: { name: categoryName },
       }));
 
-      const product = await this.prisma.product.create({
+      await this.prisma.product.create({
         data: {
           name,
           description,
@@ -58,7 +59,6 @@ export class ProductsService {
 
       return {
         message: "product created successfully",
-        data: product,
       };
     } catch (error) {
       this.logger.error(`Error in create product | ${error}`);
@@ -66,7 +66,11 @@ export class ProductsService {
     }
   }
 
-  async findAll(queryFindProductDto: QueryFindProductDto) {
+  async findAll(
+    queryFindProductDto: QueryFindProductDto,
+    decodedId,
+    isDeadStock: boolean = false,
+  ) {
     try {
       const {
         page,
@@ -78,14 +82,20 @@ export class ProductsService {
         sortBy,
         inventoryId,
       } = queryFindProductDto;
+
       const where = { isDeleted: false };
+      this.logger.debug(isDeadStock);
+      if (isDeadStock) {
+        where["quantity"] = { lte: 10 };
+        where["vendorId"] = decodedId;
+      }
+
       if (category)
         where["categories"] = {
           some: {
             name: { equals: category, mode: "insensitive" },
           },
         };
-
       if (stockStatus) where["stockStatus"] = stockStatus;
       if (name)
         where["name"] = {
@@ -94,7 +104,10 @@ export class ProductsService {
         };
       if (inventoryId) where["inventoryId"] = inventoryId;
 
-      const orderFilter = sortBy && orderBy ? { [sortBy]: orderBy } : {};
+      const orderFilter =
+        sortBy && orderBy
+          ? { [sortBy]: orderBy }
+          : { updatedAt: "desc" as "asc" | "desc" };
 
       const skip = (page - 1) * perPage;
       const rawData: any = await this.prisma.product.findMany({
@@ -145,32 +158,6 @@ export class ProductsService {
     }
   }
 
-  async findDeadStocks(decoded, queryFindProductDto) {
-    try {
-      const { page, perPage } = queryFindProductDto;
-      const skip = (page - 1) * perPage;
-      const where = {
-        isDeleted: false,
-        quantity: { lte: 10 },
-        vendorId: decoded.id,
-      };
-
-      const data = await this.prisma.product.findMany({
-        where,
-        skip,
-      });
-      const totalCount = await this.prisma.product.count({ where });
-      const totalPages = Math.ceil(totalCount / perPage);
-      const prev = page > 1 ? page - 1 : null;
-      const next = page < totalPages ? page + 1 : null;
-
-      return { page, totalPages, prev, next, data };
-    } catch (error) {
-      this.logger.error(`Error in findOne product | ${error}`);
-      throw error;
-    }
-  }
-
   async findOne(id: string) {
     try {
       const product = await this.prisma.product.findUnique({
@@ -205,8 +192,6 @@ export class ProductsService {
         categories: product.categories.map((categoryObj) => categoryObj.name),
       };
       return filterProduct;
-
-      // return product;
     } catch (error) {
       this.logger.error(`Error in findOne product | ${error}`);
       throw error;
@@ -215,11 +200,13 @@ export class ProductsService {
 
   async update(id: string, updateProductDto: UpdateProductDto) {
     try {
+      this.logger.debug(`Product update triggered`);
+      this.logger.debug(`updateProductDto | ${updateProductDto}`);
       const productFound = await this.prisma.product.findUnique({
         where: { id, isDeleted: false },
         select: { isDeleted: true },
       });
-      this.logger.debug(productFound);
+      this.logger.debug(`productFound | ${productFound}`);
       if (!productFound) {
         throw new HttpException("product not found", HttpStatus.BAD_REQUEST);
       }
@@ -229,7 +216,15 @@ export class ProductsService {
       if (name) data["name"] = name;
       if (price) data["price"] = price;
       if (description) data["description"] = description;
-      if (categories) data["categories"] = categories;
+      if (categories) {
+        data["categories"] = {
+          connectOrCreate: categories.map((categoryName) => ({
+            where: { name: categoryName },
+            create: { name: categoryName },
+          })),
+        };
+      }
+
       if (quantity) {
         data["quantity"] = quantity;
         data["stockStatus"] =

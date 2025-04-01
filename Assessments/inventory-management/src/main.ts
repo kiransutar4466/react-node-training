@@ -8,10 +8,22 @@ async function bootstrap() {
 
   app.setGlobalPrefix("/api");
   app.enableCors({
-    origin: true,
-    methods: true,
+    origin: "*",
+    // methods: "GET, PUT, POST, DELETE, OPTIONS, PATCH",
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "ngrok-skip-browser-warning",
+    ],
     credentials: true,
   });
+  // app.enableCors({
+  //   origin: "*",
+  //   methods: "GET, PUT, POST, DELETE, OPTIONS, PATCH",
+  // allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"],
+  //   credentials: true,
+  // });
+
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,

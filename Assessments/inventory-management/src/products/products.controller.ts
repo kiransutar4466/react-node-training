@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import {
   Controller,
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   HttpStatus,
   Query,
   Req,
+  Put,
 } from "@nestjs/common";
-import { ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 import { ProductsService } from "./products.service";
 import {
@@ -21,11 +22,13 @@ import {
 import {
   ResponseCreateProductDto,
   ResponseDeleteProductDto,
+  ResponseFindAllProductDto,
   ResponseFindProductDto,
   ResponseUpdateProductDto,
 } from "./dto/response.dto";
 import { Request } from "express";
 
+@ApiBearerAuth()
 @Controller("products")
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
@@ -45,27 +48,31 @@ export class ProductsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "products found successfully",
-    type: [ResponseFindProductDto],
+    type: [ResponseFindAllProductDto],
   })
   @ApiOperation({ summary: "Get All the Products" })
-  findAll(@Query() queryFindProductDto: QueryFindProductDto) {
-    return this.productsService.findAll(queryFindProductDto);
+  findAll(
+    @Query() queryFindProductDto: QueryFindProductDto,
+    @Req() req: Request,
+  ) {
+    return this.productsService.findAll(queryFindProductDto, req["decoded"].id);
   }
 
   @Get("deadStocks")
   @ApiResponse({
     status: HttpStatus.OK,
     description: "products found successfully",
-    type: ResponseFindProductDto,
+    type: ResponseFindAllProductDto,
   })
   @ApiOperation({ summary: "Get Dead Stock Products" })
   findDeadStocks(
     @Query() queryFindProductDto: QueryFindProductDto,
     @Req() req: Request,
   ) {
-    return this.productsService.findDeadStocks(
-      req["decoded"],
+    return this.productsService.findAll(
       queryFindProductDto,
+      req["decoded"].id,
+      true,
     );
   }
 
@@ -80,7 +87,7 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @Patch(":id")
+  @Put(":id")
   @ApiResponse({
     status: HttpStatus.OK,
     description: "product updated successfully",
