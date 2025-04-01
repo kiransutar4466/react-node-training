@@ -22,7 +22,7 @@ model Vendor {
 
   inventory    Inventory?
   address      Address?
-  cart         Cart[]
+  cart         Cart?
   products     Product[]
   buyerOrders  Order[]    @relation("BuyerVendor")
   sellerOrders Order[]    @relation("SellerVendor")
@@ -121,8 +121,8 @@ model Cart {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  vendorId  String?    @unique @map("vendor_id")
-  vendor    Vendor?    @relation(fields: [vendorId], references: [id])
+  vendorId  String     @unique @map("vendor_id")
+  vendor    Vendor     @relation(fields: [vendorId], references: [id])
   cartItems CartItem[]
 }
 
