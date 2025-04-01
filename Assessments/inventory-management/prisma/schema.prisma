@@ -72,7 +72,7 @@ model Product {
   inventory   Inventory?  @relation(fields: [inventoryId], references: [id])
   inventoryId String?     @map("inventory_id")
   categories  Category[]
-  cart        Cart[]
+  cartItem    CartItem[]
   orderItem   OrderItem[]
 }
 
@@ -118,15 +118,24 @@ model OrderItem {
 model Cart {
   id         String   @id @default(uuid())
   isDeleted  Boolean  @default(false) @map("is_deleted")
-  quantity   Int      @default(1)
-  cartStatus String?  @default("ACTIVE") @map("cart_status") @db.VarChar(20)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
-  vendor    Vendor?  @relation(fields: [vendorId], references: [id])
-  vendorId  String?  @map("vendor_id")
-  product   Product? @relation(fields: [productId], references: [id])
-  productId String?  @map("product_id")
+  vendorId  String?    @unique @map("vendor_id")
+  vendor    Vendor?    @relation(fields: [vendorId], references: [id])
+  cartItems CartItem[]
+}
 
-  @@unique([vendorId, productId])
+model CartItem {
+  id        String   @id @default(uuid())
+  quantity  Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  cartId    String  @map("cart_id")
+  cart      Cart    @relation(fields: [cartId], references: [id])
+  productId String  @map("product_id")
+  product   Product @relation(fields: [productId], references: [id])
+
+  @@unique([cartId, productId])
 }
