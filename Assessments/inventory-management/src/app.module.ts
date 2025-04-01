@@ -15,6 +15,8 @@ import { InventoryController } from "./inventory/inventory.controller";
 import { CategoriesController } from "./categories/categories.controller";
 import { CatchEverythingFilter } from "./filters/catch-everything.filter";
 import { SaveCredentialsModule } from "./save-credentials/save-credentials.module";
+import { CartModule } from "./cart/cart.module";
+import { CartController } from "./cart/cart.controller";
 
 @Module({
   imports: [
@@ -24,6 +26,7 @@ import { SaveCredentialsModule } from "./save-credentials/save-credentials.modul
     InventoryModule,
     SaveCredentialsModule,
     CategoriesModule,
+    CartModule,
   ],
   controllers: [],
   providers: [
@@ -46,6 +49,7 @@ export class AppModule implements NestModule {
         ProductsController,
         InventoryController,
         CategoriesController,
+        CartController,
       );
   }
 }

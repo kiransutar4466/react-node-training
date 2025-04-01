@@ -19,8 +19,6 @@ export class ResponseDeleteCategoryDto {
   message: string;
 }
 
-export class ResponseFindSingleCategoryDto {}
-
 export class ResponseFindAllCategoryDto {
   @ApiProperty({ example: 3 })
   page: number;

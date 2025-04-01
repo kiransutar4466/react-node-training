@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
+  ParseUUIDPipe,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
@@ -26,12 +27,12 @@ import {
 import { AuthGuard } from "src/guards/auth.guard";
 
 @ApiBearerAuth()
-@UseGuards(AuthGuard)
 @Controller("categories")
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: "category created successfully",
@@ -54,6 +55,7 @@ export class CategoriesController {
   }
 
   @Put(":id")
+  @UseGuards(AuthGuard)
   @ApiResponse({
     status: HttpStatus.OK,
     description: "category updated successfully",
@@ -61,20 +63,21 @@ export class CategoriesController {
   })
   @ApiOperation({ summary: "Update Category" })
   update(
-    @Param("id") id: string,
+    @Param("id", new ParseUUIDPipe()) id: string,
     @Body() updateCategoryDto: CreateCategoryDto,
   ) {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 
   @Delete(":id")
+  @UseGuards(AuthGuard)
   @ApiResponse({
     status: HttpStatus.OK,
     description: "category deleted successfully",
     type: ResponseDeleteCategoryDto,
   })
   @ApiOperation({ summary: "Delete Category" })
-  remove(@Param("id") id: string) {
+  remove(@Param("id", new ParseUUIDPipe()) id: string) {
     return this.categoriesService.remove(id);
   }
 }

@@ -12,7 +12,6 @@ import {
   UpdateProductDto,
 } from "./dto/products.dto";
 import { PrismaClient } from "@prisma/client";
-import { connect } from "http2";
 
 @Injectable()
 export class ProductsService {
@@ -31,9 +30,9 @@ export class ProductsService {
         createProductDto;
 
       const stockStatus =
-        quantity > 10
+        quantity > 20
           ? "IN_STOCK"
-          : quantity > 0
+          : quantity > 5
             ? "LOW_STOCK"
             : "OUT_OF_STOCK";
 
@@ -61,14 +60,14 @@ export class ProductsService {
         message: "product created successfully",
       };
     } catch (error) {
-      this.logger.error(`Error in create product | ${error}`);
+      this.logger.error(`Error in create | ${error}`);
       throw error;
     }
   }
 
   async findAll(
     queryFindProductDto: QueryFindProductDto,
-    decodedId,
+    decodedId: string,
     isDeadStock: boolean = false,
   ) {
     try {
@@ -86,7 +85,7 @@ export class ProductsService {
       const where = { isDeleted: false };
       this.logger.debug(isDeadStock);
       if (isDeadStock) {
-        where["quantity"] = { lte: 10 };
+        where["quantity"] = { lte: 5 };
         where["vendorId"] = decodedId;
       }
 
@@ -228,9 +227,9 @@ export class ProductsService {
       if (quantity) {
         data["quantity"] = quantity;
         data["stockStatus"] =
-          quantity > 10
+          quantity > 20
             ? "IN_STOCK"
-            : quantity > 0
+            : quantity > 5
               ? "LOW_STOCK"
               : "OUT_OF_STOCK";
       }
@@ -241,7 +240,7 @@ export class ProductsService {
 
       return { message: "product updated successfully" };
     } catch (error) {
-      this.logger.error(`Error in update product | ${error}`);
+      this.logger.error(`Error in update | ${error}`);
       throw error;
     }
   }
@@ -263,7 +262,7 @@ export class ProductsService {
       });
       return { message: "product deleted successfully" };
     } catch (error) {
-      this.logger.error(`Error in remove product | ${error}`);
+      this.logger.error(`Error in remove | ${error}`);
       throw error;
     }
   }

@@ -93,8 +93,7 @@ export class QueryFindVendorsDto {
 
   @ApiProperty({ required: false, example: "johndoe@gmail.com" })
   @IsOptional()
-  @IsEmail()
-  @MinLength(8)
+  @IsString()
   email: string;
 
   @ApiProperty({ required: false, example: "John" })

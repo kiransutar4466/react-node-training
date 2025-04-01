@@ -50,7 +50,7 @@ export class CreateProductDto {
 
   @ApiProperty({ example: 18 })
   @IsNumber()
-  @Min(0)
+  @Min(5)
   quantity: number;
 
   @ApiProperty({ example: ["Electronics"] })

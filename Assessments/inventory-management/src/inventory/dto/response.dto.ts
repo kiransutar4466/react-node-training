@@ -28,6 +28,14 @@ export class ResponseFindSingleInventoryDto {
   @ApiProperty({ example: "456854" })
   @IsString()
   pinCode: string;
+
+  @ApiProperty({ example: "John Doe" })
+  @IsString()
+  vendorName: string;
+
+  @ApiProperty({ example: 10 })
+  @IsString()
+  totalStocks: number;
 }
 
 export class ResponseFindAllInventoryDto {

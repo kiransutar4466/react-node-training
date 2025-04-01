@@ -16,10 +16,16 @@ export class CategoriesService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     try {
-      await this.prisma.category.upsert({
+      const category = await this.prisma.category.findUnique({
         where: { name: createCategoryDto.name },
-        create: { name: createCategoryDto.name },
-        update: {},
+        select: { name: true },
+      });
+      if (category) {
+        throw new HttpException("category already exists", HttpStatus.CONFLICT);
+      }
+
+      await this.prisma.category.create({
+        data: { name: createCategoryDto.name },
       });
 
       return {

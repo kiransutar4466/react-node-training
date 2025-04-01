@@ -75,6 +75,9 @@ export class VendorsService {
               },
             },
           },
+          cart: {
+            create: {},
+          },
         },
       });
 
@@ -95,7 +98,7 @@ export class VendorsService {
       const where: any = { role: "VENDOR", isDeleted: false };
       if (email) {
         where.email = {
-          equals: email,
+          contains: email,
           mode: "insensitive",
         };
       }

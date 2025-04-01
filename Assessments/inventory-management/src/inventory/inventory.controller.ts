@@ -44,7 +44,7 @@ export class InventoryController {
     type: ResponseFindSingleInventoryDto,
   })
   @ApiOperation({ summary: "Get Sigle inventory by id" })
-  async findOne(@Param("id", ParseUUIDPipe) id: string) {
+  async findOne(@Param("id", new ParseUUIDPipe(), ParseUUIDPipe) id: string) {
     return await this.inventoryService.findOne(id);
   }
 
@@ -56,7 +56,7 @@ export class InventoryController {
   })
   @ApiOperation({ summary: "Update inventory" })
   update(
-    @Param("id") id: string,
+    @Param("id", new ParseUUIDPipe()) id: string,
     @Body() updateinventoryDto: UpdateInventoryDto,
   ) {
     return this.inventoryService.update(id, updateinventoryDto);

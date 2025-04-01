@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
@@ -31,20 +33,36 @@ export class InventoryService {
         select: {
           id: true,
           name: true,
+          vendor: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
           address: {
             select: {
               city: true,
               pinCode: true,
             },
           },
+          products: {
+            select: {
+              quantity: true,
+            },
+          },
         },
       });
 
       const data = rawData.map((inventory) => {
-        const { address, ...filteredInventory } = {
+        const { address, vendor, products, ...filteredInventory } = {
           ...inventory,
           city: inventory.address?.city,
           pinCode: inventory.address?.pinCode,
+          vendorName: `${inventory.vendor?.firstName} ${inventory.vendor?.lastName}`,
+          totalStocks: inventory.products.reduce(
+            (acc, product) => acc + product.quantity,
+            0,
+          ),
         };
         return filteredInventory;
       });
@@ -67,10 +85,21 @@ export class InventoryService {
         select: {
           id: true,
           name: true,
+          vendor: {
+            select: {
+              firstName: true,
+              lastName: true,
+            },
+          },
           address: {
             select: {
               city: true,
               pinCode: true,
+            },
+          },
+          products: {
+            select: {
+              quantity: true,
             },
           },
         },
@@ -79,10 +108,15 @@ export class InventoryService {
         throw new HttpException("inventory not found", HttpStatus.BAD_REQUEST);
       }
 
-      const { address, ...filteredInventory } = {
+      const { address, vendor, products, ...filteredInventory } = {
         ...inventory,
         city: inventory.address?.city,
         pinCode: inventory.address?.pinCode,
+        vendorName: `${inventory.vendor?.firstName} ${inventory.vendor?.lastName}`,
+        totalStocks: inventory.products.reduce(
+          (acc, product) => acc + product.quantity,
+          0,
+        ),
       };
       return filteredInventory;
     } catch (error) {

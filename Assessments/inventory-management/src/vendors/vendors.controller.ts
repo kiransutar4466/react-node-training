@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 import {
   Controller,
   Get,
@@ -66,7 +65,7 @@ export class VendorsController {
     type: ResponseFindSingleVendorDto,
   })
   @ApiOperation({ summary: "Get Sigle Vendor by id" })
-  async findOne(@Param("id", ParseUUIDPipe) id: string) {
+  async findOne(@Param("id", new ParseUUIDPipe()) id: string) {
     return await this.vendorsService.findOne(id);
   }
 
@@ -78,7 +77,10 @@ export class VendorsController {
     type: ResponseUpdateVendorDto,
   })
   @ApiOperation({ summary: "Update Vendor" })
-  update(@Param("id") id: string, @Body() updateVendorDto: UpdateVendorDto) {
+  update(
+    @Param("id", new ParseUUIDPipe()) id: string,
+    @Body() updateVendorDto: UpdateVendorDto,
+  ) {
     return this.vendorsService.update(id, updateVendorDto);
   }
 
@@ -90,7 +92,7 @@ export class VendorsController {
     type: ResponseDeleteVendorDto,
   })
   @ApiOperation({ summary: "Delete Vendor" })
-  remove(@Param("id") id: string) {
+  remove(@Param("id", new ParseUUIDPipe()) id: string) {
     return this.vendorsService.remove(id);
   }
 }
