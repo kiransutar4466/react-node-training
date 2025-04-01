@@ -85,8 +85,8 @@ model Category {
 
 model Order {
   id            String   @id @default(uuid())
-  orderStatus   String   @default("PENDING") @map("order_status")
-  paymentStatus String   @default("PENDING") @map("payment_status")
+  orderStatus   String   @default("PENDING") @map("order_status") @db.VarChar(20)
+  paymentStatus String   @default("PENDING") @map("payment_status") @db.VarChar(20)
   totalPrice    Float    @map("total_price")
   isDeleted     Boolean  @default(false) @map("is_deleted")
   createdAt     DateTime @default(now()) @map("created_at")
@@ -119,7 +119,7 @@ model Cart {
   id         String   @id @default(uuid())
   isDeleted  Boolean  @default(false) @map("is_deleted")
   quantity   Int      @default(1)
-  cartStatus String?  @default("ACTIVE") @map("cart_status")
+  cartStatus String?  @default("ACTIVE") @map("cart_status") @db.VarChar(20)
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @updatedAt @map("updated_at")
 
