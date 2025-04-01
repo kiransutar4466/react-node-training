@@ -1,0 +1,1 @@
+export const BASE_URL='https://fbfc-61-246-51-66.ngrok-free.app'

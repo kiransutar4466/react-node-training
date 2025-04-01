@@ -1,0 +1,104 @@
+.login-form{
+  border-radius: 12px;
+  background-color: #2b2727d4;
+
+}
+body{
+  position: relative;
+}
+.login-form input{
+    border: 1.2px solid rgb(255, 255, 255);
+    width: 100%;
+    padding: 10px;
+    color: white;
+   
+}
+.login-form input::placeholder {
+  color: rgb(93, 93, 93);
+  opacity: 1; /* Firefox */
+}
+.event input{
+  
+    border: 2px solid rgb(0, 0, 0);
+  padding: 4px;
+}
+.modal-overlay {
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  position: fixed; /* Fixed to prevent scrolling issues */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(168, 168, 168, 0.333); /* Darker overlay for better visibility */
+  z-index: 1000;
+}
+
+.modal-content {
+ 
+  padding: 10px;
+  border-radius: 8px;
+ 
+
+ 
+}
+
+.search-inputs{
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.search-inputs input{
+  width: 100%;
+  padding: 2px;
+  border: 2px solid black;
+}
+
+.comman-table {
+  width: 100%;
+  overflow-x: auto; 
+}
+
+.comman-table table {
+  width: 100%;
+  border-collapse: collapse; 
+  border: 2px solid #000; 
+}
+
+.comman-table table th, 
+.comman-table table td {
+  border-bottom: 1px solid #97e0fa;
+  padding: 10px;
+  text-align: left; 
+}
+
+.comman-table table th {
+  background-color: #0ec6f9; 
+  font-weight: bold;
+  color: white;
+}
+
+.comman-table table tbody tr:nth-child(even) {
+  background-color: #eaeaea; 
+}
+
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Adjust thickness */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* Adjust color */
+  border-radius: 10px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.create-event-form{
+  margin-top: -30px;
+}
