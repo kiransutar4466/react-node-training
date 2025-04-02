@@ -52,7 +52,7 @@ export class QueryFindCartItemDto {
 
   @ApiProperty({ required: false, example: 1 })
   @IsOptional()
-  @IsString()
+  @IsInt()
   @Min(1)
   @Type(() => Number)
   quantity?: number;
