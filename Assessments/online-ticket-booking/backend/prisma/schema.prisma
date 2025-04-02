@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model users{
+  id          Int   @id  @default(autoincrement())               @db.Integer
+  firstName   String?                    @map("first_name")      @db.VarChar(60)
+  lastName    String?                    @map("last_name")       @db.VarChar(60)
+  email       String?                    @map("email")           @db.VarChar(60)
+  password    String?                    @map("password")        @db.VarChar(300)
+  role        String?                    @map("role")            @db.VarChar(20)
+  isDeleted   Boolean?  @default(false)  @map("is_deleted")      @db.Boolean
+  createdeAt  DateTime? @default(now())  @map("created_at")      @db.Timestamp     
+  updatedAt   DateTime? @updatedAt       @map("updated_at")      @db.Timestamp 
+
+  events events[]
+  tickets tickets[]    
+}
+
+model events{
+  id                Int @id   @default(autoincrement())                     @db.Integer
+  userId            Int?                        @map("user_id")             @db.Integer
+  eventName         String?                     @map("event_name")          @db.VarChar(70)
+  eventDescription  String?                     @map("event_description") 
+  eventCategory     String?                     @map("event_category")      @db.VarChar(30)
+  eventStartDate    DateTime?                   @map("event_start_date")    @db.Date   
+  eventEndDate      DateTime?                   @map("event_end_date")      @db.Date
+  eventSlots        Json?                       @map("event_slots")         @db.Json
+  eventTotalSeats   Int?                        @map("event_total_seats")   @db.Integer
+  eventPrice        Int?                        @map("event_price")         @db.Integer
+  eventImage        String?                     @map("event_image") 
+  isDeleted         Boolean?  @default(false)   @map("is_deleted")          @db.Boolean
+  createdeAt        DateTime? @default(now())   @map("created_at")          @db.Timestamp  
+  updatedAt         DateTime? @updatedAt        @map("updated_at")          @db.Timestamp
+
+  user users? @relation(fields: [userId],references: [id])
+
+  shows shows[]
+  tickets tickets[]
+}
+
+model shows{
+  id Int @id @default(autoincrement())               @map("id")                      @db.Integer
+  eventId               Int?                         @map("event_id")                @db.Integer   
+  showStartTime         String?                      @map("show_start_time")         @db.VarChar(10)
+  showEndTime           String?                      @map("show_end_time")           @db.VarChar(10)
+  showDate              DateTime?                    @map("show_date")               @db.Date
+  showTotalTickets      Int?                         @map("show_total_tickets")      @db.Integer
+  showSelectedTickets   Json?                        @map("selected_tickets")        @db.Json  
+  showAvailableTickets  Int?                         @map("show_available_tickets")  @db.Integer
+  createdeAt            DateTime? @default(now())    @map("created_at")              @db.Timestamp  
+  updatedAt             DateTime? @updatedAt         @map("updated_at")              @db.Timestamp
+
+  tickets tickets[]
+  event events? @relation(fields: [eventId],references: [id],onDelete: Cascade) 
+}
+
+model tickets{
+  id                  Int @id @default(autoincrement())  @map("id")                    @db.Integer
+  userId              Int?                               @map("user_id")               @db.Integer
+  eventId             Int?                               @map("event_id")              @db.Integer
+  showId              Int?                               @map("show_id")               @db.Integer
+  ticketNumbers       Json?                              @map("ticket_Numbers")        @db.Json
+  bookedTicketsCount  Int?                               @map("booked_tickets_count")  @db.Integer
+  amoutPaid           Int?                               @map("amout_paid")            @db.Integer
+  createdeAt          DateTime? @default(now())          @map("created_at")            @db.Timestamp  
+  updatedAt           DateTime? @updatedAt               @map("updated_at")            @db.Timestamp
+
+  user users? @relation(fields: [userId],references: [id])  
+  event events? @relation(fields: [eventId],references: [id],onDelete: Cascade)
+  show shows? @relation(fields: [showId],references: [id],onDelete: Cascade)
+}
+
+
+
+
