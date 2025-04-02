@@ -204,6 +204,7 @@ export class VendorsService {
           pinCode: rawData.address?.pinCode,
           inventoryName: rawData.inventory?.name,
         };
+
         return filteredVendor;
       }
     } catch (error) {
