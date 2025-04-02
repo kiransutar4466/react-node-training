@@ -91,23 +91,8 @@ export class QueryFindVendorsDto {
   @Type(() => Number)
   perPage: number = 10;
 
-  @ApiProperty({ required: false, example: "johndoe@gmail.com" })
-  @IsOptional()
-  @IsString()
-  email: string;
-
   @ApiProperty({ required: false, example: "John" })
   @IsOptional()
   @IsString()
-  firstName: string;
-
-  @ApiProperty({ required: false, example: "Doe" })
-  @IsOptional()
-  @IsString()
-  lastName: string;
-
-  @ApiProperty({ required: false, example: "Thinktive Technologies Pvt." })
-  @IsOptional()
-  @IsString()
-  companyName: string;
+  search: string;
 }

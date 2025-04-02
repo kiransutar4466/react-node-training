@@ -92,33 +92,32 @@ export class VendorsService {
 
   async findAll(queryFindVendorsDto: QueryFindVendorsDto) {
     try {
-      const { page, perPage, firstName, email, lastName, companyName } =
-        queryFindVendorsDto;
+      const { page = 1, perPage = 10, search } = queryFindVendorsDto;
 
-      const where: any = { role: "VENDOR", isDeleted: false };
-      if (email) {
-        where.email = {
-          contains: email,
+      const where: any = {
+        role: "VENDOR",
+        isDeleted: false,
+      };
+
+      if (search) {
+        const searchQuery = {
+          contains: search,
           mode: "insensitive",
         };
-      }
-      if (firstName) {
-        where.firstName = {
-          contains: firstName,
-          mode: "insensitive",
-        };
-      }
-      if (lastName) {
-        where.lastName = {
-          contains: lastName,
-          mode: "insensitive",
-        };
-      }
-      if (companyName) {
-        where.companyName = {
-          contains: companyName,
-          mode: "insensitive",
-        };
+        where.OR = [
+          {
+            email: searchQuery,
+          },
+          {
+            firstName: searchQuery,
+          },
+          {
+            lastName: searchQuery,
+          },
+          {
+            companyName: searchQuery,
+          },
+        ];
       }
 
       const skip = (page - 1) * perPage;
