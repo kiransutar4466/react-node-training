@@ -16,7 +16,7 @@ enum CartStatus {
 }
 
 export class CreateCartItemDto {
-  @ApiProperty({ example: "9812f1bf-c9d6-45a7-96c3-8d8sc644d8a3" })
+  @ApiProperty({ example: "9d0667ba-1988-4bf9-9a47-c5726dc2d35a" })
   @IsUUID()
   productId: string;
 
@@ -26,6 +26,14 @@ export class CreateCartItemDto {
   @Min(1)
   @Type(() => Number)
   quantity: number = 1;
+}
+
+export class UpdateCartItemDto {
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  @Min(1)
+  @Type(() => Number)
+  quantity: number;
 }
 
 export class QueryFindCartItemDto {

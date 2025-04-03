@@ -8,13 +8,19 @@ export class ResponseCreateCartItemDto {
 }
 
 export class ResponseUpdateCartItemDto {
-  @ApiProperty({ example: "cart updated succesfully" })
+  @ApiProperty({ example: "cart item updated succesfully" })
   @IsString()
   message: string;
 }
 
 export class ResponseDeleteCartItemDto {
   @ApiProperty({ example: "cart deleted succesfully" })
+  @IsString()
+  message: string;
+}
+
+export class ResponseDeleteAllCartItemDto {
+  @ApiProperty({ example: "all cart items deleted succesfully" })
   @IsString()
   message: string;
 }
@@ -33,7 +39,7 @@ export class ResponseFindSingleCartItemDto {
   quantity: number;
 
   @ApiProperty({ example: 100 })
-  price: number;
+  productPrice: number;
 }
 
 export class ResponseFindAllCartItemDto {

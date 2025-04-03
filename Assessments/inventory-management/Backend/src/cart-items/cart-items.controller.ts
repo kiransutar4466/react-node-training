@@ -9,23 +9,31 @@ import {
   Param,
   ParseUUIDPipe,
   Post,
+  Put,
   Query,
   Req,
 } from "@nestjs/common";
-import { CartService } from "./cart.service";
+import { CartItemsService } from "./cart-items.service";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { CreateCartItemDto, QueryFindCartItemDto } from "./dto/cart.dto";
+import {
+  CreateCartItemDto,
+  QueryFindCartItemDto,
+  UpdateCartItemDto,
+} from "./dto/cart-items.dto";
 import {
   ResponseCreateCartItemDto,
+  ResponseDeleteAllCartItemDto,
   ResponseDeleteCartItemDto,
   ResponseFindAllCartItemDto,
   ResponseFindSingleCartItemDto,
+  ResponseUpdateCartItemDto,
 } from "./dto/response.dto";
+import { Request } from "express";
 
 @ApiBearerAuth()
-@Controller("cart")
-export class CartController {
-  constructor(private readonly cartService: CartService) {}
+@Controller("cartItems")
+export class CartItemsController {
+  constructor(private readonly cartItemsService: CartItemsService) {}
 
   @Post()
   @ApiResponse({
@@ -35,7 +43,7 @@ export class CartController {
   })
   @ApiOperation({ summary: "Create Cart" })
   create(@Body() createCartItemDto: CreateCartItemDto, @Req() req: Request) {
-    return this.cartService.create(createCartItemDto, req["decoded"].id);
+    return this.cartItemsService.create(createCartItemDto, req["decoded"].id);
   }
 
   @Get()
@@ -49,7 +57,21 @@ export class CartController {
     @Query() queryFindCategoriesDto: QueryFindCartItemDto,
     @Req() req: Request,
   ) {
-    return this.cartService.findAll(queryFindCategoriesDto, req["decoded"].id);
+    return this.cartItemsService.findAll(
+      queryFindCategoriesDto,
+      req["decoded"].id,
+    );
+  }
+
+  @Delete()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "all cart items deleted successfully",
+    type: ResponseDeleteAllCartItemDto,
+  })
+  @ApiOperation({ summary: "Delete All Cart Items" })
+  removeAll(@Req() req: Request) {
+    return this.cartItemsService.removeAll(req["decoded"].id);
   }
 
   @Get(":id")
@@ -60,7 +82,26 @@ export class CartController {
   })
   @ApiOperation({ summary: "Get Single Cart Item by Id" })
   findOne(@Param("id", new ParseUUIDPipe()) id: string, @Req() req: Request) {
-    return this.cartService.findOne(id, req["decoded"].id);
+    return this.cartItemsService.findOne(id, req["decoded"].id);
+  }
+
+  @Put(":id")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "cart item updated successfully",
+    type: ResponseUpdateCartItemDto,
+  })
+  @ApiOperation({ summary: "Update Cart Item" })
+  update(
+    @Param("id", new ParseUUIDPipe()) id: string,
+    @Body() updateCartItemDto: UpdateCartItemDto,
+    @Req() req: Request,
+  ) {
+    return this.cartItemsService.update(
+      id,
+      updateCartItemDto,
+      req["decoded"].id,
+    );
   }
 
   @Delete(":id")
@@ -71,6 +112,6 @@ export class CartController {
   })
   @ApiOperation({ summary: "Delete Cart Item" })
   remove(@Param("id", new ParseUUIDPipe()) id: string, @Req() req: Request) {
-    return this.cartService.remove(id, req["decoded"].id);
+    return this.cartItemsService.remove(id, req["decoded"].id);
   }
 }
