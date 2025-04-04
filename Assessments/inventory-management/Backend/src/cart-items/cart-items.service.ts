@@ -23,6 +23,30 @@ export class CartItemsService {
       );
       const { productId, quantity } = createCartItemDto;
 
+      // check if product exists or not
+      // also check if vendor is not adding his/her own inventory product to the cart
+      const product = await this.prisma.product.findUnique({
+        where: {
+          id: productId,
+          inventory: { NOT: { vendorId } },
+          isDeleted: false,
+        },
+      });
+      this.logger.warn(product);
+      if (!product) {
+        throw new HttpException(
+          "cannot order your own product or product not found ",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      if (product.quantity - 5 < quantity) {
+        throw new HttpException(
+          "not enough stock available",
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
       // check if product is already in the cart
       const cart = await this.prisma.cart.findUnique({
         where: { vendorId },
@@ -31,33 +55,26 @@ export class CartItemsService {
           cartItems: true,
         },
       });
-      const isExistingCartItem = cart!.cartItems.find(
-        (cartItem) => cartItem.productId === productId,
-      );
-      if (isExistingCartItem) {
-        throw new HttpException(
-          "product already exists in cart",
-          HttpStatus.BAD_REQUEST,
+      if (cart) {
+        const isExistingCartItem = cart.cartItems.find(
+          (cartItem) => cartItem.productId === productId,
         );
+        if (isExistingCartItem) {
+          throw new HttpException(
+            "product already exists in cart",
+            HttpStatus.BAD_REQUEST,
+          );
+        }
       }
 
-      // check if product exists or not
-      const product = await this.prisma.product.findUnique({
-        where: { id: productId, isDeleted: false },
+      // find cart id
+      const cartId = await this.prisma.cart.findUnique({
+        where: { vendorId },
+        select: { id: true },
       });
-      if (!product) {
-        throw new HttpException("product not found", HttpStatus.BAD_REQUEST);
-      }
-      if (product.quantity < quantity) {
-        throw new HttpException(
-          "not enough stock available",
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-
       await this.prisma.cartItem.create({
         data: {
-          cartId: cart!.id,
+          cartId: cartId!.id,
           productId,
           quantity,
         },
@@ -89,6 +106,7 @@ export class CartItemsService {
             select: {
               name: true,
               price: true,
+              description: true,
             },
           },
         },
@@ -99,6 +117,7 @@ export class CartItemsService {
           ...cartItem,
           productName: cartItem.product.name,
           productPrice: cartItem.product.price,
+          productDescription: cartItem.product.description,
         };
         return filteredCartItem;
       });
@@ -187,7 +206,7 @@ export class CartItemsService {
         throw new HttpException("product not found", HttpStatus.BAD_REQUEST);
       }
       // check if stock is available for provided quantity
-      if (product.quantity < quantity) {
+      if (product.quantity - 5 < quantity) {
         throw new HttpException(
           "not enough stock available",
           HttpStatus.BAD_REQUEST,

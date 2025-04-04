@@ -5,11 +5,11 @@ import {
   Get,
   HttpStatus,
   Param,
-  Put,
   Post,
   Query,
   UseGuards,
   ParseUUIDPipe,
+  Patch,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
@@ -54,7 +54,7 @@ export class CategoriesController {
     return this.categoriesService.findAll(queryFindCategoriesDto);
   }
 
-  @Put(":id")
+  @Patch(":id")
   @UseGuards(AuthGuard)
   @ApiResponse({
     status: HttpStatus.OK,

@@ -5,18 +5,20 @@ import { PrismaClient } from "@prisma/client";
 
 import { AuthModule } from "./auth/auth.module";
 import { VendorModule } from "./vendors/vendors.module";
+import { OrdersModule } from "./orders/orders.module";
 import { ProductsModule } from "./products/products.module";
+import { CartItemsModule } from "./cart-items/cart-items.module";
 import { InventoryModule } from "./inventory/inventory.module";
 import { LoginMiddleware } from "./middleware/login.middleware";
 import { CategoriesModule } from "./categories/categories.module";
+import { OrdersController } from "./orders/orders.controller";
 import { VendorsController } from "./vendors/vendors.controller";
 import { ProductsController } from "./products/products.controller";
+import { CartItemsController } from "./cart-items/cart-items.controller";
 import { InventoryController } from "./inventory/inventory.controller";
 import { CategoriesController } from "./categories/categories.controller";
 import { CatchEverythingFilter } from "./filters/catch-everything.filter";
 import { SaveCredentialsModule } from "./save-credentials/save-credentials.module";
-import { CartModule } from "./cart/cart.module";
-import { CartController } from "./cart/cart.controller";
 
 @Module({
   imports: [
@@ -24,14 +26,15 @@ import { CartController } from "./cart/cart.controller";
     VendorModule,
     ProductsModule,
     InventoryModule,
-    SaveCredentialsModule,
     CategoriesModule,
-    CartModule,
+    CartItemsModule,
+    OrdersModule,
+    SaveCredentialsModule,
   ],
   controllers: [],
   providers: [
-    JwtService,
     Logger,
+    JwtService,
     PrismaClient,
     {
       provide: APP_FILTER,
@@ -45,11 +48,12 @@ export class AppModule implements NestModule {
       .apply(LoginMiddleware)
       .exclude("auth/login")
       .forRoutes(
+        OrdersController,
         VendorsController,
         ProductsController,
+        CartItemsController,
         InventoryController,
         CategoriesController,
-        CartController,
       );
   }
 }

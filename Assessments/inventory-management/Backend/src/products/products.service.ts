@@ -68,6 +68,7 @@ export class ProductsService {
   async findAll(
     queryFindProductDto: QueryFindProductDto,
     decodedId: string,
+    role: string,
     isDeadStock: boolean = false,
   ) {
     try {
@@ -75,20 +76,26 @@ export class ProductsService {
         page,
         perPage,
         category,
+        inventoryId,
         stockStatus,
         name,
         orderBy,
         sortBy,
-        inventoryId,
       } = queryFindProductDto;
 
-      const where = { isDeleted: false };
+      this.logger.error(role);
+      this.logger.error(role);
+      const where: any = { isDeleted: false };
       this.logger.debug(isDeadStock);
-      if (isDeadStock) {
+      if (isDeadStock && role === "ADMIN") {
+        where["quantity"] = { lte: 5 };
+      }
+      if (isDeadStock && role === "VENDOR") {
         where["quantity"] = { lte: 5 };
         where["vendorId"] = decodedId;
       }
 
+      if (inventoryId) where["inventoryId"] = inventoryId;
       if (category)
         where["categories"] = {
           some: {
@@ -101,7 +108,6 @@ export class ProductsService {
           contains: name,
           mode: "insensitive",
         };
-      if (inventoryId) where["inventoryId"] = inventoryId;
 
       const orderFilter =
         sortBy && orderBy
@@ -109,6 +115,7 @@ export class ProductsService {
           : { updatedAt: "desc" as "asc" | "desc" };
 
       const skip = (page - 1) * perPage;
+      this.logger.warn(where);
       const rawData: any = await this.prisma.product.findMany({
         where,
         skip,

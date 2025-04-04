@@ -8,8 +8,8 @@ import {
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
-  Put,
   Query,
   Req,
 } from "@nestjs/common";
@@ -85,7 +85,7 @@ export class CartItemsController {
     return this.cartItemsService.findOne(id, req["decoded"].id);
   }
 
-  @Put(":id")
+  @Patch(":id")
   @ApiResponse({
     status: HttpStatus.OK,
     description: "cart item updated successfully",

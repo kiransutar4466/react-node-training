@@ -47,7 +47,6 @@ export class QueryFindInventorysDto {
   @ApiProperty({ required: false, example: "Inventory" })
   @IsOptional()
   @IsString()
-  @MinLength(1)
   @MaxLength(100)
-  name: string;
+  search?: string;
 }

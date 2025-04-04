@@ -10,8 +10,8 @@ import {
   HttpStatus,
   Query,
   Req,
-  Put,
   ParseUUIDPipe,
+  Patch,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
@@ -57,7 +57,12 @@ export class ProductsController {
     @Query() queryFindProductDto: QueryFindProductDto,
     @Req() req: Request,
   ) {
-    return this.productsService.findAll(queryFindProductDto, req["decoded"].id);
+    return this.productsService.findAll(
+      queryFindProductDto,
+      req["decoded"].id,
+      req["decoded"].role,
+      false,
+    );
   }
 
   @Get("deadStocks")
@@ -74,6 +79,7 @@ export class ProductsController {
     return this.productsService.findAll(
       queryFindProductDto,
       req["decoded"].id,
+      req["decoded"].role,
       true,
     );
   }
@@ -89,7 +95,7 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
-  @Put(":id")
+  @Patch(":id")
   @ApiResponse({
     status: HttpStatus.OK,
     description: "product updated successfully",

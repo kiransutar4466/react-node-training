@@ -3,13 +3,13 @@ import {
   Get,
   Post,
   Body,
-  Put,
   Param,
   Delete,
   HttpStatus,
   Query,
   ParseUUIDPipe,
   UseGuards,
+  Patch,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
@@ -69,7 +69,7 @@ export class VendorsController {
     return await this.vendorsService.findOne(id);
   }
 
-  @Put(":id")
+  @Patch(":id")
   @UseGuards(VendorExistsGuard)
   @ApiResponse({
     status: HttpStatus.OK,
