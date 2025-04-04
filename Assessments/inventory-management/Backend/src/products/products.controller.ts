@@ -100,6 +100,36 @@ export class ProductsController {
     );
   }
 
+  @Get("categoriesSoldCount")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "category wise sold count found successfully",
+    // type: ResponseFindProductsStats,
+  })
+  @ApiOperation({ summary: "Get Category wise sold count" })
+  findCategoryWiseSoldCount(@Req() req: Request) {
+    return this.productsService.findCategoryWiseSoldCount(
+      req["decoded"].id,
+      req["decoded"].inventoryId,
+      req["decoded"].role,
+    );
+  }
+
+  @Get("salesPerMonthForCurrentYear")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "sales per month for current year found successfully",
+    type: ResponseFindProductsStats,
+  })
+  @ApiOperation({ summary: "Get salesPerMonthForCurrentYear" })
+  findSalesPerMonthForCurrentYear(@Req() req: Request) {
+    return this.productsService.findSalesPerMonthForCurrentYear(
+      req["decoded"].id,
+      req["decoded"].inventoryId,
+      req["decoded"].role,
+    );
+  }
+
   @Get(":id")
   @ApiResponse({
     status: HttpStatus.OK,

@@ -12,6 +12,7 @@ import {
   UpdateProductDto,
 } from "./dto/products.dto";
 import { PrismaClient } from "@prisma/client";
+import * as moment from "moment";
 
 @Injectable()
 export class ProductsService {
@@ -83,10 +84,7 @@ export class ProductsService {
         sortBy,
       } = queryFindProductDto;
 
-      this.logger.error(role);
-      this.logger.error(role);
       const where: any = { isDeleted: false, quantity: { gt: 5 } };
-      this.logger.debug(isDeadStock);
       if (isDeadStock && role === "ADMIN") {
         where["quantity"] = { lte: 5 };
       }
@@ -200,6 +198,101 @@ export class ProductsService {
       totalSales,
       salesThisMonth,
     };
+  }
+
+  async findCategoryWiseSoldCount(
+    vendorId: string,
+    inventoryId: string,
+    role: string,
+  ) {
+    const where: any = {};
+    if (role === "VENDOR") {
+      where.vendorId = vendorId;
+      where.inventoryId = inventoryId;
+    }
+
+    const products = await this.prisma.product.findMany({
+      where,
+      select: {
+        categories: { select: { name: true } },
+        soldCount: true,
+      },
+    });
+
+    // store soldCount by category
+    const categoryMap = {};
+    for (const product of products) {
+      const category = product.categories[0].name || "Other";
+      categoryMap[category] = (categoryMap[category] || 0) + product.soldCount;
+    }
+    const data = Object.entries(categoryMap).map(([category, soldCount]) => ({
+      category,
+      soldCount,
+    }));
+
+    return data;
+  }
+
+  async findSalesPerMonthForCurrentYear(
+    vendorId: string,
+    inventoryId: string,
+    role: string,
+  ) {
+    const where: any = {};
+    if (role === "VENDOR") {
+      where.vendorId = vendorId;
+      where.inventoryId = inventoryId;
+    }
+
+    const currentYear = moment().year();
+
+    // generate 12 months of the current year
+    const months = Array.from({ length: 12 }).map((_, i) => {
+      const start = moment().year(currentYear).month(i).startOf("month");
+      const end = moment(start).endOf("month");
+      return {
+        key: start.format("MMM"),
+        start: start.toDate(),
+        end: end.toDate(),
+      };
+    });
+
+    // Fetch all sales for this year
+    const products = await this.prisma.product.findMany({
+      where: {
+        ...where,
+        updatedAt: {
+          gte: moment().year(currentYear).startOf("year").toDate(),
+          lte: moment().year(currentYear).endOf("year").toDate(),
+        },
+      },
+      select: {
+        soldCount: true,
+        price: true,
+        updatedAt: true,
+      },
+    });
+
+    // initialize month map
+    const monthlySalesMap = {};
+    for (const m of months) {
+      monthlySalesMap[m.key] = 0;
+    }
+
+    // group sales into months
+    for (const product of products) {
+      const monthKey = moment(product.updatedAt).format("MMM");
+      if (monthKey in monthlySalesMap) {
+        monthlySalesMap[monthKey] += product.soldCount * Number(product.price);
+      }
+    }
+
+    const data = months.map((m) => ({
+      month: m.key,
+      totalSales: monthlySalesMap[m.key],
+    }));
+
+    return data;
   }
 
   async findOne(id: string) {
