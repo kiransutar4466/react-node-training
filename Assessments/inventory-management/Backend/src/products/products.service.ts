@@ -247,15 +247,16 @@ export class ProductsService {
     const currentYear = moment().year();
 
     // generate 12 months of the current year
-    const months = Array.from({ length: 12 }).map((_, i) => {
+    const months: any = [];
+    for (let i = 0; i < 12; i++) {
       const start = moment().year(currentYear).month(i).startOf("month");
       const end = moment(start).endOf("month");
-      return {
-        key: start.format("MMM"),
+      months.push({
+        monthName: start.format("MMM"), // like - Jan, Feb
         start: start.toDate(),
         end: end.toDate(),
-      };
-    });
+      });
+    }
 
     // Fetch all sales for this year
     const products = await this.prisma.product.findMany({
@@ -273,23 +274,21 @@ export class ProductsService {
       },
     });
 
-    // initialize month map
+    // initialize month map - every month's sales as 0 (by default)
     const monthlySalesMap = {};
     for (const m of months) {
-      monthlySalesMap[m.key] = 0;
+      monthlySalesMap[m.monthName] = 0;
     }
 
     // group sales into months
     for (const product of products) {
       const monthKey = moment(product.updatedAt).format("MMM");
-      if (monthKey in monthlySalesMap) {
-        monthlySalesMap[monthKey] += product.soldCount * Number(product.price);
-      }
+      monthlySalesMap[monthKey] += product.soldCount * product.price;
     }
 
     const data = months.map((m) => ({
-      month: m.key,
-      totalSales: monthlySalesMap[m.key],
+      month: m.monthName,
+      totalSales: monthlySalesMap[m.monthName],
     }));
 
     return data;
