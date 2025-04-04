@@ -94,7 +94,7 @@ export const getAllEventsApi = async (payload: any) => {
 
   try {
     const response = await axios.get(
-      `${BASE_URL}/api/events/?eventName=${payload.eventName}&eventCategory=${payload.eventCategory}&eventStartDate=${payload.eventStartDate}&eventEndDate=${payload.eventStartDate}`, 
+      `${BASE_URL}/api/events/?eventName=${payload.eventName}&eventCategory=${payload.eventCategory}&eventStartDate=${payload.eventStartDate}&eventEndDate=${payload.eventStartDate}&limit=${12}&page=${payload.nextPage}`, 
       {
         headers: {
           Authorization: `Bearer ${token}`,

@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import SideBar from "../component/sideBar/Side";
 import useAuthRedirect from "../utils/useAuthRedirect";
 const Layout = () => {
-      //   useAuthRedirect()
+        useAuthRedirect()
   return (
     <div className="flex h-screen">
       {/* Sidebar takes 1/5 of the screen */}

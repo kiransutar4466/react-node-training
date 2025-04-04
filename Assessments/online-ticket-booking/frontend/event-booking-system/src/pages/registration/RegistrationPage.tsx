@@ -2,15 +2,17 @@ import { useNavigate } from "react-router-dom"
 import { registrationInputs, registrationState } from "../../constant/login_register_inputs"
 import { useState } from "react"
 import loginBackGround from '../../assets/loginBackGround.png'
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 
 import { toast } from "react-toastify"
 import { RegistrationType } from "../../types/types"
 import { registerUser } from "./registerSaga"
 import { registerFormValidation } from "../../utils/formValidation"
+import { CircularProgress } from "@mui/material"
 
 const RegistrationPage = () => {
   const [data,setData]=useState<RegistrationType>(registrationState)
+  const {loading}=useSelector((state:any)=>state.register)
   const naviagte=useNavigate()
   const dispatch=useDispatch()
 
@@ -47,9 +49,11 @@ const RegistrationPage = () => {
                   </div>
                
                 ))}
-              <button className="w-[100%] p-2 bg-red-500 text-white mt-4 cursor-pointer">Register</button>
+              <button className="w-[100%] p-2 bg-red-500 text-white mt-4 cursor-pointer">{loading?<CircularProgress size="20px" />:"Register"}</button>
               </form>
-              <p className="underline cursor-pointer mt-2" onClick={()=>naviagte('/')}>Login in</p>
+              <p className="underline cursor-pointer text-[13px] mt-4 text-white" onClick={() => naviagte('/login')}>
+  Already have an account? Log in here.
+</p>
           </div>    
       </div>
   )

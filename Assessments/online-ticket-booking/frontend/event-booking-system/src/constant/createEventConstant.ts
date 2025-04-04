@@ -1,4 +1,5 @@
 export const categories = ["Corporate",  "Cultural", "Funny", "Art", "Outdoor"];
+export const categories1 = ["All",  "Cultural", "Funny", "Art", "Outdoor","Corporate",];
 export const days = [
     "Monday",
     "Tuesday",

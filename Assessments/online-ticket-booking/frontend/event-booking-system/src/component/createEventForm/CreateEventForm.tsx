@@ -27,6 +27,7 @@ const CreateEventForm = ({
   const { event } = useSelector((state: RootState) => state.eventById);
   const { loading } = useSelector((state: RootState) => state.updateEvent);
   const { createEventloading } = useSelector((state: RootState) => state.createEvent);
+  const today = new Date().toISOString().split("T")[0];
   const handleChange = (e: any) => {
     const { name, value } = e.target;
 
@@ -158,8 +159,9 @@ const CreateEventForm = ({
                   value = "";
                 }
 
-                if (value.length > 10) {
-                  value = value.slice(0, 10);
+                if (value.length > 5) {
+                  toast.error("Ticket prices must be under 5 digit")
+                  value = value.slice(0, 5);
                 }
 
                 setEventData({
@@ -259,6 +261,7 @@ const CreateEventForm = ({
               value={eventData.eventStartDate}
               onChange={handleChange}
               className="w-1/1 p-1 border rounded"
+              min={today} 
               required
             />
           </div>
@@ -270,6 +273,7 @@ const CreateEventForm = ({
               name="eventEndDate"
               value={eventData.eventEndDate}
               onChange={handleChange}
+              min={today} 
               className="w-1/1 p-1 border rounded"
               required
             />
@@ -349,7 +353,7 @@ const CreateEventForm = ({
             ))}
         </ul>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-6">
           {createEventloading ? (
             <button className="w-1/3 bg-black text-white p-2 rounded-[8px] cursor-pointer hover:shadow-2xl">
                 <CircularProgress size="20px" />

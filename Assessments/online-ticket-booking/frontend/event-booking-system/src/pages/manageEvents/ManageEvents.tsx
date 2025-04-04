@@ -15,7 +15,7 @@ import { getAllEvents } from "../displayAllEvents/getAllEventsSaga";
 import { categories } from "../../constant/createEventConstant";
 import Pagination from "../../component/pagination/Pagination";
 import { EventData } from "../../types/types";
-import { updateEventSuccess } from "../../component/createEventForm/updateEventSlice";
+
 const tableHead = [
   "Sr no.",
   "Event Name",
@@ -30,7 +30,7 @@ const ManageEvents = () => {
   const dispatch = useDispatch();
 
   const { event } = useSelector((state: RootState) => state.eventById);
-  const { data,loading } = useSelector((state: RootState) => state.getAllEvents);
+  const { data,loading } = useSelector((state: any) => state.getAllEvents);
 
   const [eventData, setEventData] = useState<EventData>(
     event
@@ -68,7 +68,7 @@ const ManageEvents = () => {
   const [nextPage, setNextPage] = useState(1);
 
   const debounceValue = useDebounceHook(seacrhText);
-  console.log("dex",debounceValue)
+  console.log("dex",data)
   const handleModal = (id: number) => {
     if (id && !isNaN(id)) {
       setToggleText("Update Event");
@@ -117,43 +117,22 @@ const ManageEvents = () => {
     dispatch(deleteEvent(id));
   };
 
-  useEffect(() => {
-    const payload = {
-      eventName: debounceValue,
-      eventCategory: "",
-      eventStartDate: "",
-      eventEndDate: "",
-    };
-   
-     
-      dispatch(getAllEvents(payload));
-    
-    
-  
-  }, [debounceValue]);
 
-  useEffect(() => {
-    if (selectedCategory) {
-      const payload = {
-        eventName: "",
-        eventCategory: selectedCategory,
-        eventStartDate: "",
-        eventEndDate: "",
-      };
-      dispatch(getAllEvents(payload));
-    }
-  }, [selectedCategory]);
+
+
 
   useEffect(() => {
     const payload = {
-      eventName: "",
-      eventCategory: "",
-      eventStartDate: "",
-      eventEndDate: "",
+      eventName: debounceValue || '',
+      eventCategory: selectedCategory || '',
+      eventStartDate: '',
+      eventEndDate: '',
+      nextPage: nextPage || 1,
     };
-    
+
     dispatch(getAllEvents(payload));
-  }, []);
+  }, [debounceValue, selectedCategory, nextPage]);
+
 
   useEffect(() => {
     if (event) {
@@ -189,7 +168,7 @@ const ManageEvents = () => {
             onChange={(e) => setSselectedCategory(e.target.value)}
             className="border rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-gray-300"
           >
-            <option value="all">Select Category</option>
+            <option value="All">Select Category</option>
             {categories?.map((cate) => (
               <>
                 <option value={cate}>{cate}</option>
@@ -210,7 +189,7 @@ const ManageEvents = () => {
       <div className="max-w-1/1 mx-auto mt-6">
         <Table
           loading={loading}
-          rows={data}
+          rows={data?.data}
           cols={tableHead}
           openModalCB={handleModal}
           toggleShowDetails={handleDisaplyModalToggle}
@@ -218,7 +197,7 @@ const ManageEvents = () => {
         />
       </div>
       <div>
-        {/* <Pagination nextPageNuber={nextPage} setNextPageNumber={setNextPage} hasNext=""/> */}
+        <Pagination nextPageNuber={nextPage} setNextPageNumber={setNextPage} hasNext={data?.pagination}/>
       </div>
 
       {/* Modal */}

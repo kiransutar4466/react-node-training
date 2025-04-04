@@ -8,6 +8,8 @@ import eventDetailsFetchSlice from '../component/createEventForm/eventDetailsFet
 import getAllDetailsSlice from '../pages/displayAllEvents/getAllDetailsSlice'
 import updateEventSlice from '../component/createEventForm/updateEventSlice'
 import showsSlice from '../pages/shows/showsSlice'
+import bookSeatsSlice from '../pages/shows/bookSeatsSlice'
+import userTicketSlice from '../component/userTickets/userTicketSlice'
 const sagaMiddleware = createSagaMiddleware()
 const store = configureStore({
     reducer: {
@@ -17,7 +19,9 @@ const store = configureStore({
         eventById:eventDetailsFetchSlice,
         getAllEvents:getAllDetailsSlice,
         updateEvent:updateEventSlice,
-        shows:showsSlice
+        shows:showsSlice,
+        bookSeats:bookSeatsSlice,
+        userTickets:userTicketSlice
 
     },
     middleware: (getDefaultMiddleware) =>

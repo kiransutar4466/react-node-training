@@ -34,7 +34,7 @@ body{
   width: 100vw;
   height: 100vh;
 
-  background: rgba(168, 168, 168, 0.333); /* Darker overlay for better visibility */
+  background: rgba(72, 72, 72, 0.818); /* Darker overlay for better visibility */
   z-index: 1000;
 }
 

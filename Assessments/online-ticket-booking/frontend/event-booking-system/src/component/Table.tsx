@@ -73,7 +73,7 @@ const Table = ({
                 colSpan={cols.length + 1}
                 className="text-center py-6 text-gray-400"
               >
-                 {/* {loading? <LinearProgress />:''} */}
+                 {loading? <LinearProgress />:''}
                 No data available
               </td>
             </tr>

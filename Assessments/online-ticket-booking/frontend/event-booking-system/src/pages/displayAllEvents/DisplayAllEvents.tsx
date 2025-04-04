@@ -1,4 +1,3 @@
-import { evevntDataCard } from "../../constant/eventCardData";
 import EventDisplayCard from "../../component/eventDispalyCards/EventDisplayCard";
 import { useNavigate } from "react-router-dom";
 
@@ -6,59 +5,62 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllEvents } from "./getAllEventsSaga";
 
-import { RootState } from "../../store/store";
-import { getEventById } from "../../component/createEventForm/createEventSaga";
+
+import NoDataFound from "../../component/no-data-found/NoDataFound";
+import { LinearProgress } from "@mui/material";
+import { categories1 } from "../../constant/createEventConstant";
 
 const DisplayAllEvents = () => {
-  const [isActive, setIsactiove] = useState("");
+  const [selectedText, setSelectedText] = useState("All");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { data } = useSelector((state: RootState) => state.getAllEvents);
+  const { data, loading } = useSelector((state: any) => state.getAllEvents);
 
   const handleNavigation = (id: any) => {
     navigate(`/viewMore-EventDetails/${id}`);
-    
-    
+  };
+
+  const handleFilterCategory = (seletedText: any) => {
+    setSelectedText(seletedText);
   };
 
   useEffect(() => {
     const payload = {
       eventName: "",
-      eventCategory: "",
+      eventCategory: selectedText,
       eventStartDate: "",
       eventEndDate: "",
+      nextPage: 1,
     };
     dispatch(getAllEvents(payload));
-  }, []);
+  }, [selectedText]);
   return (
     <div className="">
-      {/* <div className="w-[80%] mx-auto flex gap-5 px-5 mt-4">
-  <p
-    className={`${
-      isActive === "All" ? "bg-[#000000] text-[#ffffff]" : "bg-[#dfdfdf] text-black"
-    } p-2 rounded-[8px] px-4 cursor-pointer`}
-    onClick={() => setIsactiove("All")}
-  >
-    All
-  </p>
-
-  <p
-    className={`${
-      isActive === "Today" ? "bg-[#000000] text-[#ffffff]" : "bg-[#dfdfdf] text-black"
-    } p-2 rounded-[8px] px-4 cursor-pointer`}
-    onClick={() => setIsactiove("Today")}
-  >
-    Today
-  </p>
-</div> */}
-
-      <div className="w-[80%] mx-auto  px-5  mt-4">
-        <p className="text-[1.4rem] font-bold">Book Shows</p>
+    
+    <div className="w-[80%] mx-auto  px-5  mt-4">
+        <p className="text-[1.4rem] font-bold">Show List</p>
       </div>
-      {/* /h-[calc(100vh-140px)] */}
+      <div className="w-[80%] mx-auto flex flex-wrap gap-5 px-5 mt-4">
+        {categories1.map((cate)=>(
+             <p
+             className={`${
+               selectedText === cate
+                 ? "bg-[#000000] text-[#ffffff]"
+                 : "bg-[#dfdfdf] text-black"
+             } p-2 rounded-[8px] px-4 cursor-pointer`}
+             onClick={() => handleFilterCategory(cate)}
+           >
+             {cate}
+           </p>
+        )) }
+       
+      </div>
+
+    
+      <div className="w-[80%] mx-auto ">{loading && <LinearProgress />}</div>
       <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-6  w-[80%] mx-auto ">
-        {data &&
-          data.map(
+        {data && data?.data?.length ? (
+          data?.data?.map(
             (
               item: {
                 id: string;
@@ -79,7 +81,10 @@ const DisplayAllEvents = () => {
                 handleNavigationCB={handleNavigation}
               />
             )
-          )}
+          )
+        ) : (
+          <NoDataFound text="No events found" />
+        )}
       </div>
     </div>
   );

@@ -11,7 +11,7 @@ const useAuthRedirect = () => {
       const decoded: JwtPayload & { role?: string } = jwtDecode(token);
       console.log("data in use")
       if (decoded?.role === "admin") {
-        navigate("/admin-dashboard");
+        navigate("/layout/admin-dashboard");
       } else if (decoded.role == 'user') {
         navigate("/");
       }

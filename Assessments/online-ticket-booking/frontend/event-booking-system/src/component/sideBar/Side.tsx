@@ -14,11 +14,11 @@ const SideBar = () => {
   };
   return (
     <div className="w-1/5 h-screen bg-black text-white flex flex-col p-4 fixed ">
-      <h2 className="text-2xl font-bold mb-6 text-center">Admin</h2>
+      <h2 className="ms-1 text-2xl font-bold mb-6 text-left">Admin</h2>
       
       <nav className="space-y-4">
       <NavButton to="/layout/dasboard-data" icon={<LayoutDashboard size={20} />} label="Dashboard" />
-        <NavButton to="/layout/admin-dashboard" icon={<Home size={20} />} label="Create Event" />
+        <NavButton to="/layout/admin-dashboard" icon={<Home size={20} />} label="Event Management" />
       
       </nav>
 

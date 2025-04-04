@@ -1,51 +1,68 @@
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "../pages/login/LoginPage";
-import Dashboard from "../pages/dashboard/Dashboard";
+import { lazy, Suspense } from "react";
 
-import ViewMoreEventDetails from "../pages/viewMoreEventDetails/ViewMoreEventDetails";
-import Shows from "../pages/shows/Shows";
+import Loader from "../component/Loader";
+import MainLayout from "../layout's/MainLout";
 import AdminDashboard from "../pages/adminDashboard/AdminDashboard";
-import RegistrationPage from "../pages/registration/RegistrationPage";
 import Layout from "../layout's/Layout";
-import DasboardData from "../pages/adminDashboard/dashboardData/DasboardData";
-import UserTickets from "../component/userTickets/UserTickets";
+import DashboardData from "../pages/adminDashboard/dashboardData/DasboardData";
+
+
+const LoginPage = lazy(() => import("../pages/login/LoginPage"));
+const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
+const ViewMoreEventDetails = lazy(() => import("../pages/viewMoreEventDetails/ViewMoreEventDetails"));
+const Shows = lazy(() => import("../pages/shows/Shows"));
+const RegistrationPage = lazy(() => import("../pages/registration/RegistrationPage"));
+const UserTickets = lazy(() => import("../component/userTickets/UserTickets"));
 
 const router = createBrowserRouter([
-  {
-    path: "login",
-    element: <LoginPage />,
-  },
-  {
-    path:'register',
-    element:<RegistrationPage/>
-  },
+
+  { path: "login", element: <Suspense fallback={<Loader />}><LoginPage /></Suspense> },
+  { path: "register", element: <Suspense fallback={<Loader />}><RegistrationPage /></Suspense> },
+
+
   {
     path: "/",
-    element: <Dashboard />,
-  },
-  {
-    path: "viewMore-EventDetails/:id",
-    element: <ViewMoreEventDetails />,
-  },
-  {
-    path:'user-tickets',
-    element:<UserTickets/>
-  },
-  {
-    path:'layout',
-    element:<Layout/>,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <MainLayout />
+      </Suspense>
+    ),
     children: [
-      
-  
-      { path: "admin-dashboard", element: <AdminDashboard /> },
-      { path: "dasboard-data", element: <DasboardData /> },
-     
+      { path: "", element: <Suspense fallback={<Loader />}><Dashboard /></Suspense> },
+      { path: "viewMore-EventDetails/:id", element: <Suspense fallback={<Loader />}><ViewMoreEventDetails /></Suspense> },
+      { path: "user-tickets", element: <Suspense fallback={<Loader />}><UserTickets /></Suspense> },
+      { path: "shows/:id", element: <Suspense fallback={<Loader />}><Shows /></Suspense> },
     ],
   },
   {
-    path:'shows/:id',
-    element:<Shows/>
-  }
+    path: "layout",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <Layout />
+      </Suspense>
+    ),
+    children: [
+      {
+        path: "admin-dashboard",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <AdminDashboard />
+          </Suspense>
+        ),
+      },
+    
+      {
+        path: "dasboard-data",
+        element: (
+          <Suspense fallback={<Loader />}>
+            <DashboardData />
+          </Suspense>
+        ),
+      },
+     
+    ],
+  },
 ]);
 
 export default router;

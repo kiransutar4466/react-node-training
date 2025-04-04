@@ -1,3 +1,4 @@
+import moment from 'moment';
 
 const EventDetailsScreen = ( {eventData ,closeModalCB}: any) => {
 
@@ -27,11 +28,11 @@ const EventDetailsScreen = ( {eventData ,closeModalCB}: any) => {
             <h2 className="text-black font-semibold inline-block">
               Start Date:
             </h2>{" "}
-            <span className="text-gray-600">{data.eventStartDate}</span>
+            <span className="text-gray-600">{ moment(data.eventStartDate).subtract(10, 'days').calendar()}</span>
           </div>
           <div className="mb-1">
             <h2 className="text-black font-semibold inline-block">End Date:</h2>{" "}
-            <span className="text-gray-600">{data.eventEndDate}</span>
+            <span className="text-gray-600">{ moment(data.eventEndDate).subtract(10, 'days').calendar()}</span>
           </div>
           <div className="mb-1">
             <h2 className="text-black font-semibold inline-block">Price:</h2>{" "}
