@@ -24,13 +24,20 @@ export class InventoryService {
   async findAll(queryFindInventorysDto: QueryFindInventorysDto) {
     try {
       const { page, perPage, search } = queryFindInventorysDto;
-      const where: any = search
-        ? {
-            name: { contains: search, mode: "insensitive" },
-            isDeleted: false,
-            vendor: { role: "VENDOR" },
-          }
-        : { isDeleted: false, vendor: { role: "VENDOR" } };
+      const where: any = { isDeleted: false, vendor: { role: "VENDOR" } };
+      if (search) {
+        const searchQuery = {
+          contains: search,
+          mode: "insensitive",
+        };
+        where.OR = [
+          { vendor: { firstName: searchQuery } },
+          { vendor: { lastName: searchQuery } },
+          { address: { city: searchQuery } },
+          { address: { pinCode: searchQuery } },
+          { name: searchQuery },
+        ];
+      }
 
       const skip = (page - 1) * perPage;
       const rawData = await this.prisma.inventory.findMany({
@@ -97,9 +104,17 @@ export class InventoryService {
       const { page, perPage, search } = queryFindOrdersDto;
       const where: any = { inventoryId, inventory: { vendorId } };
       if (search) {
-        where.product = {
-          name: { contains: search, mode: "insensitive" },
-        };
+        const searchQuery = { contains: search, mode: "insensitive" };
+        where.OR = [
+          { orderStatus: searchQuery },
+          { paymentStatus: searchQuery },
+          { product: { name: searchQuery } },
+          { order: { buyerVendor: { firstName: searchQuery } } },
+          { order: { buyerVendor: { lastName: searchQuery } } },
+          { order: { buyerVendor: { address: { city: searchQuery } } } },
+          { order: { buyerVendor: { address: { pinCode: searchQuery } } } },
+          { order: { buyerVendor: { lastName: searchQuery } } },
+        ];
       }
 
       const skip = (page - 1) * perPage;
@@ -116,6 +131,22 @@ export class InventoryService {
           orderStatus: true,
           paymentStatus: true,
           product: { select: { name: true } },
+          order: {
+            select: {
+              buyerVendor: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  address: {
+                    select: {
+                      city: true,
+                      pinCode: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
         orderBy: {
           createdAt: "desc",
@@ -123,9 +154,11 @@ export class InventoryService {
       });
 
       const data = orderItems.map((orderItem) => {
-        const { product, ...filteredOrderItem } = {
+        const { product, order, ...filteredOrderItem } = {
           ...orderItem,
           productName: orderItem.product.name,
+          orderedBy: `${orderItem.order.buyerVendor?.firstName} ${orderItem.order.buyerVendor?.lastName}`,
+          address: `${orderItem.order.buyerVendor?.address?.city} - ${orderItem.order.buyerVendor?.address?.pinCode}`,
         };
         return filteredOrderItem;
       });
@@ -143,6 +176,55 @@ export class InventoryService {
       };
     } catch (error) {
       this.logger.error(`Error in findAllOrders | ${error}`);
+      throw error;
+    }
+  }
+
+  async findSingleOrder(id: string, vendorId: string, inventoryId: string) {
+    try {
+      const orderItem = await this.prisma.orderItem.findUnique({
+        where: { id, inventoryId, inventory: { vendorId } },
+        select: {
+          id: true,
+          productId: true,
+          quantity: true,
+          totalPrice: true,
+          orderStatus: true,
+          paymentStatus: true,
+          product: { select: { name: true } },
+          order: {
+            select: {
+              buyerVendor: {
+                select: {
+                  firstName: true,
+                  lastName: true,
+                  address: {
+                    select: {
+                      city: true,
+                      pinCode: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      if (!orderItem) {
+        throw new HttpException("order item not found", HttpStatus.BAD_REQUEST);
+      }
+
+      const { product, order, ...filteredOrderItem } = {
+        ...orderItem,
+        productName: orderItem.product.name,
+        orderedBy: `${orderItem.order.buyerVendor?.firstName} ${orderItem.order.buyerVendor?.lastName}`,
+        address: `${orderItem.order.buyerVendor?.address?.city} - ${orderItem.order.buyerVendor?.address?.pinCode}`,
+      };
+
+      return filteredOrderItem;
+    } catch (error) {
+      this.logger.error(`Error in findSingleOrder | ${error}`);
       throw error;
     }
   }
@@ -237,11 +319,11 @@ export class InventoryService {
     vendorId: string,
   ) {
     try {
-      const inventoryFound = await this.prisma.inventory.findUnique({
+      const isInventoryFound = await this.prisma.inventory.findUnique({
         where: { id, vendorId, isDeleted: false },
         select: { isDeleted: true },
       });
-      if (!inventoryFound) {
+      if (!isInventoryFound) {
         throw new HttpException(
           "you can only update your inventory",
           HttpStatus.BAD_REQUEST,

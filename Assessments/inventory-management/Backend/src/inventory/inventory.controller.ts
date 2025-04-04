@@ -21,7 +21,9 @@ import {
 } from "./dto/inventory.dto";
 import {
   ResponseFindAllInventoryDto,
+  ResponseFindSingleInventoryAllOrderDto,
   ResponseFindSingleInventoryDto,
+  ResponseFindSingleInventorySingleOrderDto,
   ResponseUpdateInventoryDto,
 } from "./dto/response.dto";
 import { Request } from "express";
@@ -54,7 +56,7 @@ export class InventoryController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "orders found successfully",
-    type: ResponseFindSingleInventoryDto,
+    type: ResponseFindSingleInventoryAllOrderDto,
   })
   @ApiOperation({ summary: "Get All the Orders for Seller Vendor's Inventory" })
   async findAllOrders(
@@ -63,6 +65,24 @@ export class InventoryController {
   ) {
     return await this.inventoryService.findAllOrders(
       queryFindOrdersDto,
+      req["decoded"].id,
+      req["decoded"].inventoryId,
+    );
+  }
+
+  @Get("orders/:orderItemId")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "order found successfully",
+    type: ResponseFindSingleInventorySingleOrderDto,
+  })
+  @ApiOperation({ summary: "Get Single Order for Seller Vendor's Inventory" })
+  async findSingleOrder(
+    @Param("orderItemId", new ParseUUIDPipe()) orderItemId: string,
+    @Req() req: Request,
+  ) {
+    return await this.inventoryService.findSingleOrder(
+      orderItemId,
       req["decoded"].id,
       req["decoded"].inventoryId,
     );
