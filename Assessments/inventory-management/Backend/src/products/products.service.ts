@@ -85,7 +85,7 @@ export class ProductsService {
 
       this.logger.error(role);
       this.logger.error(role);
-      const where: any = { isDeleted: false };
+      const where: any = { isDeleted: false, quantity: { gt: 5 } };
       this.logger.debug(isDeadStock);
       if (isDeadStock && role === "ADMIN") {
         where["quantity"] = { lte: 5 };
@@ -99,7 +99,7 @@ export class ProductsService {
       if (category)
         where["categories"] = {
           some: {
-            name: { equals: category, mode: "insensitive" },
+            name: { contains: category, mode: "insensitive" },
           },
         };
       if (stockStatus) where["stockStatus"] = stockStatus;
@@ -162,6 +162,44 @@ export class ProductsService {
       this.logger.error(`Error in findAll product | ${error}`);
       throw error;
     }
+  }
+
+  async findProductsStats(vendorId: string, inventoryId: string, role: string) {
+    const where: any = {};
+    if (role === "VENDOR") {
+      where.vendorId = vendorId;
+      where.inventoryId = inventoryId;
+    }
+
+    const totalProducts = await this.prisma.product.count({ where });
+    const allSales = await this.prisma.product.findMany({
+      where,
+      select: { soldCount: true, price: true },
+    });
+    // updating where clause for getting monthly sales i.e. to find sold count from 1st day of month
+    where.updatedAt = {
+      gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+    };
+    this.logger.warn(where);
+    const monthlySales = await this.prisma.product.findMany({
+      where,
+      select: { soldCount: true, price: true },
+    });
+
+    const totalSales = allSales.reduce(
+      (totalSum, product) => totalSum + product.soldCount * product.price,
+      0,
+    );
+    const salesThisMonth = monthlySales.reduce(
+      (totalSum, product) => totalSum + product.soldCount * product.price,
+      0,
+    );
+
+    return {
+      totalProducts,
+      totalSales,
+      salesThisMonth,
+    };
   }
 
   async findOne(id: string) {

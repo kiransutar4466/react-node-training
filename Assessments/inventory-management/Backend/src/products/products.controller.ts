@@ -26,6 +26,7 @@ import {
   ResponseDeleteProductDto,
   ResponseFindAllProductDto,
   ResponseFindProductDto,
+  ResponseFindProductsStats,
   ResponseUpdateProductDto,
 } from "./dto/response.dto";
 import { Request } from "express";
@@ -81,6 +82,21 @@ export class ProductsController {
       req["decoded"].id,
       req["decoded"].role,
       true,
+    );
+  }
+
+  @Get("stats")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "stats found successfully",
+    type: ResponseFindProductsStats,
+  })
+  @ApiOperation({ summary: "Get Products Statistics" })
+  findProductsStats(@Req() req: Request) {
+    return this.productsService.findProductsStats(
+      req["decoded"].id,
+      req["decoded"].inventoryId,
+      req["decoded"].role,
     );
   }
 

@@ -59,3 +59,14 @@ export class ResponseFindAllProductDto {
   @ApiProperty({ type: [ResponseFindProductDto] })
   data: ResponseFindProductDto[];
 }
+
+export class ResponseFindProductsStats {
+  @ApiProperty({ example: 4 })
+  totalProducts: number;
+
+  @ApiProperty({ example: 100 })
+  totalSales: number;
+
+  @ApiProperty({ example: 10 })
+  salesThisMonth: number;
+}
