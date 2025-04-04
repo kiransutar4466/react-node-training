@@ -61,15 +61,13 @@ export class CreateProductDto {
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
 
 export class QueryFindProductDto {
-  @ApiProperty({ required: false, example: 1 })
-  @IsOptional()
+  @ApiProperty({ required: true, example: 1 })
   @IsInt()
   @Min(1)
   @Type(() => Number)
   page: number = 1;
 
-  @ApiProperty({ required: false, example: 10 })
-  @IsOptional()
+  @ApiProperty({ required: true, example: 10 })
   @IsInt()
   @Min(1)
   @Type(() => Number)
