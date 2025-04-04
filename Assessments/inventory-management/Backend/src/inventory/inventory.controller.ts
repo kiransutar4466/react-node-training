@@ -67,6 +67,7 @@ export class InventoryController {
       queryFindOrdersDto,
       req["decoded"].id,
       req["decoded"].inventoryId,
+      req["decoded"].role,
     );
   }
 

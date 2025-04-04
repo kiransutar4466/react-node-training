@@ -99,10 +99,20 @@ export class InventoryService {
     queryFindOrdersDto: QueryFindOrdersDto,
     vendorId: string,
     inventoryId: string,
+    role: string,
   ) {
     try {
       const { page, perPage, search } = queryFindOrdersDto;
-      const where: any = { inventoryId, inventory: { vendorId } };
+      // const where: any = { inventoryId, inventory: { vendorId } };
+      const where: any = {};
+      const whereClauseForCount: any = {};
+      if (role === "VENDOR") {
+        whereClauseForCount.inventoryId = inventoryId;
+        whereClauseForCount.inventory = { vendorId };
+        where.inventoryId = inventoryId;
+        where.inventory = { vendorId };
+      }
+
       if (search) {
         const searchQuery = { contains: search, mode: "insensitive" };
         where.OR = [
@@ -164,7 +174,7 @@ export class InventoryService {
       });
 
       const totalOrderItems = await this.prisma.orderItem.count({
-        where: { inventoryId, inventory: { vendorId } },
+        where: whereClauseForCount,
       });
 
       return {
