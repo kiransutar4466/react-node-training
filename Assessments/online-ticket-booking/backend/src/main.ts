@@ -23,7 +23,12 @@ async function bootstrap() {
     transform : true
   }))
 
-  app.enableCors();
+  // app.enableCors();
+  app.enableCors({
+    origin: true,
+    methods: 'GET, PUT, POST, DELETE, OPTIONS, PATCH',
+    credentials: true,
+  });
 
   // app.enableCors({
   //   origin: '*', // Allow all origins (or specify your frontend URL)

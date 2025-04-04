@@ -15,7 +15,6 @@ export class EventsService {
     endDate: Date,
     eventSlots: { day: string; startTime: string; endTime: string }[],
     eventTotalSeats: number,
-    eventId: number,
   ) {
     const showData: ShowInputDto[] = [];
     let tempDate = startDate;
@@ -37,7 +36,6 @@ export class EventsService {
 
         slotsForDay.forEach((slots) => {
           showData.push({
-            eventId: eventId,
             showStartTime: slots.startTime,
             showEndTime: slots.endTime,
             showDate: dateForDay,
@@ -53,7 +51,7 @@ export class EventsService {
     return showData;
   }
 
-  async createEvent(eventInputDto: EventInputDto) {
+  async createEvent(eventInputDto: EventInputDto, force: boolean) {
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
@@ -103,27 +101,22 @@ export class EventsService {
         );
       }
 
-      const event = await this.prismaClient.events.create({
-        data: eventInputDto,
-      });
-      this.logger.log('Event created succesfully');
-
       const { eventTotalSeats, eventStartDate, eventEndDate, eventSlots } =
         eventInputDto;
-      const { days, slots } = eventInputDto.eventSlots;
+      // const { days, slots } = eventInputDto.eventSlots;
+      const modifiedEventStartDate = new Date(eventStartDate);
+      const modifiedEventEndDate = new Date(eventEndDate);
 
+      // console.log(eventInputDto);
       const showData = this.getShowDataForInsert(
-        eventStartDate,
-        eventEndDate,
+        modifiedEventStartDate,
+        modifiedEventEndDate,
         eventSlots,
         eventTotalSeats,
-        event.id,
       );
 
-      
-      //check for shows overlapping
+      // check for shows overlapping
       for (const slots of showData) {
-        // console.log("Slots Date : ",slots.showDate);
         const overlappingShow = await this.prismaClient.shows.findFirst({
           where: {
             showDate: slots.showDate,
@@ -131,9 +124,9 @@ export class EventsService {
             showEndTime: slots.showEndTime,
           },
         });
-
-        if (overlappingShow) {
-          this.logger.error(
+        console.log("overlapping shows : ",overlappingShow);
+        if (overlappingShow && !force) {
+          this.logger.warn(
             'Some shows are overlapping. Do you want to continue?',
           );
           throw new HttpException(
@@ -143,9 +136,21 @@ export class EventsService {
         }
       }
 
-      await this.prismaClient.shows.createMany({
-        data: showData,
+      const event = await this.prismaClient.events.create({
+        data: eventInputDto,
       });
+      this.logger.log('Event created succesfully');
+
+      // await this.prismaClient.shows.createMany({
+      //   data: showData,
+      // });
+      await this.prismaClient.shows.createMany({
+        data: showData.map((slot) => ({
+          ...slot,
+          eventId: event.id, // Assign event ID to each slot
+        })),
+      });
+
       this.logger.log('Data insreted in show table');
 
       return {
@@ -275,6 +280,7 @@ export class EventsService {
 
   async updateEvent(id: number, updateEventDto: UpdateEventDto) {
     try {
+      //check for given id event is present or not
       const eventFound = await this.prismaClient.events.findUnique({
         where: {
           id,
@@ -316,12 +322,8 @@ export class EventsService {
         );
       }
 
-      console.log('eventName : ', eventName);
-      console.log('eventStartDate : ', eventStartDate);
-      console.log('eventEndDate : ', eventEndDate);
-
+      //check - event already exist with same name and time date range
       if (eventName || eventStartDate || eventEndDate) {
-        //check - event already exist with same name and time date range
         const eventAlreadyExist = await this.prismaClient.events.findFirst({
           where: {
             eventName: eventName,
@@ -333,8 +335,6 @@ export class EventsService {
             },
           },
         });
-        console.log('Exist event : ', eventAlreadyExist);
-        console.log('Exist event id: ', eventAlreadyExist?.id);
 
         if (eventAlreadyExist) {
           this.logger.error(
@@ -348,7 +348,7 @@ export class EventsService {
       }
 
       const findEventSlots = eventFound.eventSlots;
-
+      //if user provided different timeslot or startdate or enddate then update show table
       if (
         (eventSlots &&
           JSON.stringify(findEventSlots) !== JSON.stringify(eventSlots)) ||
@@ -357,7 +357,6 @@ export class EventsService {
         (eventEndDate &&
           eventFound.eventEndDate?.getTime() !== eventEndDate?.getTime())
       ) {
-        // console.log("Event slots or event dates have been updated");
         await this.prismaClient.shows.deleteMany({
           where: {
             eventId: id,
@@ -367,21 +366,58 @@ export class EventsService {
         const { eventTotalSeats, eventStartDate, eventEndDate, eventSlots } =
           updateEventDto;
 
+        const parsedEventStartDate = eventStartDate
+          ? new Date(eventStartDate)
+          : (eventFound.eventStartDate ?? new Date());
+        const parsedEventEndDate = eventEndDate
+          ? new Date(eventEndDate)
+          : (eventFound.eventEndDate ?? new Date());
+
         const showData = this.getShowDataForInsert(
-          eventStartDate ?? eventFound.eventStartDate ?? new Date(),
-          eventEndDate ?? eventFound.eventEndDate ?? new Date(),
-          eventSlots,
+          parsedEventStartDate,
+          parsedEventEndDate,
+          eventSlots ?? eventFound.eventSlots,
           eventTotalSeats ?? eventFound.eventTotalSeats ?? 0,
-          id,
         );
 
+        //check for shows overlapping
+        for (const slots of showData) {
+          const overlappingShow = await this.prismaClient.shows.findFirst({
+            where: {
+              showDate: slots.showDate,
+              showStartTime: slots.showStartTime,
+              showEndTime: slots.showEndTime,
+              eventId: {
+                not: id,
+              },
+            },
+          });
+
+          if (overlappingShow) {
+            this.logger.error(
+              'Some shows are overlapping. Do you want to continue?',
+            );
+            throw new HttpException(
+              'Some shows are overlapping. Do you want to continue?',
+              HttpStatus.CONFLICT,
+            );
+          }
+        }
+
+        // await this.prismaClient.shows.createMany({
+        //   data: showData,
+        // });
+
         await this.prismaClient.shows.createMany({
-          data: showData,
+          data: showData.map((slot) => ({
+            ...slot,
+            eventId: id, // Assign event ID to each slot
+          })),
         });
         this.logger.log('Data insreted in show table');
       }
 
-      // **Handle eventTotalSeats update in show table separately**
+      // Handle eventTotalSeats update in show table separately**
       if (eventTotalSeats !== eventFound.eventTotalSeats) {
         await this.prismaClient.shows.updateMany({
           where: { eventId: id },

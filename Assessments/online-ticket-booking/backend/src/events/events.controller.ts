@@ -16,9 +16,10 @@ export class EventsController {
     @UseGuards(AuthGuard)
     @Roles('admin')
     @ApiOperation({summary:'create an event'})
+    @ApiQuery({name:"force",required:false,description:"make it true if you want to overlap show"})
     @Post()
-    async createEvent(@Body() eventInputDto:EventInputDto) {
-      return this.eventsService.createEvent(eventInputDto);
+    async createEvent(@Body() eventInputDto:EventInputDto,@Query('force') force:boolean) {
+      return this.eventsService.createEvent(eventInputDto,force);
     }
 
   //FETCH ALL EVENT DATA

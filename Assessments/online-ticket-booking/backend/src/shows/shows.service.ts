@@ -60,7 +60,14 @@ export class ShowsService {
   async getShowById(id: number) {
     try{
           const showFound = await this.prismaClient.shows.findFirst({
-          where : { id }
+          where : { id },
+          include : {
+            event : {
+              select : {
+                eventPrice : true
+              },
+            },
+          },
       })
 
       if(!showFound){
@@ -104,6 +111,10 @@ export class ShowsService {
 
   async bookShowTicket(showTicketInputDto:ShowTicketInputDto){
     try{
+        if((showTicketInputDto.selectedTickets).length<=0){
+          this.logger.warn("Please book at least one ticket.");
+          throw new HttpException("Please book at least one ticket.",HttpStatus.BAD_REQUEST);
+        }
         const findShow = await this.prismaClient.shows.findUnique({
           where : {
             id:showTicketInputDto.showId

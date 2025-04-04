@@ -1,9 +1,9 @@
 import { IsArray, IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator"
 
 export class ShowInputDto{
-    @IsNumber()
-    @IsNotEmpty()
-    eventId : number
+    // @IsNumber()
+    // @IsNotEmpty()
+    // eventId : number
 
     @IsString()
     @IsNotEmpty()
