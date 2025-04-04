@@ -60,7 +60,7 @@ export class VendorsService {
       await this.saveCredentialsService.appendToJsonFile({ email, password });
 
       password = bcrypt.hashSync(password, 10);
-      await this.prisma.vendor.create({
+      const data: any = await this.prisma.vendor.create({
         data: {
           firstName,
           lastName,
@@ -91,8 +91,11 @@ export class VendorsService {
         },
       });
 
+      delete data.password;
+      delete data.isDeleted;
       return {
         message: "vendor created successfully",
+        data,
       };
     } catch (error) {
       this.logger.error(`Error in create vendor | ${error}`);
