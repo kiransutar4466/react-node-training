@@ -162,6 +162,7 @@ export class CartItemsService {
           product: {
             select: {
               name: true,
+              description: true,
               price: true,
             },
           },
@@ -175,6 +176,7 @@ export class CartItemsService {
         ...cartItem,
         productName: cartItem.product.name,
         productPrice: cartItem.product.price,
+        productDescription: cartItem.product.description,
       };
       return filteredCartItem;
     } catch (error) {
