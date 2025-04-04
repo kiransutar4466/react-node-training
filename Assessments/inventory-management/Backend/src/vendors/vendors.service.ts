@@ -13,7 +13,6 @@ import {
   UpdateVendorDto,
 } from "./dto/vendors.dto";
 import { SaveCredentialsService } from "src/save-credentials/save-credentials.service";
-import { generatePassword } from "./utils/password";
 
 @Injectable()
 export class VendorsService {
@@ -23,6 +22,17 @@ export class VendorsService {
     private readonly saveCredentialsService: SaveCredentialsService,
   ) {
     this.logger = new Logger(VendorsService.name);
+  }
+
+  private generatePassword(length: number): string {
+    const chars =
+      "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    let password = "";
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * chars.length);
+      password += chars[randomIndex];
+    }
+    return password;
   }
 
   async create(createVendorDto: CreateVendorDto) {
@@ -46,7 +56,7 @@ export class VendorsService {
       if (vendor) {
         throw new HttpException("email already exists", HttpStatus.CONFLICT);
       }
-      let password = generatePassword(12);
+      let password = this.generatePassword(12);
       await this.saveCredentialsService.appendToJsonFile({ email, password });
 
       password = bcrypt.hashSync(password, 10);
