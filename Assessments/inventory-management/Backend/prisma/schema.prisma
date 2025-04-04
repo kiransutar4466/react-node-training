@@ -25,7 +25,6 @@ model Vendor {
   cart         Cart?
   products     Product[]
   buyerOrders  Order[]    @relation("BuyerVendor")
-  sellerOrders Order[]    @relation("SellerVendor")
 }
 
 model Inventory {
@@ -85,8 +84,6 @@ model Category {
 
 model Order {
   id            String   @id @default(uuid())
-  orderStatus   String   @default("PENDING") @map("order_status") @db.VarChar(20)
-  paymentStatus String   @default("PENDING") @map("payment_status") @db.VarChar(20)
   totalPrice    Float    @map("total_price")
   isDeleted     Boolean  @default(false) @map("is_deleted")
   createdAt     DateTime @default(now()) @map("created_at")
@@ -94,18 +91,19 @@ model Order {
 
   buyerVendor    Vendor?     @relation("BuyerVendor", fields: [buyerVendorId], references: [id])
   buyerVendorId  String?     @map("buyer_vendor_id")
-  sellerVendor   Vendor?     @relation("SellerVendor", fields: [sellerVendorId], references: [id])
-  sellerVendorId String?     @map("seller_vendor_id")
   orderItems     OrderItem[]
 }
 
 model OrderItem {
-  id         String   @id @default(uuid())
-  quantity   Int
-  price      Float    @map("price_at_purchase")
-  totalPrice Float    @map("total_price")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
+  id            String   @id @default(uuid())
+  quantity      Int
+  price         Float    @map("price_at_purchase")
+  totalPrice    Float    @map("total_price")
+  orderStatus   String   @default("PENDING") @map("order_status") @db.VarChar(20)
+  paymentStatus String   @default("PENDING") @map("payment_status") @db.VarChar(20)
+  isDeleted     Boolean  @default(false) @map("is_deleted")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
   order       Order     @relation(fields: [orderId], references: [id])
   orderId     String    @map("order_id")
@@ -129,7 +127,6 @@ model Cart {
 model CartItem {
   id             String   @id @default(uuid())
   quantity       Int      @default(1)
-  cartItemStatus String?  @default("ACTIVE") @map("cart_item_status") @db.VarChar(20)
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
@@ -137,6 +134,4 @@ model CartItem {
   cart      Cart    @relation(fields: [cartId], references: [id])
   productId String  @map("product_id")
   product   Product @relation(fields: [productId], references: [id])
-
-  @@unique([cartId, productId])
 }
