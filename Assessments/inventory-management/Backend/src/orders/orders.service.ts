@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -119,9 +120,17 @@ export class OrdersService {
         isDeleted: false,
       };
       if (search) {
-        where.product = {
-          name: { contains: search, mode: "insensitive" },
+        const searchQuery = {
+          contains: search,
+          mode: "insensitive",
         };
+        where.OR = [
+          { orderStatus: searchQuery },
+          { paymentStatus: searchQuery },
+          { quantity: searchQuery },
+          { totalPrice: searchQuery },
+          { product: { name: searchQuery } },
+        ];
       }
 
       const skip = (page - 1) * perPage;
@@ -203,7 +212,13 @@ export class OrdersService {
         throw new HttpException("order item not found", HttpStatus.NOT_FOUND);
       }
 
-      return orderItem;
+      const filteredOrderItem: any = {
+        ...orderItem,
+        productName: orderItem.product.name,
+      };
+      delete filteredOrderItem.product;
+
+      return filteredOrderItem;
     } catch (error) {
       this.logger.error(`Error in findAll | ${error}`);
       throw error;
@@ -215,15 +230,19 @@ export class OrdersService {
     try {
       const orderItem = await this.prisma.orderItem.findUnique({
         where: { id, order: { buyerVendorId: vendorId }, isDeleted: false },
-        select: { id: true },
+        select: { id: true, orderStatus: true, paymentStatus: true },
       });
       if (!orderItem) {
         throw new HttpException("order item not found", HttpStatus.NOT_FOUND);
       }
 
+      const data: any = { orderStatus: "CANCELLED" };
+      if (orderItem.paymentStatus === "PENDING")
+        data.paymentStatus = "CANCELLED";
+
       await this.prisma.orderItem.update({
         where: { id, order: { buyerVendorId: vendorId } },
-        data: { orderStatus: "CANCEL" },
+        data,
       });
       return { message: "order item cancelled successfully" };
     } catch (error) {

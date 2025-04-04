@@ -22,6 +22,7 @@ export enum OrderStatus {
 export enum PaymentStatus {
   PAID = "PAID",
   PENDING = "PENDING",
+  CANCELLED = "CANCELLED",
 }
 
 export class CreateOrderItemDto {
@@ -43,19 +44,27 @@ export class CreateOrderItemDto {
 }
 
 export class UpdateOrderItemDto {
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: "DELIVERED" })
   @IsString()
   @IsOptional()
   @MinLength(1)
   @MaxLength(20)
   orderStatus: OrderStatus;
 
-  @ApiProperty({ example: 1 })
+  @ApiProperty({ example: "PAID" })
   @IsString()
   @IsOptional()
   @MinLength(1)
   @MaxLength(20)
   paymentStatus: PaymentStatus;
+}
+
+export class QueryFindSingleOrderDto {
+  @ApiProperty({ example: 1 })
+  @IsString()
+  @IsOptional()
+  @MaxLength(20)
+  search: string;
 }
 
 export class QueryFindOrdersDto {

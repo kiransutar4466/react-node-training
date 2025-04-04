@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   Controller,
-  Delete,
   Get,
   HttpStatus,
   Param,
   ParseUUIDPipe,
+  Patch,
   Post,
   Query,
   Req,
@@ -73,7 +73,7 @@ export class OrdersController {
     );
   }
 
-  @Delete(":orderItemId")
+  @Patch(":orderItemId")
   @ApiResponse({
     status: HttpStatus.OK,
     description: "order item cancelled successfully",
