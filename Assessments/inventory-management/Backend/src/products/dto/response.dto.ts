@@ -70,3 +70,19 @@ export class ResponseFindProductsStats {
   @ApiProperty({ example: 10 })
   salesThisMonth: number;
 }
+
+export class ResponseFindCategoriesSoldCount {
+  @ApiProperty({ example: "Electronics" })
+  category: string;
+
+  @ApiProperty({ example: 10 })
+  soldCount: number;
+}
+
+export class ResponseFindSalesPerMonthForCurrentYear {
+  @ApiProperty({ example: "Jan" })
+  month: string;
+
+  @ApiProperty({ example: 500 })
+  totalSales: number;
+}

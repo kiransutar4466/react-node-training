@@ -283,6 +283,16 @@ export class VendorsService {
         where: { id },
         data: {
           isDeleted: true,
+          inventory: {
+            update: {
+              isDeleted: true,
+            },
+          },
+          cart: {
+            update: {
+              isDeleted: true,
+            },
+          },
         },
       });
       return { message: "vendor deleted successfully" };

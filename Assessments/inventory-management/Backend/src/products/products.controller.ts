@@ -25,8 +25,10 @@ import {
   ResponseCreateProductDto,
   ResponseDeleteProductDto,
   ResponseFindAllProductDto,
+  ResponseFindCategoriesSoldCount,
   ResponseFindProductDto,
   ResponseFindProductsStats,
+  ResponseFindSalesPerMonthForCurrentYear,
   ResponseUpdateProductDto,
 } from "./dto/response.dto";
 import { Request } from "express";
@@ -104,7 +106,7 @@ export class ProductsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "category wise sold count found successfully",
-    // type: ResponseFindProductsStats,
+    type: [ResponseFindCategoriesSoldCount],
   })
   @ApiOperation({ summary: "Get Category wise sold count" })
   findCategoryWiseSoldCount(@Req() req: Request) {
@@ -119,9 +121,9 @@ export class ProductsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: "sales per month for current year found successfully",
-    type: ResponseFindProductsStats,
+    type: [ResponseFindSalesPerMonthForCurrentYear],
   })
-  @ApiOperation({ summary: "Get salesPerMonthForCurrentYear" })
+  @ApiOperation({ summary: "Get Sales Per Month For Current Year" })
   findSalesPerMonthForCurrentYear(@Req() req: Request) {
     return this.productsService.findSalesPerMonthForCurrentYear(
       req["decoded"].id,

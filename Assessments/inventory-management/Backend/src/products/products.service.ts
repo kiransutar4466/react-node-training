@@ -163,7 +163,7 @@ export class ProductsService {
   }
 
   async findProductsStats(vendorId: string, inventoryId: string, role: string) {
-    const where: any = {};
+    const where: any = { isDeleted: false };
     if (role === "VENDOR") {
       where.vendorId = vendorId;
       where.inventoryId = inventoryId;

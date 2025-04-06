@@ -22,6 +22,7 @@ import {
   ResponseCreateCategoryDto,
   ResponseDeleteCategoryDto,
   ResponseFindAllCategoryDto,
+  ResponseFindSingleCategoryDto,
   ResponseUpdateCategoryDto,
 } from "./dto/response.dto";
 import { AuthGuard } from "src/guards/auth.guard";
@@ -52,6 +53,17 @@ export class CategoriesController {
   @ApiOperation({ summary: "Get All the Categories" })
   findAll(@Query() queryFindCategoriesDto: QueryFindCategoriesDto) {
     return this.categoriesService.findAll(queryFindCategoriesDto);
+  }
+
+  @Get(":id")
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: "category found successfully",
+    type: ResponseFindSingleCategoryDto,
+  })
+  @ApiOperation({ summary: "Get Single Category by Id" })
+  findOne(@Param("id", new ParseUUIDPipe()) id: string) {
+    return this.categoriesService.findOne(id);
   }
 
   @Patch(":id")

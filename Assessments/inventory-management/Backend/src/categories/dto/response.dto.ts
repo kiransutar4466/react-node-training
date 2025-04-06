@@ -19,6 +19,14 @@ export class ResponseDeleteCategoryDto {
   message: string;
 }
 
+export class ResponseFindSingleCategoryDto {
+  @ApiProperty({ example: "9812f1bf-c9d6-45a7-96c3-8d8sc644d8a3" })
+  id: string;
+
+  @ApiProperty({ example: "Electronics" })
+  name: string;
+}
+
 export class ResponseFindAllCategoryDto {
   @ApiProperty({ example: 3 })
   page: number;

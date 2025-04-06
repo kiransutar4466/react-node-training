@@ -70,6 +70,21 @@ export class CategoriesService {
     }
   }
 
+  async findOne(id: string) {
+    try {
+      const category = await this.prisma.category.findUnique({
+        where: { id },
+      });
+      if (!category)
+        throw new HttpException("category not found", HttpStatus.BAD_REQUEST);
+
+      return category;
+    } catch (error) {
+      this.logger.error(`Error in findOne | ${error}`);
+      throw error;
+    }
+  }
+
   async update(id: string, updateCategoryDto: CreateCategoryDto) {
     try {
       const productFound = await this.prisma.category.findUnique({
