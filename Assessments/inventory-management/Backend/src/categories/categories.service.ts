@@ -63,7 +63,7 @@ export class CategoriesService {
       const prev = page > 1 ? page - 1 : null;
       const next = page < totalPages ? page + 1 : null;
 
-      return { page, totalPages, prev, next, data };
+      return { page, totalPages, totalCount, prev, next, data };
     } catch (error) {
       this.logger.error(`Error in findAll | ${error}`);
       throw error;

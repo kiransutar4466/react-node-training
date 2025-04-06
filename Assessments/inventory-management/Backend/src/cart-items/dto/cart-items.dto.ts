@@ -1,19 +1,6 @@
-import {
-  IsString,
-  IsOptional,
-  Min,
-  IsInt,
-  MaxLength,
-  MinLength,
-  IsUUID,
-} from "class-validator";
+import { IsOptional, Min, IsInt, IsUUID } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
-
-enum CartStatus {
-  ACTIVE = "ACTIVE",
-  ARCHIVED = "ARCHIVED",
-}
 
 export class CreateCartItemDto {
   @ApiProperty({ example: "9d0667ba-1988-4bf9-9a47-c5726dc2d35a" })
@@ -48,13 +35,6 @@ export class QueryFindCartItemDto {
   @Min(1)
   @Type(() => Number)
   perPage: number = 10;
-
-  @ApiProperty({ required: false, example: "ACTIVE" })
-  @IsOptional()
-  @IsString()
-  @MinLength(1)
-  @MaxLength(20)
-  cartStatus?: CartStatus;
 
   @ApiProperty({ required: false, example: 1 })
   @IsOptional()

@@ -31,6 +31,9 @@ export class ResponseFindAllVendorDto {
   @ApiProperty({ example: 3 })
   totalPages: number;
 
+  @ApiProperty({ example: 7 })
+  totalCount: number;
+
   @ApiProperty({ example: 2, nullable: true })
   prev: number | null;
 

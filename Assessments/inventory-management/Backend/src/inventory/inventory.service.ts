@@ -88,7 +88,7 @@ export class InventoryService {
       const prev = page > 1 ? page - 1 : null;
       const next = page < totalPages ? page + 1 : null;
 
-      return { page, totalPages, prev, next, data };
+      return { page, totalPages, totalCount, prev, next, data };
     } catch (error) {
       this.logger.error(`Error in findAll | ${error}`);
       throw error;
@@ -103,12 +103,8 @@ export class InventoryService {
   ) {
     try {
       const { page, perPage, search } = queryFindOrdersDto;
-      // const where: any = { inventoryId, inventory: { vendorId } };
       const where: any = {};
-      const whereClauseForCount: any = {};
       if (role === "VENDOR") {
-        whereClauseForCount.inventoryId = inventoryId;
-        whereClauseForCount.inventory = { vendorId };
         where.inventoryId = inventoryId;
         where.inventory = { vendorId };
       }
@@ -174,12 +170,13 @@ export class InventoryService {
       });
 
       const totalOrderItems = await this.prisma.orderItem.count({
-        where: whereClauseForCount,
+        where,
       });
 
       return {
         page,
         totalPages: Math.ceil(totalOrderItems / perPage),
+        totalCount: totalOrderItems,
         prev: page > 1 ? page - 1 : null,
         next: page * perPage < totalOrderItems ? page + 1 : null,
         data,

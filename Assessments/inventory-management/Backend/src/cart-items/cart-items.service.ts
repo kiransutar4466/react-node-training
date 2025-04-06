@@ -144,7 +144,7 @@ export class CartItemsService {
       const prev = page > 1 ? page - 1 : null;
       const next = page < totalPages ? page + 1 : null;
 
-      return { page, totalPages, prev, next, totalPrice, data };
+      return { page, totalPages, totalCount, prev, next, totalPrice, data };
     } catch (error) {
       this.logger.error(`Error in findAll | ${error}`);
       throw error;

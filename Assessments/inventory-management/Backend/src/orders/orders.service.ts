@@ -162,12 +162,13 @@ export class OrdersService {
       });
 
       const totalOrderItems = await this.prisma.orderItem.count({
-        where: { order: { buyerVendorId: vendorId }, isDeleted: false },
+        where,
       });
 
       return {
         page,
         totalPages: Math.ceil(totalOrderItems / perPage),
+        totalCount: totalOrderItems,
         prev: page > 1 ? page - 1 : null,
         next: page * perPage < totalOrderItems ? page + 1 : null,
         data,

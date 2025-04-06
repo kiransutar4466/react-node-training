@@ -25,7 +25,7 @@ export class AdditionalProductDto {
   @ApiProperty({ example: "9818f1bf-c9d6-45a7-96c3-8d8dc644d8a3" })
   id: string;
 
-  @ApiProperty({ example: "LOW_STOCK" })
+  @ApiProperty({ example: "OUT_OF_STOCK" })
   stockStatus: string;
 
   @ApiProperty({ example: 5 })
@@ -49,6 +49,9 @@ export class ResponseFindAllProductDto {
 
   @ApiProperty({ example: 3 })
   totalPages: number;
+
+  @ApiProperty({ example: 7 })
+  totalCount: number;
 
   @ApiProperty({ example: 2, nullable: true })
   prev: number | null;
