@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "OrderItem" ADD COLUMN     "order_status" VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+ADD COLUMN     "payment_status" VARCHAR(20) NOT NULL DEFAULT 'PENDING';
