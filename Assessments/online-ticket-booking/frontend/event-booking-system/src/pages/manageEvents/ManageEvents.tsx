@@ -12,9 +12,14 @@ import {
 import { RootState } from "../../store/store";
 import { useDebounceHook } from "../../utils/useDebounceHook";
 import { getAllEvents } from "../displayAllEvents/getAllEventsSaga";
-import { categories } from "../../constant/createEventConstant";
+import { categories1 } from "../../constant/createEventConstant";
 import Pagination from "../../component/pagination/Pagination";
 import { EventData } from "../../types/types";
+
+import Breadcrumb from "../../component/breadcrumb/Breadcrumb";
+
+import { IoFilter } from "react-icons/io5";
+import CategoryFilter from "../../component/cateGoryFilter/CategoryFilter";
 
 const tableHead = [
   "Sr no.",
@@ -26,11 +31,16 @@ const tableHead = [
   "Total Seats",
 ];
 
+const dataCate = {
+  Category: categories1,
+  Eventtype: ["ongoing", "upcoming", "past"],
+};
+
 const ManageEvents = () => {
   const dispatch = useDispatch();
 
   const { event } = useSelector((state: RootState) => state.eventById);
-  const { data,loading } = useSelector((state: any) => state.getAllEvents);
+  const { data, loading } = useSelector((state: any) => state.getAllEvents);
 
   const [eventData, setEventData] = useState<EventData>(
     event
@@ -63,12 +73,13 @@ const ManageEvents = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDetailsModal, setShowDispalyModal] = useState(false);
   const [seacrhText, setSearchText] = useState("");
-  const [selectedCategory, setSselectedCategory] = useState("");
+
   const [toggleText, setToggleText] = useState("");
   const [nextPage, setNextPage] = useState(1);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
 
   const debounceValue = useDebounceHook(seacrhText);
-  console.log("dex",data)
+
   const handleModal = (id: number) => {
     if (id && !isNaN(id)) {
       setToggleText("Update Event");
@@ -83,8 +94,8 @@ const ManageEvents = () => {
         eventName: "",
         eventDescription: "",
         eventCategory: "",
-        eventStartDate:null,
-        eventEndDate:null,
+        eventStartDate: null,
+        eventEndDate: null,
         eventTotalSeats: null,
         eventImage: null,
         eventPrice: null,
@@ -113,26 +124,60 @@ const ManageEvents = () => {
       }
     });
   };
+
+  // const handleDelete = (id: number) => {
+  //   dispatch(deleteEvent(id));
+  // };
+
   const handleDelete = (id: number) => {
-    dispatch(deleteEvent(id));
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this event?"
+    );
+    if (confirmDelete) {
+      dispatch(deleteEvent(id));
+    }
   };
 
+  const handleAdd = (selection: any) => {
+    if (dataCate?.Eventtype.includes(selection.type)) {
+      const payload = {
+        eventName: "",
+        eventCategory: "",
+        eventStartDate: "",
+        eventEndDate: "",
+        nextPage: nextPage || 1,
+        eventStatus: selection.type || "",
+      };
 
+      dispatch(getAllEvents(payload));
+    } else {
+      const payload = {
+        eventName: "",
+        eventCategory: selection.type || "",
+        eventStartDate: "",
+        eventEndDate: "",
+        nextPage: nextPage || 1,
+        eventStatus: "",
+      };
 
+      dispatch(getAllEvents(payload));
+    }
 
+    setIsFilterOpen(false);
+  };
 
   useEffect(() => {
     const payload = {
-      eventName: debounceValue || '',
-      eventCategory: selectedCategory || '',
-      eventStartDate: '',
-      eventEndDate: '',
+      eventName: debounceValue || "",
+      eventCategory:  "",
+      eventStartDate: "",
+      eventEndDate: "",
       nextPage: nextPage || 1,
+      eventStatus: "",
     };
 
     dispatch(getAllEvents(payload));
-  }, [debounceValue, selectedCategory, nextPage]);
-
+  }, [debounceValue, nextPage]);
 
   useEffect(() => {
     if (event) {
@@ -141,8 +186,12 @@ const ManageEvents = () => {
         eventName: event.eventName,
         eventDescription: event.eventDescription,
         eventCategory: event.eventCategory,
-        eventStartDate: event.eventStartDate ? event.eventStartDate.split("T")[0] : "", 
-        eventEndDate: event.eventEndDate ? event.eventEndDate.split("T")[0] : "", 
+        eventStartDate: event.eventStartDate
+          ? event.eventStartDate.split("T")[0]
+          : "",
+        eventEndDate: event.eventEndDate
+          ? event.eventEndDate.split("T")[0]
+          : "",
         eventTotalSeats: event.eventTotalSeats,
         eventImage: event.eventImage,
         eventPrice: event.eventPrice,
@@ -150,32 +199,43 @@ const ManageEvents = () => {
       });
     }
   }, [event]);
-  
-
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between max-w-5xl mx-auto mt-4">
-        <input
-          type="text"
-          onChange={(e) => setSearchText(e.target.value)}
-          placeholder="Search events by name"
-          className="border rounded-xl px-4 py-2 w-72 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        />
-
-        <div className="flex gap-4">
-          <select
-            onChange={(e) => setSselectedCategory(e.target.value)}
+    <div className="">
+      <Breadcrumb />
+      <div className="flex justify-between  mx-auto mt-4">
+        <div className="flex gap-4 relative">
+          <input
+            type="text"
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search events by name"
+            className="border rounded-xl px-4 py-2  w-72 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          {/* <select
+            
             className="border rounded-xl px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-gray-300"
-          >
-            <option value="All">Select Category</option>
+          > */}
+          {/* <option value="All">Category</option>
             {categories?.map((cate) => (
               <>
                 <option value={cate}>{cate}</option>
               </>
-            ))}
-          </select>
+            ))} */}
+          {/* </select> */}
+          <div
+            className="h-10 w-10 bg-white rounded-xl p-2 border-1 flex justify-center items-center"
+            onClick={() => setIsFilterOpen((prev) => !prev)}
+          >
+            <IoFilter />
+          </div>
+          {isFilterOpen && (
+            <div className="absolute top-11 left-75">
+              <CategoryFilter data={dataCate} onAdd={handleAdd} />
+            </div>
+          )}
+        </div>
 
+        <div className="flex gap-4">
           <Button
             text="Create Event"
             onClickCB={() => handleModal(0)}
@@ -186,7 +246,7 @@ const ManageEvents = () => {
         </div>
       </div>
 
-      <div className="max-w-1/1 mx-auto mt-6">
+      <div className="max-w-1/1 mx-auto mt-1">
         <Table
           loading={loading}
           rows={data?.data}
@@ -196,8 +256,13 @@ const ManageEvents = () => {
           deletDataCB={handleDelete}
         />
       </div>
-      <div>
-        <Pagination nextPageNuber={nextPage} setNextPageNumber={setNextPage} hasNext={data?.pagination}/>
+      <div className="flex justify-end">
+        <Pagination
+          nextPageNuber={nextPage}
+          setNextPageNumber={setNextPage}
+          hasNext={data?.pagination}
+          totalPages={data?.pagination}
+        />
       </div>
 
       {/* Modal */}

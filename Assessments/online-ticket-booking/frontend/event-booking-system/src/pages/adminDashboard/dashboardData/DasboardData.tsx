@@ -1,83 +1,155 @@
-
-import { useEffect } from "react";
-import { FaTicketAlt, FaRegCalendarAlt } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { FaTicketAlt, FaRegCalendarAlt, FaRupeeSign } from "react-icons/fa";
 import { getAllEvents } from "../../displayAllEvents/getAllEventsSaga";
 import { useDispatch, useSelector } from "react-redux";
-import { getUserTickets } from "../../../component/userTickets/userTicketSaga";
-import { RootState } from "../../../store/store";
-import { CircularProgress } from "@mui/material";
-import { Loader } from "lucide-react";
+
 import TicketsBarChart from "./TicketsBarChart";
+
+import StatCard from "../../../component/statCard/StatCard";
+import DashboardHeader from "../../../component/statCard/DashboardHeader";
+import RunningShowsTable from "../../../component/statCard/RunningShowsTable";
+import { getDashboardData } from "../dashboardSaga";
+import CategoryFilter from "../../../component/cateGoryFilter/CategoryFilter";
+import { categories1 } from "../../../constant/createEventConstant";
 // import TicketsBarChart from "./TicketsBarChart";
-
-
+const dataCate = {
+  Category: categories1,
+  Eventtype: ["ongoing", "upcoming", "past"],
+};
 const DashboardData = () => {
-  const dispatch=useDispatch()
-  const {data}=useSelector((state:any)=>state.getAllEvents)
-   const {ticketData,userTicketloading}=useSelector((state:RootState)=>state.userTickets)
-  useEffect(()=>{
-    const payload = {
-      eventName: "",
-      eventCategory: "",
-      eventStartDate: "",
-      eventEndDate: "",
-      nextPage:1
-    };
-      
-        dispatch(getUserTickets(""))
-   
-       dispatch(getAllEvents(payload))
-  },[])
-  
+  const dispatch = useDispatch();
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const { dashboardData, loading } = useSelector(
+    (state: any) => state.dashboard
+  );
+
+  const { data } = useSelector((state: any) => state.getAllEvents);
+
   const stats = [
     {
       id: 1,
       title: "Total Tickets Booked",
-      value:ticketData&& ticketData?.length,
+      value: dashboardData && dashboardData?.totalTicketBooked,
       icon: <FaTicketAlt className="text-blue-400 text-4xl" />,
       bg: "bg-gradient-to-r from-gray-900 to-gray-800",
     },
     {
       id: 2,
       title: "Total Events Created",
-      value: `${data&&data?.data?.length||0}`,
+      value: `${dashboardData && dashboardData?.totalEvents}`,
       icon: <FaRegCalendarAlt className="text-green-400 text-4xl" />,
       bg: "bg-gradient-to-r from-gray-800 to-gray-700",
     },
-    // {
-    //   id: 3,
-    //   title: "Total  Shows Created",
-    //   value: 5,
-    //   icon: <FaTheaterMasks className="text-purple-400 text-4xl" />,
-    //   bg: "bg-gradient-to-r from-gray-700 to-gray-600",
-    // },
+    {
+      id: 3,
+      title: "Total Earnings",
+      value: dashboardData && dashboardData?.totalRevenue,
+      icon: <FaRupeeSign className="text-purple-400 text-4xl" />,
+      bg: "bg-gradient-to-r from-gray-700 to-gray-600",
+    },
   ];
+  // const showsData = dashboardData?.upcomingEventsData?.data?.map(
+  //   (event: any) => ({
+  //     name: event.eventName,
+  //     description: event.eventDescription,
+  //     time: `${event.eventSlots[0]?.startTime} - ${event.eventSlots[0]?.endTime}`,
+  //     day: event.eventSlots[0]?.day || "N/A",
+  //     status: "Running",
+  //     image: event.eventImage,
+  //     startTime: event?.eventStartDate,
+  //     category: event?.eventCategory,
+  //   })
+  // );
+  const showsData = data?.data?.map(
+    (event: any) => ({
+      name: event.eventName,
+      description: event.eventDescription,
+      time: `${event.eventSlots[0]?.startTime} - ${event.eventSlots[0]?.endTime}`,
+      day: event.eventSlots[0]?.day || "N/A",
+      status: "Running",
+      image: event.eventImage,
+      startTime: event?.eventStartDate,
+      category: event?.eventCategory,
+    })
+  );
 
+  const handleAdd = (selection: any) => {
+    if (dataCate?.Eventtype.includes(selection.type)) {
+      const payload = {
+        eventName: "",
+        eventCategory: "",
+        eventStartDate: "",
+        eventEndDate: "",
+        nextPage: 1,
+        eventStatus: selection.type || "",
+      };
+      dispatch(getAllEvents(payload));
+    } else {
+      const payload = {
+        eventName: "",
+        eventCategory: selection.type || "",
+        eventStartDate: "",
+        eventEndDate: "",
+        nextPage: 1,
+        eventStatus: "",
+      };
+      dispatch(getAllEvents(payload));
+    }
+    setIsFilterOpen(false);
+  };
+  
+  useEffect(() => {
+    const payload = {
+      eventName: "",
+      eventCategory: "",
+      eventStartDate: "",
+      eventEndDate: "",
+      nextPage: 1,
+      eventStatus:''
+    };
 
+    dispatch(getAllEvents(payload));
+  }, []);
 
+  useEffect(() => {
+    dispatch(getDashboardData());
+  }, []);
   return (
     <>
-    <div className="p-6 grid max-w-1/1 mx-auto mt-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-     { userTicketloading?<Loader/>:
-      stats.map((stat) => (
-        <div
-          key={stat.id}
-          className={`rounded-xl p-6 shadow-md flex items-center gap-4 ${stat.bg} hover:shadow-lg transition duration-300`}
-        >
-          <div>{stat.icon}</div>
+      <DashboardHeader text="Dashboard" />
+      <div className="py-4 hide-scrollbar grid max-w-1/1 mx-auto grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {stats.map((stat) => (
+          <StatCard
+            key={stat.id}
+            icon={stat.icon}
+            title={stat.title}
+            value={stat.value}
+            bg={stat.bg}
+            loading={loading}
+          />
+        ))}
+      </div>
+      <div className="flex gap-4">
+        <div className="w-[50%] relative">
           <div>
-            <h3 className="text-lg text-gray-300">{stat.title}</h3>
-            <p className="text-2xl font-bold text-white">{userTicketloading?  <CircularProgress size="30px" />:stat.value}</p>
+            <RunningShowsTable
+              shows={showsData || []}
+              setIsFilterOpenCB={() => setIsFilterOpen((prev) => !prev)}
+            />
           </div>
-        </div>
-      ))}
 
-    </div>
-    {/* <div className="p-4 border-[2px] w-[50%] mx-7 rounded-[12px] bg-gradient-to-r from-[#ebe9e9] to-[#f5f5f5] text-white">
-      <TicketsBarChart />
-    </div> */}
+          {isFilterOpen && (
+            <div className="absolute top-14 left-24">
+              <CategoryFilter data={dataCate} onAdd={handleAdd} />
+            </div>
+          )}
+        </div>
+
+        <div className="border-[2px] w-[50%]  rounded-[12px] bg-gradient-to-r from-[#ebe9e9] to-[#e5e4e4] text-white">
+          <TicketsBarChart data={dashboardData?.ticketsPerMonth || []} />
+        </div>
+      </div>
     </>
-   
   );
 };
 

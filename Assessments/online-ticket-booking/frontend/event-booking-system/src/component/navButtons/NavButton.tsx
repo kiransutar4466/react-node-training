@@ -1,18 +1,20 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
-const NavButton = ({ to, icon, label }: { to: string; icon: any; label: string }) => {
-    return (
-      <NavLink
-        to={to}
-        className={({ isActive }) =>
-          `flex items-center gap-3 px-4 py-2 rounded-lg transition duration-300 
-          ${isActive ? "bg-white text-black font-semibold" : "bg-black text-white hover:bg-gray-800"}`
-        }
-      >
-        {icon}
-        <span>{label}</span>
-      </NavLink>
-    );
-  };
+const NavButton = ({ to, icon, label, showLabel }:any) => {
+  const location = useLocation();
+  const isActive = location.pathname === to;
 
-  export default NavButton
+  return (
+    <NavLink
+      to={to}
+      className={`flex items-center gap-3 p-2 rounded-md transition-all duration-200 ${
+        isActive ? "bg-white text-black font-semibold" : "bg-black text-white"
+      }`}
+    >
+      {icon}
+      {showLabel? <span>{label}</span>:""}
+    </NavLink>
+  );
+};
+
+export default NavButton;

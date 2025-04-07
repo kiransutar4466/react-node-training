@@ -36,7 +36,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "layout",
+    path: "admin",
     element: (
       <Suspense fallback={<Loader />}>
         <Layout />
@@ -44,7 +44,7 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        path: "admin-dashboard",
+        path: "event-management",
         element: (
           <Suspense fallback={<Loader />}>
             <AdminDashboard />
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
       },
     
       {
-        path: "dasboard-data",
+        path: "admin-dashboard",
         element: (
           <Suspense fallback={<Loader />}>
             <DashboardData />

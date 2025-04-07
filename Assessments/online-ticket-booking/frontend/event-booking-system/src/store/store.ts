@@ -10,6 +10,9 @@ import updateEventSlice from '../component/createEventForm/updateEventSlice'
 import showsSlice from '../pages/shows/showsSlice'
 import bookSeatsSlice from '../pages/shows/bookSeatsSlice'
 import userTicketSlice from '../component/userTickets/userTicketSlice'
+import sidebarReducer from '../component/sideBar/sidebarSlice'
+import dashboardSlice from '../pages/adminDashboard/dashboardSlice'
+import reviewSlice from '../pages/viewMoreEventDetails/reviews/reviewSlice'
 const sagaMiddleware = createSagaMiddleware()
 const store = configureStore({
     reducer: {
@@ -21,7 +24,10 @@ const store = configureStore({
         updateEvent:updateEventSlice,
         shows:showsSlice,
         bookSeats:bookSeatsSlice,
-        userTickets:userTicketSlice
+        userTickets:userTicketSlice,
+        sidebar: sidebarReducer,
+        dashboard:dashboardSlice,
+        reviews:reviewSlice
 
     },
     middleware: (getDefaultMiddleware) =>

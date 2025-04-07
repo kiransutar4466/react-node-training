@@ -9,7 +9,7 @@ const EventDisplayCard = ({
   handleNavigationCB,
 }: any) => {
 
-
+console.log("id",id)
 
 
   return (

@@ -86,3 +86,6 @@ export type EventType = {
   export const GET_AVAILABLE_SEATS:string="GET_AVAILABLE_SEATS"
   export const BOOK_SEATS:string=" BOOK_SEATS"
   export const GET_USER_TICKETS:string="GET_USER_TICKETS"
+   export const GET_DASHBOARD_DATA:string="GET_DASHBOARD_DATA"
+      export const POST_REVIEW:string="POST_REVIEW"
+        export const GET_REVIEW:string="GET_REVIEW"

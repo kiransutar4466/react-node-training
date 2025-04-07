@@ -1,5 +1,6 @@
 import axios from "axios";
 import { BASE_URL } from "./baseUrl";
+import { toast } from "react-toastify";
 
 export const createEventApi = async (payload: any) => {
 
@@ -94,7 +95,7 @@ export const getAllEventsApi = async (payload: any) => {
 
   try {
     const response = await axios.get(
-      `${BASE_URL}/api/events/?eventName=${payload.eventName}&eventCategory=${payload.eventCategory}&eventStartDate=${payload.eventStartDate}&eventEndDate=${payload.eventStartDate}&limit=${12}&page=${payload.nextPage}`, 
+      `${BASE_URL}/api/events/?eventName=${payload.eventName}&eventCategory=${payload.eventCategory}&eventStartDate=${payload.eventStartDate}&eventEndDate=${payload.eventStartDate}&limit=${8}&page=${payload.nextPage}&eventStatus=${payload.eventStatus}`, 
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -105,6 +106,10 @@ export const getAllEventsApi = async (payload: any) => {
 
     return {response};
   } catch (error: any) {
+    if(error?.response?.statusCode==401)
+    {
+      toast.error(error.response?.data?.message)
+    }
     throw new Error(error.response?.data?.message || "Something went wrong");
   }
 };

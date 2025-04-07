@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDebounceHook } from "../../utils/useDebounceHook";
 import { useDispatch } from "react-redux";
 import { getAllEvents } from "../../pages/displayAllEvents/getAllEventsSaga";
@@ -23,16 +23,27 @@ const Navbar = () => {
 
   const value = useDebounceHook(searchText);
 
-  useEffect(() => {
-    const payload = {
-      eventName: value,
-      eventCategory: "",
-      eventStartDate: "",
-      eventEndDate: "",
-      nextPage: 1,
-    };
 
-    dispatch(getAllEvents(payload));
+  const handleChange=(e:any)=>{
+
+    setSearchText(e.target.value);
+ 
+  }
+ 
+
+  useEffect(() => {
+  
+    
+      const payload = {
+        eventName: value,
+        eventCategory: "",
+        eventStartDate: "",
+        eventEndDate: "",
+        nextPage: 1,
+        eventStatus: ""
+      };
+      dispatch(getAllEvents(payload));
+    
   }, [value, dispatch]);
 
   return (
@@ -56,16 +67,16 @@ const Navbar = () => {
           </p>
         )} */}
 
-        <div className="flex items-center  bg-[#fffdfd] rounded-[9px] px-2  border-2">
-          <IoIosSearch className="text-gray-500 text-lg" />
-          <input
-            type="text"
-            placeholder="Search events"
-            onChange={(e) => setSearchText(e.target.value)}
-            className="h-[40px]    w-50 sm:60 md:80    px-2 border-none outline-none text-[0.9rem] bg-[#ffffffb1] rounded-[12px]"
-          />
-          
-        </div>
+<div className="flex items-center bg-[#22242B] rounded-[9px] px-2 border-2">
+  <IoIosSearch className="text-gray-500 text-lg" />
+  <input
+    type="text"
+    placeholder="Search events"
+    onChange={(e)=>  setSearchText(e.target.value)}
+    className="h-[40px] w-50 sm:w-60 md:w-80 px-2 border-none outline-none text-[0.9rem] bg-[#22242B] text-white placeholder-gray-400"
+  />
+</div>
+
       </div>
 
       <div className="relative w-[20%] flex justify-end px-4">

@@ -1,17 +1,21 @@
 import { Outlet } from "react-router-dom";
 import SideBar from "../component/sideBar/Side";
-import useAuthRedirect from "../utils/useAuthRedirect";
-const Layout = () => {
-        useAuthRedirect()
-  return (
-    <div className="flex h-screen">
-      {/* Sidebar takes 1/5 of the screen */}
-      <div className="w-1/5">
-        <SideBar />
-      </div>
+import { useSelector } from "react-redux";
 
-      {/* Outlet container takes 4/5 of the screen */}
-      <div className="w-4/5 p-2">
+const Layout = () => {
+  const isExpanded = useSelector((state: any) => state.sidebar.isExpanded);
+
+  
+  const sidebarWidth = isExpanded ? "20%" : "70px";
+  const outletWidth = isExpanded ? "80%" : "calc(100% - 70px)";
+
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <SideBar />
+      <div
+        style={{ marginLeft: sidebarWidth, width: outletWidth }}
+        className="transition-all duration-300 ease-in-out p-4 overflow-auto"
+      >
         <Outlet />
       </div>
     </div>

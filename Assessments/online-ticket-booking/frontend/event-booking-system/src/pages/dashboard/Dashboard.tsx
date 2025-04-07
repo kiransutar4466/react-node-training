@@ -5,6 +5,7 @@ import DisplayAllEvents from "../displayAllEvents/DisplayAllEvents";
 import DashboardBanner from "../../component/dasboardBanners/DashboardBanner";
 import Footer from "../../component/footer/Footer";
 
+
 const Dashboard = () => {
   return (
     <>
@@ -16,6 +17,7 @@ const Dashboard = () => {
       
 
       <DisplayAllEvents />
+ 
       <Footer/>
     </>
   );

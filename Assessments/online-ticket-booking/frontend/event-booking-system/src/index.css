@@ -14,7 +14,7 @@
     color: #0b0b0b;
 }
 .fontsize-forEventDescription{
-    font-size: 1rem;
+    font-size: 0.96rem;
     color: #6b6a6a;
 }
 .book-tickets-btn:hover{
@@ -45,7 +45,7 @@
     background: rgb(2,0,36);
     background: linear-gradient(0deg, rgb(228, 228, 228) 0%, rgba(251,251,251,1) 0%, rgb(253, 253, 253) 100%);
     padding: 20px 20px;
-    width: 70%;
+    width: 90%;
     box-shadow: 0px 0px 14px  rgb(210, 210, 210);
   }
   

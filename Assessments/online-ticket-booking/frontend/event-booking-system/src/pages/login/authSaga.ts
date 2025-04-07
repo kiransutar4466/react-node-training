@@ -28,7 +28,7 @@ function* loginUser(action: { type: string; payload: LoginActionPayload }) {
 
             toast.success(response?.data?.message)
             if (decoded.role == 'admin') {
-                navigate('/layout/dasboard-data')
+                navigate('/admin/admin-dashboard')
             } else if (decoded.role == "user") {
                 navigate('/')
             }

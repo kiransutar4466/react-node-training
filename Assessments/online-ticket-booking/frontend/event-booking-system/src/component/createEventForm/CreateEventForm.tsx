@@ -118,7 +118,7 @@ const CreateEventForm = ({
     }
   }, []);
 
-  console.log("evenitID", event);
+
 
   return (
     <div className="bg-white p-10 h-[90vh]  w-[100%] mx-auto shadow-lg overflow-y-scroll thin-scrollbar rounded-lg create-event-form relative ">
