@@ -17,11 +17,7 @@ export class DashboardService {
 
   async findInfo(vendorId: string, inventoryId: string, role: string) {
     try {
-      const productStats = await this.findProductsStats(
-        vendorId,
-        inventoryId,
-        role,
-      );
+      const productStats = await this.findProductsStats(inventoryId, role);
       const categoryWiseSoldCount = await this.findCategoryWiseSoldCount(
         vendorId,
         inventoryId,
@@ -60,7 +56,7 @@ export class DashboardService {
       const where: any = { isDeleted: false };
       if (role === "VENDOR") {
         where.inventoryId = inventoryId;
-        where.inventory = { vendorId };
+        where.inventory = { vendorId, vendor: { isDeleted: false } };
       }
       return await this.prisma.orderItem.count({
         where,
@@ -77,7 +73,10 @@ export class DashboardService {
         return 1;
       }
       return await this.prisma.inventory.count({
-        where: { isDeleted: false, vendor: { role: "VENDOR" } },
+        where: {
+          isDeleted: false,
+          vendor: { role: "VENDOR", isDeleted: false },
+        },
       });
     } catch (error) {
       this.logger.error(`Error in findTotalInventory | ${error}`);
@@ -148,11 +147,6 @@ export class DashboardService {
         .sort((a, b) => b.soldCount - a.soldCount)
         .slice(0, bestSellerCount);
 
-      this.logger.log(
-        "Top Vendors: ",
-        bestSellers.map((v) => `${v.firstName} ${v.lastName} (${v.soldCount})`),
-      );
-
       return bestSellers;
     } catch (error) {
       this.logger.error(`Error in findBestSellers | ${error}`);
@@ -160,39 +154,52 @@ export class DashboardService {
     }
   }
 
-  private async findProductsStats(
-    vendorId: string,
-    inventoryId: string,
-    role: string,
-  ) {
+  private async findProductsStats(inventoryId: string, role: string) {
     try {
       const where: any = { isDeleted: false };
       if (role === "VENDOR") {
-        where.vendorId = vendorId;
         where.inventoryId = inventoryId;
       }
 
-      const totalProducts = await this.prisma.product.count({ where });
-      const allSales = await this.prisma.product.findMany({
+      const totalProducts = await this.prisma.product.count({
         where,
-        select: { soldCount: true, price: true },
-      });
-      // updating where clause for getting monthly sales i.e. to find sold count from 1st day of month
-      where.updatedAt = {
-        gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      };
-      this.logger.warn(where);
-      const monthlySales = await this.prisma.product.findMany({
-        where,
-        select: { soldCount: true, price: true },
       });
 
-      const totalSales = allSales.reduce(
-        (totalSum, product) => totalSum + product.soldCount * product.price,
+      // get total sales from orderItems (for all time)
+      const totalOrderItems = await this.prisma.orderItem.findMany({
+        where,
+        select: {
+          quantity: true,
+          price: true,
+        },
+      });
+
+      const totalSales = totalOrderItems.reduce(
+        (sum, item) => sum + item.quantity * item.price,
         0,
       );
-      const salesThisMonth = monthlySales.reduce(
-        (totalSum, product) => totalSum + product.soldCount * product.price,
+
+      // find sales of this month from order items
+      const startOfMonth = new Date(
+        new Date().getFullYear(),
+        new Date().getMonth(),
+        1,
+      );
+      const salesThisMonthItems = await this.prisma.orderItem.findMany({
+        where: {
+          ...where,
+          createdAt: {
+            gte: startOfMonth,
+          },
+        },
+        select: {
+          quantity: true,
+          price: true,
+        },
+      });
+
+      const salesThisMonth = salesThisMonthItems.reduce(
+        (sum, item) => sum + item.quantity * item.price,
         0,
       );
 
@@ -252,60 +259,49 @@ export class DashboardService {
     role: string,
   ) {
     try {
-      const where: any = { isDeleted: false };
+      const where: any = {
+        isDeleted: false,
+        createdAt: {
+          gte: moment().startOf("year").toDate(),
+          lte: moment().endOf("year").toDate(),
+        },
+      };
+
       if (role === "VENDOR") {
-        where.vendorId = vendorId;
+        where.inventory = { vendorId };
         where.inventoryId = inventoryId;
       }
 
-      const currentYear = moment().year();
-
-      // generate 12 months of the current year
-      const months: any = [];
-      for (let i = 0; i < 12; i++) {
-        const start = moment().year(currentYear).month(i).startOf("month");
-        const end = moment(start).endOf("month");
-        months.push({
-          monthName: start.format("MMM"), // like - Jan, Feb
-          start: start.toDate(),
-          end: end.toDate(),
-        });
-      }
-
-      // Fetch all sales for this year
-      const products = await this.prisma.product.findMany({
-        where: {
-          ...where,
-          updatedAt: {
-            gte: moment().year(currentYear).startOf("year").toDate(),
-            lte: moment().year(currentYear).endOf("year").toDate(),
-          },
-        },
+      // finding all order items of the current year
+      const orderItems = await this.prisma.orderItem.findMany({
+        where,
         select: {
-          soldCount: true,
+          quantity: true,
           price: true,
-          updatedAt: true,
+          createdAt: true,
         },
       });
 
       // initialize month map - every month's sales as 0 (by default)
-      const monthlySalesMap = {};
-      for (const m of months) {
-        monthlySalesMap[m.monthName] = 0;
+      const months: any = [];
+      const salesMap: any = {};
+      for (let i = 0; i < 12; i++) {
+        const monthName = moment().month(i).format("MMM");
+        months.push(monthName);
+        salesMap[monthName] = 0;
       }
 
-      // group sales into months
-      for (const product of products) {
-        const monthKey = moment(product.updatedAt).format("MMM");
-        monthlySalesMap[monthKey] += product.soldCount * product.price;
+      // add sales according to the specific month
+      for (const item of orderItems) {
+        const monthKey = moment(item.createdAt).format("MMM");
+        const itemTotalPrice = item.quantity * item.price;
+        salesMap[monthKey] += itemTotalPrice;
       }
 
-      const data = months.map((m) => ({
-        month: m.monthName,
-        totalSales: monthlySalesMap[m.monthName],
+      return months.map((m) => ({
+        month: m,
+        totalSales: salesMap[m],
       }));
-
-      return data;
     } catch (error) {
       this.logger.error(`Error in findSalesPerMonthForCurrentYear | ${error}`);
       throw error;
