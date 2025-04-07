@@ -29,6 +29,7 @@ export class EventsController {
     @ApiQuery({name:'eventStartDate',required:false,description:'Filter event by start date'})
     @ApiQuery({name:'eventEndDate',required:false,description:'Filter event by end date'})
     @ApiQuery({name:'eventEndDate',required:false,description:'Filter event by end date'})
+    @ApiQuery({name:'eventStatus ',required:false,description:'Filter event by status (ongoing,upcoming,past)'})
     @ApiQuery({ name: 'page', required: false, description: 'Page number for pagination' })
    @ApiQuery({ name: 'limit', required: false, description: 'Number of events per page' })
     @Get()
@@ -47,9 +48,10 @@ export class EventsController {
     @UseGuards(AuthGuard)
     @Roles('admin')
     @ApiOperation({summary:'update an event'})
+    @ApiQuery({name:"force",required:false,description:"make it true if you want to overlap show"})
     @Patch(':id')
-    async updateEvent(@Param('id') id:number,@Body() updateEventDto:UpdateEventDto){
-       return this.eventsService.updateEvent(id,updateEventDto);
+    async updateEvent(@Param('id') id:number,@Body() updateEventDto:UpdateEventDto,@Query('force') force:boolean){
+       return this.eventsService.updateEvent(id,updateEventDto,force);
     }
 
   // DELETE AN EVENT

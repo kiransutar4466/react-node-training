@@ -25,6 +25,11 @@ export class QueryInputDto{
 
     @ApiProperty()
     @IsOptional()
+    @IsString()
+    eventStatus ?: string;
+
+    @ApiProperty()
+    @IsOptional()
     @IsNumber()
     @Type(() => Number) 
     page : number = 1

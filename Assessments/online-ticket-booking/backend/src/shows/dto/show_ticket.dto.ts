@@ -17,7 +17,7 @@ export class ShowTicketInputDto{
     @IsNotEmpty({message:'show id not provided'})
     showId : number
 
-    @ApiProperty()
+    @ApiProperty({example:[12,13,14]})
     @IsArray()
     @IsNotEmpty({message:'selected tickets not provided'})
     selectedTickets : number[]

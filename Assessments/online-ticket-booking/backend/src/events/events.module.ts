@@ -6,5 +6,6 @@ import { PrismaClient } from '@prisma/client';
 @Module({
   controllers: [EventsController],
   providers: [EventsService,PrismaClient],
+  exports: [EventsService]
 })
 export class EventsModule {}

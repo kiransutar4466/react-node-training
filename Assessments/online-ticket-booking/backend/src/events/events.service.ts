@@ -165,9 +165,11 @@ export class EventsService {
 
   async getEvents(queryInputDto: QueryInputDto) {
     try {
+
       const whereCondition: any = {
         isDeleted: false,
       };
+      
 
       if (queryInputDto.eventName) {
         whereCondition.eventName = {
@@ -203,8 +205,21 @@ export class EventsService {
         }
       }
 
+      if(queryInputDto.eventStatus){
+        const now = new Date();
+        const status = queryInputDto.eventStatus.toLowerCase();
+        if (status === 'ongoing') {
+          whereCondition.eventStartDate = { lte: now };
+          whereCondition.eventEndDate = { gte: now };
+        } else if (status === 'upcoming') {
+          whereCondition.eventStartDate = { gt: now };
+        } else if (status === 'past') {
+          whereCondition.eventEndDate = { lt: now };
+        }
+      }
+
       let allEvents;
-      let totalCounts;
+      let totalEventsCounts;
       let pagination = {};
 
       const { page, limit } = queryInputDto;
@@ -215,12 +230,24 @@ export class EventsService {
         where: whereCondition,
         skip,
         take: limit,
+        select:{
+          id : true,
+          eventName : true,
+          eventDescription : true,
+          eventCategory : true,
+          eventStartDate : true,
+          eventEndDate : true,
+          eventSlots : true,
+          eventTotalSeats : true,
+          eventPrice : true,
+          eventImage : true,
+        }
       });
 
-      totalCounts = await this.prismaClient.events.count({
+      totalEventsCounts = await this.prismaClient.events.count({
         where: whereCondition,
       });
-      const totalPages = Math.ceil(totalCounts / limit);
+      const totalPages = Math.ceil(totalEventsCounts / limit);
 
       const prev = page > 1 ? page - 1 : null;
       const next = page < totalPages ? page + 1 : null;
@@ -230,6 +257,7 @@ export class EventsService {
         prev,
         next,
         totalPages,
+        totalEventsCounts
       };
 
       this.logger.log('All events data fetched succesfully');
@@ -278,7 +306,7 @@ export class EventsService {
     }
   }
 
-  async updateEvent(id: number, updateEventDto: UpdateEventDto) {
+  async updateEvent(id: number, updateEventDto: UpdateEventDto, force: boolean) {
     try {
       //check for given id event is present or not
       const eventFound = await this.prismaClient.events.findUnique({
@@ -393,8 +421,8 @@ export class EventsService {
             },
           });
 
-          if (overlappingShow) {
-            this.logger.error(
+          if (overlappingShow && !force) {
+            this.logger.warn(
               'Some shows are overlapping. Do you want to continue?',
             );
             throw new HttpException(

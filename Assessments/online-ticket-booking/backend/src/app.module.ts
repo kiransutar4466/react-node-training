@@ -10,11 +10,14 @@ import { JwtService } from '@nestjs/jwt';
 import { ShowsModule } from './shows/shows.module';
 import { UsersModule } from './users/users.module';
 import { TicketsModule } from './tickets/tickets.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { EventsService } from './events/events.service';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
-  imports: [AuthModule, EventsModule, ShowsModule, UsersModule, TicketsModule],
+  imports: [AuthModule, EventsModule, ShowsModule, UsersModule, TicketsModule, DashboardModule, ReviewsModule],
   controllers: [AppController],
-  providers: [AppService,PrismaClient,ConfigService,JwtService],
+  providers: [AppService,PrismaClient,ConfigService,JwtService,EventsService],
 })
 export class AppModule {
   configure(consumer:MiddlewareConsumer){
