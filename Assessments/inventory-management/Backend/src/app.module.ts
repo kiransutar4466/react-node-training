@@ -10,12 +10,14 @@ import { ProductsModule } from "./products/products.module";
 import { CartItemsModule } from "./cart-items/cart-items.module";
 import { InventoryModule } from "./inventory/inventory.module";
 import { LoginMiddleware } from "./middleware/login.middleware";
+import { DashboardModule } from "./dashboard/dashboard.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { OrdersController } from "./orders/orders.controller";
 import { VendorsController } from "./vendors/vendors.controller";
 import { ProductsController } from "./products/products.controller";
 import { CartItemsController } from "./cart-items/cart-items.controller";
 import { InventoryController } from "./inventory/inventory.controller";
+import { DashboardController } from "./dashboard/dashboard.controller";
 import { CategoriesController } from "./categories/categories.controller";
 import { CatchEverythingFilter } from "./filters/catch-everything.filter";
 import { SaveCredentialsModule } from "./save-credentials/save-credentials.module";
@@ -30,6 +32,7 @@ import { SaveCredentialsModule } from "./save-credentials/save-credentials.modul
     CartItemsModule,
     OrdersModule,
     SaveCredentialsModule,
+    DashboardModule,
   ],
   controllers: [],
   providers: [
@@ -54,6 +57,7 @@ export class AppModule implements NestModule {
         CartItemsController,
         InventoryController,
         CategoriesController,
+        DashboardController,
       );
   }
 }
