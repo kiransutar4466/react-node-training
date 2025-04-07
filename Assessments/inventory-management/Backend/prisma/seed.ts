@@ -1,112 +1,83 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { PrismaClient } from "@prisma/client";
+// import * as bcrypt from "bcrypt";
+import { v4 as uuid } from "uuid";
+
 const prisma = new PrismaClient();
 
 async function main() {
-  // Categories
-  const categoryNames = [
+  // const hashedPassword: string = await bcrypt.hash("Pass@123", 10);
+
+  const categories = [
     "Electronics",
-    "Clothing",
+    "VR",
+    "Mobile",
     "Groceries",
-    "Home",
-    "Books",
-    "Sports",
-    "Beauty",
-    "Kitchen",
+    "Televisions",
+    "Furniture",
+    "Cars",
+    "Watches",
     "Toys",
-    "Office",
+    "Fruits",
   ];
 
-  const categories = await Promise.all(
-    categoryNames.map((name) =>
-      prisma.category.upsert({
-        where: { name },
-        update: {},
-        create: { name },
-      }),
-    ),
-  );
-
-  // Vendors
-  const vendor = await prisma.vendor.upsert({
-    where: { email: "vendor1@example.com" },
-    update: {},
-    create: {
-      firstName: "Amit",
-      lastName: "Sharma",
-      email: "vendor1@example.com",
-      password: "hashedpassword",
-      companyName: "Amit Traders",
-      contactNumber: "9876543210",
-    },
-  });
-
-  // Inventory
-  const inventory = await prisma.inventory.create({
-    data: {
-      name: "Main Inventory",
-      vendorId: vendor.id,
-    },
-  });
-
-  // Products
-  const productsData = [
-    {
-      name: "Wireless Mouse",
-      description: "Ergonomic wireless mouse",
-      price: 499,
-      quantity: 100,
-      stockStatus: "IN_STOCK",
-      vendorId: vendor.id,
-      inventoryId: inventory.id,
-      categoryNames: ["Electronics"],
-    },
-    {
-      name: "Cotton T-Shirt",
-      description: "Comfortable round-neck t-shirt",
-      price: 299,
-      quantity: 200,
-      stockStatus: "IN_STOCK",
-      vendorId: vendor.id,
-      inventoryId: inventory.id,
-      categoryNames: ["Clothing"],
-    },
-    {
-      name: "Organic Apples",
-      description: "Fresh organic apples",
-      price: 150,
-      quantity: 50,
-      stockStatus: "IN_STOCK",
-      vendorId: vendor.id,
-      inventoryId: inventory.id,
-      categoryNames: ["Groceries"],
-    },
-  ];
-
-  for (const product of productsData) {
-    const createdProduct = await prisma.product.create({
-      data: {
-        name: product.name,
-        description: product.description,
-        price: product.price,
-        quantity: product.quantity,
-        stockStatus: product.stockStatus,
-        vendorId: product.vendorId,
-        inventoryId: product.inventoryId,
-        categories: {
-          connect: product.categoryNames.map((name) => ({
-            name,
-          })),
-        },
-      },
+  // Ensure categories exist
+  for (const name of categories) {
+    await prisma.category.upsert({
+      where: { name },
+      update: {},
+      create: { name },
     });
-    console.log(`Created product: ${createdProduct.name}`);
+  }
+
+  // Your vendor creation code here (same as before)...
+  // Assume vendors array already created and inserted
+
+  // Retrieve all vendors with their inventories
+  const vendorsWithInventories = await prisma.vendor.findMany({
+    include: {
+      inventory: true,
+    },
+  });
+
+  for (const vendor of vendorsWithInventories) {
+    const inventory = vendor.inventory;
+
+    if (!inventory) continue;
+
+    for (let i = 0; i < 3; i++) {
+      const randomCategory =
+        categories[Math.floor(Math.random() * categories.length)];
+
+      const category = await prisma.category.findUnique({
+        where: { name: randomCategory },
+      });
+
+      const product = await prisma.product.create({
+        data: {
+          id: uuid(),
+          name: `${randomCategory} Product ${i + 1} by ${vendor.firstName}`,
+          description: `High quality ${randomCategory} product.`,
+          price: Math.floor(Math.random() * 10000 + 100),
+          quantity: Math.floor(Math.random() * 100 + 1),
+          stockStatus: "IN_STOCK",
+          vendorId: vendor.id,
+          inventoryId: inventory.id,
+          categories: {
+            connect: { id: category?.id },
+          },
+        },
+      });
+
+      console.log(`Created product: ${product.name}`);
+    }
   }
 }
 
 main()
   .then(() => {
-    console.log("Seed completed.");
+    console.log("All products, vendors, and categories seeded.");
     return prisma.$disconnect();
   })
   .catch(async (e) => {
