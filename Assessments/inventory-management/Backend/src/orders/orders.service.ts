@@ -127,8 +127,6 @@ export class OrdersService {
         where.OR = [
           { orderStatus: searchQuery },
           { paymentStatus: searchQuery },
-          { quantity: searchQuery },
-          { totalPrice: searchQuery },
           { product: { name: searchQuery } },
         ];
       }
@@ -222,7 +220,7 @@ export class OrdersService {
 
       return filteredOrderItem;
     } catch (error) {
-      this.logger.error(`Error in findAll | ${error}`);
+      this.logger.error(`Error in findSingleOrder | ${error}`);
       throw error;
     }
   }
