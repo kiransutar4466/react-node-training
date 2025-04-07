@@ -42,6 +42,9 @@ export class ResponseDashboardDto {
   @ApiProperty({ example: 15 })
   totalInventory: number;
 
+  @ApiProperty({ example: 5 })
+  totalOrders: number;
+
   @ApiProperty({ type: ResponseFindProductsStats })
   productStats: ResponseFindProductsStats;
 

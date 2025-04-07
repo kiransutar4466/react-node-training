@@ -161,16 +161,16 @@ export class OrdersService {
         return filteredOrderItem;
       });
 
-      const totalOrderItems = await this.prisma.orderItem.count({
+      const totalCount = await this.prisma.orderItem.count({
         where,
       });
 
       return {
         page,
-        totalPages: Math.ceil(totalOrderItems / perPage),
-        totalCount: totalOrderItems,
+        totalPages: Math.ceil(totalCount / perPage),
+        totalCount,
         prev: page > 1 ? page - 1 : null,
-        next: page * perPage < totalOrderItems ? page + 1 : null,
+        next: page * perPage < totalCount ? page + 1 : null,
         data,
       };
     } catch (error) {

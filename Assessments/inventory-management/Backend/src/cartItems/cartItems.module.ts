@@ -1,8 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import { Logger, Module } from "@nestjs/common";
 
-import { CartItemsService } from "./cart-items.service";
-import { CartItemsController } from "./cart-items.controller";
+import { CartItemsService } from "./cartItems.service";
+import { CartItemsController } from "./cartItems.controller";
 
 @Module({
   controllers: [CartItemsController],

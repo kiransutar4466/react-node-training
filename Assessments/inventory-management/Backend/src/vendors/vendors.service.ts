@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 /* eslint-disable @typescript-eslint/no-base-to-string */
@@ -6,20 +7,20 @@
 import { HttpException, HttpStatus, Injectable, Logger } from "@nestjs/common";
 import { PrismaClient } from "@prisma/client";
 import * as bcrypt from "bcrypt";
+import { promises as fs } from "fs";
+import * as path from "path";
 
 import {
   CreateVendorDto,
   QueryFindVendorsDto,
   UpdateVendorDto,
 } from "./dto/vendors.dto";
-import { SaveCredentialsService } from "src/save-credentials/save-credentials.service";
 
 @Injectable()
 export class VendorsService {
   constructor(
     private readonly logger: Logger,
     private readonly prisma: PrismaClient,
-    private readonly saveCredentialsService: SaveCredentialsService,
   ) {
     this.logger = new Logger(VendorsService.name);
   }
@@ -57,7 +58,7 @@ export class VendorsService {
         throw new HttpException("email already exists", HttpStatus.CONFLICT);
       }
       let password = this.generatePassword(12);
-      await this.saveCredentialsService.appendToJsonFile({ email, password });
+      await this.appendToJsonFile({ email, password });
 
       password = bcrypt.hashSync(password, 10);
       const data: any = await this.prisma.vendor.create({
@@ -299,6 +300,27 @@ export class VendorsService {
     } catch (error) {
       this.logger.error(`Error in remove | ${error}`);
       throw error;
+    }
+  }
+
+  private filePath = path.join(
+    __dirname,
+    "../../../Credentials/passwords.json",
+  );
+  private async appendToJsonFile(newCredential: any) {
+    try {
+      const fileData = await fs.readFile(this.filePath, "utf8");
+      const jsonArray = JSON.parse(fileData);
+      jsonArray.push(newCredential);
+      await fs.writeFile(this.filePath, JSON.stringify(jsonArray));
+
+      return true;
+    } catch (error) {
+      this.logger.error(error);
+      throw new HttpException(
+        "Error appending to JSON file",
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 }

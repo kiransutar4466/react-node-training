@@ -13,13 +13,13 @@ import {
   Query,
   Req,
 } from "@nestjs/common";
-import { CartItemsService } from "./cart-items.service";
+import { CartItemsService } from "./cartItems.service";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import {
   CreateCartItemDto,
   QueryFindCartItemDto,
   UpdateCartItemDto,
-} from "./dto/cart-items.dto";
+} from "./dto/cartItems.dto";
 import {
   ResponseCreateCartItemDto,
   ResponseDeleteAllCartItemDto,

@@ -5,7 +5,7 @@ import {
   CreateCartItemDto,
   QueryFindCartItemDto,
   UpdateCartItemDto,
-} from "./dto/cart-items.dto";
+} from "./dto/cartItems.dto";
 
 @Injectable()
 export class CartItemsService {

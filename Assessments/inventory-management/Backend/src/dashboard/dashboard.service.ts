@@ -31,9 +31,14 @@ export class DashboardService {
         await this.findSalesPerMonthForCurrentYear(vendorId, inventoryId, role);
       const bestSellers = await this.findBestSellers(role);
       const totalInventory = await this.findTotalInventory(role);
-
+      const totalOrders = await this.findTotalOrders(
+        vendorId,
+        inventoryId,
+        role,
+      );
       return {
         totalInventory,
+        totalOrders,
         productStats,
         categoryWiseSoldCount,
         salesPerMonthForCurrentYear,
@@ -41,6 +46,28 @@ export class DashboardService {
       };
     } catch (error) {
       this.logger.error(`Error in findInfo | ${error}`);
+      throw error;
+    }
+  }
+
+  // find total sellers orders
+  private async findTotalOrders(
+    vendorId: string,
+    inventoryId: string,
+    role: string,
+  ) {
+    try {
+      const where: any = { isDeleted: false };
+      if (role === "VENDOR") {
+        where.inventoryId = inventoryId;
+        where.inventory = { vendorId };
+      }
+
+      return await this.prisma.orderItem.count({
+        where,
+      });
+    } catch (error) {
+      this.logger.error(`Error in findTotalOrders | ${error}`);
       throw error;
     }
   }

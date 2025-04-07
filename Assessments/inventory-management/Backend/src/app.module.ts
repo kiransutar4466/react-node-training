@@ -7,7 +7,7 @@ import { AuthModule } from "./auth/auth.module";
 import { VendorModule } from "./vendors/vendors.module";
 import { OrdersModule } from "./orders/orders.module";
 import { ProductsModule } from "./products/products.module";
-import { CartItemsModule } from "./cart-items/cart-items.module";
+import { CartItemsModule } from "./cartItems/cartItems.module";
 import { InventoryModule } from "./inventory/inventory.module";
 import { LoginMiddleware } from "./middleware/login.middleware";
 import { DashboardModule } from "./dashboard/dashboard.module";
@@ -15,12 +15,11 @@ import { CategoriesModule } from "./categories/categories.module";
 import { OrdersController } from "./orders/orders.controller";
 import { VendorsController } from "./vendors/vendors.controller";
 import { ProductsController } from "./products/products.controller";
-import { CartItemsController } from "./cart-items/cart-items.controller";
+import { CartItemsController } from "./cartItems/cartItems.controller";
 import { InventoryController } from "./inventory/inventory.controller";
 import { DashboardController } from "./dashboard/dashboard.controller";
 import { CategoriesController } from "./categories/categories.controller";
 import { CatchEverythingFilter } from "./filters/catch-everything.filter";
-import { SaveCredentialsModule } from "./save-credentials/save-credentials.module";
 
 @Module({
   imports: [
@@ -31,7 +30,6 @@ import { SaveCredentialsModule } from "./save-credentials/save-credentials.modul
     CategoriesModule,
     CartItemsModule,
     OrdersModule,
-    SaveCredentialsModule,
     DashboardModule,
   ],
   controllers: [],
