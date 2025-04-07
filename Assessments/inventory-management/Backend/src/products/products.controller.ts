@@ -14,6 +14,7 @@ import {
   Patch,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import { Request } from "express";
 
 import { ProductsService } from "./products.service";
 import {
@@ -25,13 +26,9 @@ import {
   ResponseCreateProductDto,
   ResponseDeleteProductDto,
   ResponseFindAllProductDto,
-  ResponseFindCategoriesSoldCount,
   ResponseFindProductDto,
-  ResponseFindProductsStats,
-  ResponseFindSalesPerMonthForCurrentYear,
   ResponseUpdateProductDto,
 } from "./dto/response.dto";
-import { Request } from "express";
 
 @ApiBearerAuth()
 @Controller("products")
@@ -84,51 +81,6 @@ export class ProductsController {
       req["decoded"].id,
       req["decoded"].role,
       true,
-    );
-  }
-
-  @Get("stats")
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "stats found successfully",
-    type: ResponseFindProductsStats,
-  })
-  @ApiOperation({ summary: "Get Products Statistics" })
-  findProductsStats(@Req() req: Request) {
-    return this.productsService.findProductsStats(
-      req["decoded"].id,
-      req["decoded"].inventoryId,
-      req["decoded"].role,
-    );
-  }
-
-  @Get("categoriesSoldCount")
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "category wise sold count found successfully",
-    type: [ResponseFindCategoriesSoldCount],
-  })
-  @ApiOperation({ summary: "Get Category wise sold count" })
-  findCategoryWiseSoldCount(@Req() req: Request) {
-    return this.productsService.findCategoryWiseSoldCount(
-      req["decoded"].id,
-      req["decoded"].inventoryId,
-      req["decoded"].role,
-    );
-  }
-
-  @Get("salesPerMonthForCurrentYear")
-  @ApiResponse({
-    status: HttpStatus.OK,
-    description: "sales per month for current year found successfully",
-    type: [ResponseFindSalesPerMonthForCurrentYear],
-  })
-  @ApiOperation({ summary: "Get Sales Per Month For Current Year" })
-  findSalesPerMonthForCurrentYear(@Req() req: Request) {
-    return this.productsService.findSalesPerMonthForCurrentYear(
-      req["decoded"].id,
-      req["decoded"].inventoryId,
-      req["decoded"].role,
     );
   }
 
