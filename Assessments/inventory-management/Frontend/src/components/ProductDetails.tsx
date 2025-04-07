@@ -7,6 +7,7 @@ import { addToCart, fetchCart, patchCart } from "../pages/cart-page/cartSaga";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { useEffect } from "react";
 
+
 const ProductDetails = ({ productDetails }: { productDetails: any }) => {
   const { userDetails } = useSelector((state: rootState) => state.auth);
   const { cart } = useSelector((state: rootState) => state.cart);
@@ -15,16 +16,17 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
     (item) => item.productId == productDetails.id
   )[0];
 
-  console.log(cartItem);
+ 
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchCart({ page: 1, perPage: 10 }));
+   
   }, []);
 
   return (
-    <div className="bg-primary-white rounded-xl w-[600px] p-5">
+    <div className="bg-primary-white rounded-xl w-full h-full p-5">
       <div className="flex flex-col justify-between gap-3">
         <h2>
           <span className="font-medium">Product Name: </span>{" "}
@@ -79,7 +81,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
         {userDetails?.role == VENDOR &&
           productDetails.inventoryId !== userDetails.inventoryId &&
           (cartItem ? (
-            <div className="w-[100px] py-1 flex justify-around bg-primary-orange rounded-xl items-center text-primary-white">
+            <div className="w-[100px] py-1 flex justify-around bg-dark-orange rounded-xl items-center text-primary-white">
               <span
                 className={`cursor-pointer ${
                   cartItem.quantity > 1
@@ -122,7 +124,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
           ) : (
             <Button
               color="primary-white"
-              bgColor="primary-orange"
+              bgColor="dark-orange"
               width="fit"
               btnContent={"Add to cart"}
               onClickCb={() =>

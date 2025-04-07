@@ -11,12 +11,12 @@ const VendorForm = ({title, id ,initialData}:{title:string, id?:string, initialD
 
     const dispatch = useDispatch()
 
-    const {isLoading,isSuccess} = useSelector((state:rootState)=>state.vendor)
+    const {isLoading} = useSelector((state:rootState)=>state.vendor)
 
 
   return (
     <div className=" bg-primary-white rounded-xl border-1 p-5 w-fit">
-        <h2 className="text-center mb-4 text-2xl font-medium">{title}</h2>
+        <h2 className="text-start mb-4 text-2xl font-medium">{title}</h2>
      <Formik
            initialValues={initialData ? initialData : { 
             firstName:"",
@@ -33,25 +33,24 @@ const VendorForm = ({title, id ,initialData}:{title:string, id?:string, initialD
            
          onSubmit={(values, actions) => {
            if(title == 'Edit Vendor' && id){
-            dispatch(patchVendor({id, formData:values, dispatchAction:()=>dispatch(
+            dispatch(patchVendor({id, formData:values, dispatchAction:()=>{actions.resetForm() ;dispatch(
                     fetchAllVendors({
                       page: 1,
                       searchQuery:"",
                       perPage: 10,
                     })
-                  )}))
+                  )}}))
            }else if(title == 'Add Vendor'){
 
             console.log(values)
-            dispatch(postVendor({formData:values, dispatchAction:()=>dispatch(
+            dispatch(postVendor({formData:values, dispatchAction:()=> {actions.resetForm() ;dispatch(
               fetchAllVendors({
                 page: 1,
                 searchQuery:"",
                 perPage: 10,
               })
-            )}));
-
-            isSuccess && actions.resetForm()
+            )}}));
+           
            }
          
           }}
@@ -105,8 +104,8 @@ const VendorForm = ({title, id ,initialData}:{title:string, id?:string, initialD
             <ErrorMessage name="pinCode" component="div" className="text-xs w-full text-red-500" />
             </div>
             </div>
-            <div className="flex w-full justify-center items-center">
-            {isLoading ? <SmallLoader/> : <Button type="submit" btnContent={"Submit"} color="primary-white" bgColor="primary-orange" width={"[100px]"}/>}
+            <div className="flex w-full justify-end items-center">
+            {isLoading ? <SmallLoader/> : <Button type="submit" btnContent={"Submit"} color="primary-white" bgColor="dark-orange" width={"[100px]"}/>}
             </div>
 
           </Form>

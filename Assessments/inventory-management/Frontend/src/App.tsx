@@ -29,13 +29,15 @@ function App() {
       <div className="flex h-[90vh]">
        <Sidebar/>
         <div
-          className={` duration-300 ease-in-out   ${
+          className={` duration-300 ease-in-out overflow-y-scroll overflow-x-hidden h-[90vh] ${
             isSidebarOpen && isLoggedIn
               ? "translate-x-0 w-full"
-              : "translate-x-[-300px] min-w-[100vw]"
-          } px-5`}
+              : "translate-x-[-250px] min-w-[100vw]"
+          }  `}
         >
-         <Router/>
+       {isLoggedIn &&  <div className="h-24 bg-primary-orange w-[104%] translate-x-[-20px] "></div>}
+        <div className="translate-y-[-100px] h-full"><Router/></div>
+         
         </div>
       </div>
       <ToastContainer position="bottom-right" theme="dark" />

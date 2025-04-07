@@ -10,6 +10,8 @@ import StatusComponent from "../../components/StatusComponent"
 import { fetchAllCategories } from "../product-list-page/productSaga"
 import Modal from "../../components/Modal"
 import SmallLoader from "../../components/SmallLoader"
+import { deselectProduct } from "../product-list-page/productSlice"
+import { useNavigate } from "react-router"
 const UpdateStockForm = lazy(()=>import('../../components/UpdateStockForm'))
 
 
@@ -24,7 +26,7 @@ const LowStocksPage = () => {
   const {lowStocks, isLoading, details} = useSelector((state:rootState)=>state.lowStocks)
   const {userDetails} = useSelector((state:rootState)=>state.auth)
   const {allCategories} = useSelector((state:rootState)=>state.product)
-
+  const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
 
   const columns = [
@@ -40,7 +42,7 @@ const LowStocksPage = () => {
     dispatch(fetchAllLowStocks({
       page:pageNum,
       perPage:10,
-      category:selectedCategory
+      category:selectedCategory,
     }))
   },[pageNum, selectedCategory])
 
@@ -91,9 +93,10 @@ const LowStocksPage = () => {
   });
 
   return (
-    <div> <div className="w-full h-full max-h-full overflow-y-scroll">
+    <div> <div className="w-full h-full max-h-full overflow-y-scroll px-5">
     <div className="my-3">
-      <h1 className="font-bold text-2xl text-center">Dead Stocks</h1>
+      <h1 className="font-bold text-[18px] text-start">Dead Stocks</h1>
+      <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/low-stocks')}>Dead Stocks</span></p>
     </div> 
 
     
@@ -108,11 +111,11 @@ const LowStocksPage = () => {
         />
       
 
-    <div className="flex justify-end py-1">
+    <div className="flex justify-end py-1  mt-12">
     <select
               onChange={(e) => setSelectedCategory(e.target.value)}
               defaultValue={""}
-              className="bg-primary-gray text-primary-white py-1 px-2 rounded-lg"
+              className="bg-primary-white text-text-dark py-1 px-2 rounded-[5px] border-[1px] border-table-border cursor-pointer"
             >
               {" "}
               <option value={""}>All Categories</option>
@@ -139,6 +142,7 @@ const LowStocksPage = () => {
               {
                 content: <MdEdit />,
                 onClickCb: (id: string) => {
+                  dispatch(deselectProduct())
                   setSelectedId(id);
                   setIsModalVisible(true)
                 },

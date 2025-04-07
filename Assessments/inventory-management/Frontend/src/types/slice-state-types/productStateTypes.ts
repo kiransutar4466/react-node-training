@@ -27,7 +27,8 @@ export type productType = {
         stockStatus: string,
         inventoryId: string | null,
         inventoryName: string | null,
-        categories: string[]
+        categories: string[],
+        soldCount?:number
     
 }
 

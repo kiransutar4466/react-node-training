@@ -20,7 +20,7 @@ const UpdateStockForm = ({id, closeModalCb}:{id:string, closeModalCb:Function}) 
 
   return (
     <div className=" bg-primary-white rounded-xl border-1 p-5 w-fit">
-    <h2 className="text-center mb-4 text-2xl font-medium">Update Stocks</h2>
+    <h2 className="text-start mb-4 text-2xl font-medium">Update Stocks</h2>
     {selectedProduct?.quantity && <Formik
        initialValues={{quantity:selectedProduct?.quantity}}
 
@@ -46,7 +46,7 @@ const UpdateStockForm = ({id, closeModalCb}:{id:string, closeModalCb:Function}) 
         </div>
        
         <div className="flex w-full justify-center items-center">
-        { isLoading ? <SmallLoader/> : <Button type="submit" btnContent={"Submit"} color="primary-white" bgColor="primary-orange" width={"[100px]"}/>}
+        { isLoading ? <SmallLoader/> : <Button type="submit" btnContent={"Submit"} color="primary-white" bgColor="dark-orange" width={"[100px]"}/>}
         </div>
 
       </Form>

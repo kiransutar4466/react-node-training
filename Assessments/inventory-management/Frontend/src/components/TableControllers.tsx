@@ -10,20 +10,20 @@ const TableControllers = ({
 }: tableControllersPropsTypes) => {
   return (
     <>
-      <div className="relative flex w-full min-h-10 justify-center gap-3 py-2 items-center bg-secondary-gray rounded-b-md border-1 border-t-0">
+      <div className="relative flex w-full min-h-10 justify-end gap-3 py-2 items-center rounded-b-md ">
         {totolPages > 0 && (
           <>
             <Button
               btnContent={
-                <span className="flex items-center">
-                  <GrFormPreviousLink /> Prev
+                <span className="flex items-center rounded-[10px]">
+                  <GrFormPreviousLink />
                 </span>
               }
               onClickCb={pageNum > 1 ? prevPageCb : () => {}}
               width="fit"
-              color="primary-white"
-              bgColor="primary-gray"
-              classNames="text-sm"
+              color="text-dark"
+              bgColor={pageNum==1?"header-bg":"primary-orange"}
+              classNames="text-sm rounded-[10px] overflow-hidden"
             />
 
             <span className="w-10 text-center">
@@ -32,18 +32,17 @@ const TableControllers = ({
 
             <Button
               btnContent={
-                <span className="flex items-center">
-                  Next <GrFormNextLink />
+                <span className="flex items-center rounded-[10px] overflow-hidden">
+                  <GrFormNextLink />
                 </span>
               }
               onClickCb={pageNum < totolPages ? nextPageCb : () => {}}
               width="fit"
-              color="primary-white"
-              bgColor="primary-gray"
-              classNames="text-sm"
+              color="text-dark"
+              bgColor={pageNum == totolPages ? "header-bg" :"primary-orange"}
+              classNames="text-sm rounded-[10px] overflow-hidden"
             />
 
-            <div className="absolute left-2 text-sm">Per Page-10 </div>
           </>
         )}
       </div>

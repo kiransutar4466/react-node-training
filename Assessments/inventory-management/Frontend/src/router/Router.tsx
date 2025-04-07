@@ -16,6 +16,7 @@ const RedirectComponent = lazy(() => import("../components/RedirectComponent"));
 import Loader from "../components/Loader";
 import PrivateRoute from "../components/PrivateRoute";
 import { ADMIN, VENDOR } from "../constants/roles";
+const Product = lazy(()=>import("../pages/product-page/Product") );
 const ManageVendorsPage = lazy(() => import("../pages/manage-vendors-page/ManageVendorsPage"));
 
 const Router = () => {
@@ -35,6 +36,7 @@ const Router = () => {
             <Route path={"/"} element={<Suspense fallback={<Loader/>}> <DashboardPage /> </Suspense>} />
             <Route path={"/dashboard"} element={<Suspense fallback={<Loader/>}> <DashboardPage /> </Suspense>} />
             <Route path={"/products"} element={<Suspense fallback={<Loader/>}> <ProductListPage /> </Suspense>} />
+            <Route path={"/products/:id"} element={<Suspense fallback={<Loader/>}> <Product /> </Suspense>} />
             <Route path={"/low-stocks"} element={<Suspense fallback={<Loader/>}><LowStocksPage /> </Suspense>} />
             <Route path={"/orders"} element={<Suspense fallback={<Loader/>}><OrdersPage /> </Suspense>} />
 

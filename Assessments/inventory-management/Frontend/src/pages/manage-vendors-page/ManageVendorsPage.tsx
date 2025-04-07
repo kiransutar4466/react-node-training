@@ -14,6 +14,7 @@ import ConfirmForm from "../../components/ConfirmForm";
 import SmallLoader from "../../components/SmallLoader";
 import VendorDetails from "../../components/VendorDetails";
 import useDebounce from "../../hooks/useDebounce";
+import { useNavigate } from "react-router";
 
 const ManageVendorsPage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -30,6 +31,7 @@ const ManageVendorsPage = () => {
   const { vendors, isLoading, details, selectedVendor } = useSelector(
     (state: rootState) => state.vendor
   );
+  const navigate = useNavigate()
 
   const debounceValue = useDebounce({value:searchQuery, delay:1000})
 
@@ -175,11 +177,12 @@ const ManageVendorsPage = () => {
         />
       )}
 
-      <div className="w-full h-full max-h-full overflow-y-scroll">
+      <div className="w-full h-full max-h-full overflow-y-scroll px-5">
         <div className="my-3">
-          <h1 className="font-bold text-2xl text-center">Vendor List</h1>
+          <h1 className="font-bold text-[18px] text-start">Vendors</h1>
+          <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/manage-vendors')}>Manage Vendors</span></p>
         </div>
-        <div className="mb-1 flex justify-between">
+        <div className="mb-1 flex justify-between  mt-12">
           
             <SearchBar
               onChangeCb={(e: { target: { value: SetStateAction<string> } }) =>
@@ -189,7 +192,7 @@ const ManageVendorsPage = () => {
               name={"searchQuery"}
               placeholder={"Enter search query"}
               value={searchQuery}
-              width="400px"
+              width="300px"
             />
 
             <Button

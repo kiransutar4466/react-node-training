@@ -11,6 +11,8 @@ import Modal from "../../components/Modal"
 import OrderDetails from "../../components/OrderDetails"
 import { VENDOR } from "../../constants/roles"
 import useDebounce from "../../hooks/useDebounce"
+import { deselectOrder } from "./ordersSlice"
+import { useNavigate } from "react-router"
 
 
 const OrdersPage = () => {
@@ -27,12 +29,15 @@ const OrdersPage = () => {
     const {orders, isLoading, details} = useSelector((state:rootState)=>state.orders)
     const {userDetails} = useSelector((state:rootState)=>state.auth)
 
-    const columns = [{name:"Sr no.", width:"100px"}, {name:"Product Name", width:"150px"}, {name:"Quantity", width:"100px"}, {name:"Price", width:"100px"}, {name:"Order Status", width:"150px"} , {name:"Payment Status", width:"150px"}]
+    const columns = [{name:"Sr no.", width:"100px"}, {name:"Product Name", width:"250px"}, {name:"Quantity", width:"100px"}, {name:"Price", width:"100px"}, {name:"Order Status", width:"150px"} , {name:"Payment Status", width:"150px"}]
 
     const handleRowClick = (id:string)=>{
+          dispatch(deselectOrder())
          setSelectedId(id)
          setIsModalVisible(true)
     }
+
+    const navigate = useNavigate()
 
     const debounceValue = useDebounce({value:searchQuery, delay:1000})
 
@@ -44,7 +49,7 @@ const OrdersPage = () => {
           id: order.id,
           productName: order.productName,
           quantity:order.quantity,
-          totalPrice:"$" + order.totalPrice,
+          totalPrice:"$ " + order.totalPrice,
           orderStatus: order.orderStatus && (
             <StatusComponent
               bgColor={`${
@@ -107,7 +112,7 @@ if(isInventoryOrders){
 }
    
     
-  },[debounceValue,pageNum, isInventoryOrders, isModalVisible])
+  },[debounceValue,pageNum, isInventoryOrders])
 
 
 
@@ -122,12 +127,13 @@ if(isInventoryOrders){
           }
       />
     
-    <div className="w-full h-full max-h-full overflow-y-scroll">
+    <div className="w-full h-full max-h-full px-5">
     <div className="my-3">
-      <h1 className="font-bold text-2xl text-center">Orders</h1>
+      <h1 className="font-bold text-[18px] text-start">Orders</h1>
+      <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/orders')}>Orders</span></p>
     </div>
 
-    <div className="flex justify-between py-1 h-10">
+    <div className="flex justify-between py-1 h-10  mt-12">
 
     <SearchBar
           onChangeCb={(e: { target: { value: SetStateAction<string> } }) =>
@@ -137,12 +143,12 @@ if(isInventoryOrders){
           name={"searchQuery"}
           placeholder={"Search orders"}
           value={searchQuery}
-          width="400px"
+          width="300px"
         />
 
-      {userDetails?.role==VENDOR && <div className="flex justify-between gap-3 p-1 items-center bg-primary-white mx-2">
-        <span onClick={()=>setIsInventoryOrders(false)} className={`w-[150px] cursor-pointer text-center border-1 rounded-lg ${isInventoryOrders ? 'text-secondary-gray' : "text-primary-black"}`} >My orders</span>
-        <span onClick={()=>setIsInventoryOrders(true)} className={`w-[150px] cursor-pointer text-center border-1 rounded-lg ${isInventoryOrders ? "text-primary-black" :  'text-secondary-gray'}`}>Inventory Orders</span>
+      {userDetails?.role==VENDOR && <div className="flex justify-between gap-1 items-center px-1  py-2  bg-primary-white border-[1px]  mx-2 text-xs rounded-[5px]">
+        <span onClick={()=>setIsInventoryOrders(false)} className={`w-[130px] h-fit cursor-pointer p-1 text-center rounded-[5px] ${isInventoryOrders ? 'text-secondary-gray ' : "text-primary-white drop-shadow-md bg-dark-orange border-none"}`} >My Orders</span>
+        <span onClick={()=>setIsInventoryOrders(true)} className={`w-[130px]  h-fit cursor-pointer p-1 text-center  rounded-[5px] ${isInventoryOrders ? "text-primary-white drop-shadow-md bg-dark-orange border-none" :  'text-secondary-gray'}`}>Inventory Orders</span>
       </div>}
     
     </div>

@@ -18,7 +18,7 @@ const Button = ({
         backgroundColor:bgColor
       }}
       onClick={(e) => onClickCb && onClickCb(e)}
-      className={clsx(`text-${color} bg-${bgColor} h-fit cursor-pointer drop-shadow-md px-2 py-1 rounded-lg w-${width}  ${
+      className={clsx(`text-${color} bg-${bgColor} h-fit cursor-pointer  px-2 py-1 rounded-[5px] w-${width}  ${
         classNames && classNames
       }`)}
     >

@@ -19,9 +19,10 @@ import ConfirmForm from "../../components/ConfirmForm";
 const ProductForm = lazy(() => import("../../components/ProductForm"));
 import { deselectProduct } from "./productSlice";
 import SmallLoader from "../../components/SmallLoader";
-import ProductDetails from "../../components/ProductDetails";
 import StatusComponent from "../../components/StatusComponent";
 import useDebounce from "../../hooks/useDebounce";
+import { useNavigate } from "react-router";
+
 
 const ProductListPage = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -38,6 +39,7 @@ const ProductListPage = () => {
   const [category, setCategory] = useState<string>("");
   const [inventoryId, setInventoryId] = useState<string | undefined>("");
   const [data, setData] = useState<any>();
+  const navigate = useNavigate()
 
   const dispatch = useDispatch();
 
@@ -89,9 +91,9 @@ const ProductListPage = () => {
 
   const columns = [
     { name: "Sr no.", width: "70px" },
-    { name: "Product Name", width: "200px" },
+    { name: "Product Name", width: "250px" },
     { name: "Price", width: "100px" },
-    { name: "Vendor", width: "200px" },
+    { name: "Vendor", width: "250px" },
     { name: "Status", width: "150px" },
     { name: "Categories", width: "200px" },
   ];
@@ -140,8 +142,9 @@ const ProductListPage = () => {
   const handleRowClick = (id: string) => {
     dispatch(deselectProduct());
     setSelectedId(id);
-    setModalReason("viewProductDetails");
-    setIsModalVisible(true);
+    navigate(`/products/${id}`)
+    // setModalReason("viewProductDetails");
+    // setIsModalVisible(true);
   };
 
 
@@ -175,7 +178,6 @@ const ProductListPage = () => {
 
 
 
-
   useEffect(() => {
     dispatch(
       fetchAllProducts({
@@ -186,7 +188,7 @@ const ProductListPage = () => {
         inventoryId: inventoryId,
       })
     );
-  }, [pageNum, inventoryId, debounceValue, category, dispatch, isModalVisible]);
+  }, [pageNum, inventoryId, debounceValue, category]);
   
 
   useEffect(() => {
@@ -233,7 +235,7 @@ const ProductListPage = () => {
         />
       )}
 
-      {modalReason == "viewProductDetails" && selectedData && (
+      {/* {modalReason == "viewProductDetails" && selectedData && (
         <Modal
           isVisible={isModalVisible}
           toggleIsVisibleCb={handleToggleModal}
@@ -243,7 +245,7 @@ const ProductListPage = () => {
             </Suspense>
           }
         />
-      )}
+      )} */}
 
       {modalReason == "addProduct" && (
         <Modal
@@ -265,11 +267,14 @@ const ProductListPage = () => {
           }
         />
       )}
-      <div className="w-full h-full max-h-full overflow-y-scroll">
+
+
+      <div className="w-full h-full max-h-full px-5">
         <div className="my-3">
-          <h1 className="font-bold text-2xl text-center">Product List</h1>
+          <h1 className="font-bold text-[18px] text-start">Products</h1>
+          <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/products')}>Products</span></p>
         </div>
-        <div className="mb-1 flex justify-between">
+        <div className="mb-1 flex justify-between gap-2  mt-12">
           <div className="flex gap-2 ">
           <SearchBar
               placeholder="Search by name"
@@ -277,17 +282,16 @@ const ProductListPage = () => {
               id="searchProduct"
               name="searchProduct"
               value={searchTerm}
-              width="400px"
+              width="300px"
             />
-           
-          </div>
 
-          <div className="flex gap-2">
+          {/* <FilterComponent/> */}
+
           {userDetails?.role == VENDOR && (
               <select
                 onChange={(e) => handleInventoryChange(e)}
                 defaultValue={"allProducts"}
-                className="bg-primary-gray text-primary-white py-1 px-2 rounded-lg"
+                className="bg-primary-white text-text-dark py-1 px-2 rounded-[5px] border-[1px] border-table-border cursor-pointer"
               >
                 <option value={"myProducts"}>My Products</option>
                 <option value={"allProducts"}>All Products</option>
@@ -297,7 +301,7 @@ const ProductListPage = () => {
             <select
               onChange={(e) => setCategory(e.target.value)}
               defaultValue={""}
-              className="bg-primary-gray text-primary-white py-1 px-2 rounded-lg"
+              className="bg-primary-white text-text-dark py-1 px-2 rounded-[5px] border-[1px] border-table-border cursor-pointer"
             >
               {" "}
               <option value={""}>All Categories</option>
@@ -308,6 +312,11 @@ const ProductListPage = () => {
               ))}
             </select>
 
+           
+          </div>
+        
+          <div className="flex gap-2">
+          
           {userDetails?.role == VENDOR && (
               <Button
                 btnContent={"Add Product"}

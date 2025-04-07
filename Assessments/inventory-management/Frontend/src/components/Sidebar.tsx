@@ -6,6 +6,7 @@ import {
   MdInventory,
   MdLogout,
   MdManageAccounts,
+  MdSettings,
   MdSpaceDashboard,
 } from "react-icons/md";
 import { FaBoxOpen, FaShoppingCart } from "react-icons/fa";
@@ -42,8 +43,8 @@ const Sidebar = () => {
     <>
       <div
         className={`flex flex-col  ${
-          isSidebarOpen && isLoggedIn? "translate-x-0" : " translate-x-[-310px]"
-        } w-[300px] min-w-[300px] bg-secondary-black h-full py-2 px-4 justify-between  duration-300 ease-in-out `}
+          isSidebarOpen && isLoggedIn? "translate-x-0" : " translate-x-[-260px]"
+        } w-[250px] min-w-[250px] bg-sidebar-bg h-full py-2 px-4 justify-between  duration-300 ease-in-out border-[1px] border-table-border `}
       >
         <div className="flex flex-col">
           <Link to={'/dashboard'}>
@@ -57,9 +58,9 @@ const Sidebar = () => {
               setSelectedTab('dashboard');
             }}
             width="full"
-            color="primary-white"
-            bgColor={ selectedTab == 'dashboard' || selectedTab == '/' ? 'primary-orange' : 'primary-gray'}
-            classNames={"text-left mb-2"}
+            color={selectedTab == 'dashboard' || selectedTab == '/' ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark"}
           />
           </Link>
           
@@ -75,9 +76,9 @@ const Sidebar = () => {
               setSelectedTab('products');
             }}
             width="full"
-            color="primary-white"
-            bgColor={ selectedTab == 'products' ? 'primary-orange' : 'primary-gray'}
-            classNames={"text-left mb-2"}
+            color={selectedTab == 'products'  ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark"}
           />
           </Link>
           
@@ -93,9 +94,9 @@ const Sidebar = () => {
               setSelectedTab('orders');
             }}
             width="full"
-            color="primary-white"
-            bgColor={ selectedTab == 'orders' ? 'primary-orange' : 'primary-gray'}
-            classNames={"text-left mb-2"}
+            color={selectedTab == 'orders' ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark"}
           />
           </Link>
          
@@ -111,9 +112,9 @@ const Sidebar = () => {
               setSelectedTab('cart');
             }}
             width="full"
-            color="primary-white"
-            bgColor={ selectedTab == 'cart' ? 'primary-orange' : 'primary-gray'}
-            classNames={"text-left mb-2"}
+            color={selectedTab == 'cart'  ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark"}
           />
          </Link>} 
           
@@ -130,9 +131,9 @@ const Sidebar = () => {
               setSelectedTab('inventory');
             }}
             width="full"
-            color="primary-white"
-            bgColor={ selectedTab == 'inventory' ? 'primary-orange' : 'primary-gray'}
-            classNames={"text-left mb-2"}
+            color={selectedTab == 'inventory'  ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark drop-shadow-none"}
           />
           </Link>}
           
@@ -149,15 +150,15 @@ const Sidebar = () => {
               setSelectedTab('low-stocks');
             }}
             width="full"
-            color="primary-white"
-            bgColor={ selectedTab == 'low-stocks' ? 'primary-orange' : 'primary-gray'}
-            classNames={"text-left mb-2"}
+            color={selectedTab == 'low-stocks'  ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark"}
           />
          </Link>
           
 
         </div>
-        <div className="flex flex-col">
+        <div className="flex flex-col border-t-[1px] border-table-border pt-2">
 
           {userDetails?.role == ADMIN &&  <Link to={'/manage-vendors'}>
          <Button
@@ -171,9 +172,27 @@ const Sidebar = () => {
               setSelectedTab('manage-vendors');
             }}
             width="full"
-            color="primary-white"
-            bgColor={ selectedTab == 'manage-vendors' ? 'primary-orange' : 'primary-gray'}
-            classNames={"text-left mb-2"}
+            color={selectedTab == 'manage-vendors'  ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark"}
+          />
+         </Link>}
+
+         {userDetails?.role == VENDOR &&  <Link to={'/settings'}>
+         <Button
+            btnContent={
+              <span className="flex items-center gap-2">
+                {" "}
+                <MdSettings />Settings
+              </span>
+            }
+            onClickCb={() => {
+              setSelectedTab('settings');
+            }}
+            width="full"
+            color={selectedTab == 'settings'  ? 'dark-orange' :'text-dark'}
+            bgColor='primary-white'
+            classNames={"text-left mb-2 hover:bg-header-bg hover:text-text-dark"}
           />
          </Link>}
           
@@ -189,7 +208,7 @@ const Sidebar = () => {
             }}
             width="full"
             color={"primary-white"}
-            bgColor={"primary-black"}
+            bgColor={"dark-orange"}
             classNames={"text-left mb-2"}
           />
         </div>

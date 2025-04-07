@@ -20,7 +20,7 @@ export const patchProduct = (payload:{id:string, formData:ProductFormInputType ,
     return {type:EDIT_PRODUCT, payload}
 }
 
-export const addProduct = (payload:ProductFormInputType)=>{
+export const addProduct = (payload:{formData:ProductFormInputType , dispatchAction?:Function})=>{
     return {type:POST_PRODUCT, payload}
 }
 
@@ -91,16 +91,17 @@ function* editProduct(action:{type:string, payload:{id:string, formData:ProductF
 
 }
 
-function* postProduct(action:{type:string, payload:ProductFormInputType}){
+function* postProduct(action:{type:string, payload:{formData:ProductFormInputType , dispatchAction?:Function}}){
 
     yield put(startProductApiRequest());
 
-    const response: {data?:any, error?:string} = yield postProductService(action.payload);
+    const response: {data?:any, error?:string} = yield postProductService(action.payload.formData);
     
     
 
     if(response.data){
          yield put(successAddProduct())
+         yield action.payload.dispatchAction && action.payload.dispatchAction()
     }else{
          yield put(failProductApiRequest(response))
     }

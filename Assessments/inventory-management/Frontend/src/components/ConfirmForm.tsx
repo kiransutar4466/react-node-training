@@ -12,9 +12,9 @@ const ConfirmForm = ({message, buttonContent, actionCb, cancelCb}:{message:strin
 
      <div className="actions flex justify-between w-full">
 
-     <Button onClickCb={cancelCb} bgColor="primary-black" color="primary-white" width="fit" btnContent={"Cancel"}/>
+     <Button onClickCb={cancelCb} bgColor="button-blue" color="primary-white" width="fit" btnContent={"Cancel"}/>
       
-     <Button onClickCb={actionCb} bgColor="primary-orange" color="primary-white" width="fit" btnContent={buttonContent}/>
+     <Button onClickCb={actionCb} bgColor="dark-orange" color="primary-white" width="fit" btnContent={buttonContent}/>
 
      </div>
 

@@ -8,9 +8,9 @@ const Table = ({ tableData, columns ,isActions, actions, pageNum, perPage, isLoa
 
   return (
     <>
-    <div className=" ">
-     <div className="h-fit w-full overflow-x-scroll  border-1 border-b-0 rounded-t-md overflow-hidden">
-        <div className="flex border-b-1 justify-between items-center bg-secondary-gray p-2 w-full min-w-fit">
+    <div className="h-fit">
+     <div className="h-fit w-full border-x-[1px] border-table-border bg-sidebar-bg overflow-x-scroll rounded-t-[5px] overflow-hidden">
+        <div className="flex bg-header-bg border-table-border border-y-[1px] text-text-dark justify-between items-center  p-2 w-full min-w-fit">
           {columns.map((column, index: number | string) => (
             <span
             style={{
@@ -27,7 +27,7 @@ const Table = ({ tableData, columns ,isActions, actions, pageNum, perPage, isLoa
           {isActions && <span className="text-center font-medium w-[100px]">Actions</span>}
         </div>
 
-        <div className="h-[405px]">
+        <div className="">
           {isLoading ? <Loader/> : tableData.map(
             (
               row: { [s: string]: unknown } | ArrayLike<unknown> | any,
@@ -37,7 +37,7 @@ const Table = ({ tableData, columns ,isActions, actions, pageNum, perPage, isLoa
                 <div
                   
                   key={index}
-                  className="flex justify-between items-center bg-primary-white p-2 border-b-1 hover:bg-tertiary-gray w-full min-w-fit"
+                  className="flex justify-between items-center bg-primary-white p-2  border-table-border border-b-[1px] hover:bg-header-bg w-full min-w-fit duration-100 ease-in-out"
                 >
                   {Object.values(row).map((data: any, key: number) => {
                     return (
@@ -49,7 +49,7 @@ const Table = ({ tableData, columns ,isActions, actions, pageNum, perPage, isLoa
                         maxWidth:columnWidth[key],
                       }}
                         key={key}
-                        className={clsx(`text-left ${key==1 && onClickRowCb &&  'cursor-pointer hover:underline hover:underline-offset-4 hover:text-blue-700'}`)}
+                        className={clsx(`text-left ${key==1 && onClickRowCb &&  'cursor-pointer  hover:underline-offset-4 hover:text-dark-orange duration-100 ease-in-out'}`)}
                       >
                         {key == 0 && columns[0].name=="Sr no." ? index + 1 + ((pageNum-1)*perPage): data}
                       </span>

@@ -4,12 +4,12 @@ import { failLowStocksApiRequest, startLowStocksApiRequest, successFetchAllLowSt
 import { getAllLowStocksService } from "../../services/lowStockService";
 
 
-export const fetchAllLowStocks = (payload:{ page: number; perPage: number; category: string; })=>{
+export const fetchAllLowStocks = (payload:{ page: number; perPage: number; category: string})=>{
     return {type :  FETCH_ALL_LOW_STOCKS, payload}
 }
 
 
-function* getAllLowStocks(action:{type:string, payload:{ page: number; perPage: number; category: string; }}){
+function* getAllLowStocks(action:{type:string, payload:{ page: number; perPage: number; category: string;}}){
 
     yield put(startLowStocksApiRequest());
 

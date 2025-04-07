@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchOrderById, patchInventoryOrder, patchOrder } from "../pages/orders-page/ordersSaga";
+import { fetchAllOrders, fetchOrderById, patchInventoryOrder, patchOrder } from "../pages/orders-page/ordersSaga";
 import { rootState } from "../store/store";
 import StatusComponent from "./StatusComponent";
 import Button from "./Button";
+import { VENDOR } from "../constants/roles";
 
 
 const OrderDetails = ({id, isSeller}:{id:string, isSeller:boolean}) => {
@@ -12,6 +13,7 @@ const OrderDetails = ({id, isSeller}:{id:string, isSeller:boolean}) => {
     const {selectedOrder} = useSelector((state:rootState)=>state.orders)
     const [selectedOrderStatus, setSelectedOrderStatus] = useState<string>("")
     const [selectedPaymentStatus, setSelectedPaymenStatus] = useState<string>("")
+    const {userDetails} = useSelector((state:rootState)=>state.auth)
     useEffect(()=>{
 
         dispatch(fetchOrderById(id))
@@ -21,6 +23,16 @@ const OrderDetails = ({id, isSeller}:{id:string, isSeller:boolean}) => {
         }
  
     },[])
+
+    useEffect(()=>{
+
+   
+      if(selectedOrder?.orderStatus && selectedOrder?.paymentStatus){
+          setSelectedOrderStatus(selectedOrder?.orderStatus?.toString())
+          setSelectedPaymenStatus(selectedOrder?.paymentStatus?.toString())
+      }
+
+  },[selectedOrder])
 
     console.log(selectedOrder)
 
@@ -100,13 +112,13 @@ const OrderDetails = ({id, isSeller}:{id:string, isSeller:boolean}) => {
     
     {!isSeller && selectedOrder?.orderStatus== "PENDING" && <div className="flex justify-end w-full">
 
-         <Button onClickCb={()=>{ console.log('called'); dispatch(patchOrder({id, formData:{orderStatus:"CANCELLED"}, dispatchAction:()=>dispatch(fetchOrderById(id))}))}} btnContent="Cancel Order" width="fit" bgColor="primary-orange" color="primary-white"/>
+         <Button onClickCb={()=>{ console.log('called'); dispatch(patchOrder({id, formData:{orderStatus:"CANCELLED"}, dispatchAction:()=>{dispatch(fetchOrderById(id)); dispatch(fetchAllOrders({page:1,perPage:10,search:""}))}}))}} btnContent="Cancel Order" width="fit" bgColor="primary-orange" color="primary-white"/>
         
         </div>}
 
-        {isSeller && <div>
-
-            <div className="flex flex-col w-full gap-3 mt-3 font-medium">
+        {isSeller && userDetails?.role == VENDOR && selectedOrderStatus &&  selectedPaymentStatus&& <div>
+           
+            <div className="flex  w-full gap-3 mt-8 font-medium mb-6">
             <div className="w-fit">
             <label >Update Order Status: </label>{" "}
             <select defaultValue={selectedOrderStatus} onChange={(e)=>setSelectedOrderStatus(e.target.value)} className="px-2 py-1 rounded-lg bg-secondary-white border-1 font-normal text-xs">
@@ -129,10 +141,8 @@ const OrderDetails = ({id, isSeller}:{id:string, isSeller:boolean}) => {
            <div className="flex justify-end">
            <Button onClickCb={()=>{ 
             (selectedOrderStatus !== selectedOrder.orderStatus || selectedPaymentStatus !== selectedOrder.paymentStatus) &&
-            dispatch(patchInventoryOrder({id, formData:{orderStatus:selectedOrderStatus, paymentStatus:selectedPaymentStatus}, dispatchAction:()=>dispatch(fetchOrderById(id))}))}} btnContent="Submit" width="fit" bgColor="primary-orange" color="primary-white"/>
+            dispatch(patchInventoryOrder({id, formData:{orderStatus:selectedOrderStatus, paymentStatus:selectedPaymentStatus}, dispatchAction:()=>dispatch(fetchOrderById(id))}))}} btnContent="Submit" width="fit" bgColor="dark-orange" color="primary-white"/>
            </div>
-
-           
 
         </div>
         }

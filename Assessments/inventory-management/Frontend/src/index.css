@@ -1,30 +1,44 @@
 @import "tailwindcss";
 
-@theme{
-    
-    --color-primary-black: #000000;
-    --color-secondary-black: #1E1B1B;
-    --color-primary-white: #FFFFFF;
-    --color-secondary-white: #FFFFE4;
-    --color-tertiary-gray:#E2E2E2;
-    --color-primary-orange: #FF4D00;
-    --color-secondary-orange: #FF6d2e;
-    --color-primary-gray: #4A4543;
-    --color-secondary-gray: #898583;
-    --font-roboto:"Roboto";
-    --font-rubik:"Rubik";
-    --font-poppins:"Poppins";
-
+@theme {
+  --color-primary-black: #000000;
+  --color-secondary-black: #1e1b1b;
+  --color-primary-white: #ffffff;
+  --color-secondary-white: #ffffe4;
+  --color-tertiary-gray: #e2e2e2;
+  --color-secondary-orange: #fcf1ea;
+  --color-primary-gray: #4a4543;
+  --color-secondary-gray: #898583;
+  --font-roboto: "Roboto";
+  --font-rubik: "Rubik";
+  --font-poppins: "Poppins";
+  --color-background-light: #f9fafb;
+  --color-sidebar-bg: #ffffff;
+  --color-header-bg: #f1f5f9;
+  --color-card-border: #e5e7eb;
+  --color-table-border: #d1d5db;
+  --color-primary-blue: #2563eb; /* Used for active icons/text */
+  --color-hover-blue: #1d4ed8;
+  --color-primary-orange: #ffa726; /* Add Product button */
+  --color-dark-orange: #fb8c00;
+  --color-button-blue: #0f172a; /* POS button */
+  --color-button-hover: #1e293b;
+  --color-success-green: #22c55e;
+  --color-alert-red: #ef4444;
+  --color-text-dark: #111827;
+  --color-text-muted: #6b7280;
+  --color-text-light: #9ca3af;
+  --color-avatar-border: #e2e8f0;
 }
 
-*{
-    scrollbar-width: none !important;
-    scrollbar-color: none;  
+* {
+  scrollbar-width: none !important;
+  scrollbar-color: none;
 }
 
-body{
-    background-color: var(--color-secondary-white);
-    font-family: var(--font-rubik);
-    width: 100vw;
-    overflow-x: hidden;
+body {
+  background-color: var(--color-background-light);
+  font-family: var(--font-rubik);
+  width: 100vw;
+  overflow-x: hidden;
 }
