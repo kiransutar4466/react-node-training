@@ -53,7 +53,7 @@ export class LoginMiddleware implements NestMiddleware {
         case "invalid token":
           throw new HttpException("invalid token", HttpStatus.BAD_REQUEST);
         case "jwt expired":
-          throw new HttpException("jwt expired", HttpStatus.BAD_REQUEST);
+          throw new HttpException("token expired", HttpStatus.BAD_REQUEST);
         case "invalid signature":
           throw new HttpException("invalid token", HttpStatus.BAD_REQUEST);
         default:
