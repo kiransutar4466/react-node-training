@@ -62,7 +62,6 @@ export class DashboardService {
         where.inventoryId = inventoryId;
         where.inventory = { vendorId };
       }
-
       return await this.prisma.orderItem.count({
         where,
       });
@@ -77,7 +76,6 @@ export class DashboardService {
       if (role === "VENDOR") {
         return 1;
       }
-
       return await this.prisma.inventory.count({
         where: { isDeleted: false, vendor: { role: "VENDOR" } },
       });

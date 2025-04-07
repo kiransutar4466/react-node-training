@@ -47,6 +47,9 @@ export class ResponseFindSingleOrderItemDto {
 
   @ApiProperty({ example: "PENDING" })
   paymentStatus: PaymentStatus;
+
+  @ApiProperty({ example: '"2025-04-06T15:01:19.618Z"' })
+  createdAt: Date;
 }
 
 export class ResponseFindAllOrdersDto {

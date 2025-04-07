@@ -102,11 +102,21 @@ export class InventoryService {
     role: string,
   ) {
     try {
-      const { page, perPage, search } = queryFindOrdersDto;
-      const where: any = {};
+      const { page, perPage, search, startDate, endDate } = queryFindOrdersDto;
+      const where: any = { isDeleted: false };
       if (role === "VENDOR") {
         where.inventoryId = inventoryId;
         where.inventory = { vendorId };
+      }
+
+      if (startDate || endDate) {
+        where.createdAt = {};
+        if (startDate) {
+          where.createdAt.gte = new Date(startDate);
+        }
+        if (endDate) {
+          where.createdAt.lte = new Date(endDate);
+        }
       }
 
       if (search) {
@@ -136,6 +146,7 @@ export class InventoryService {
           totalPrice: true,
           orderStatus: true,
           paymentStatus: true,
+          createdAt: true,
           product: { select: { name: true } },
           order: {
             select: {

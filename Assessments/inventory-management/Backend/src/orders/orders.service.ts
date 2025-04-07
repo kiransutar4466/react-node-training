@@ -205,6 +205,7 @@ export class OrdersService {
           totalPrice: true,
           orderStatus: true,
           paymentStatus: true,
+          createdAt: true,
           product: { select: { name: true } },
         },
       });

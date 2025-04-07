@@ -7,6 +7,7 @@ import {
   MinLength,
   IsUUID,
   IsNumber,
+  IsDateString,
 } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
 import { Type } from "class-transformer";
@@ -85,4 +86,14 @@ export class QueryFindOrdersDto {
   @IsString()
   @MaxLength(256)
   search?: string;
+
+  @ApiProperty({ required: false, example: "2025-01-01" })
+  @IsOptional()
+  @IsDateString()
+  startDate?: string;
+
+  @ApiProperty({ required: false, example: "2025-04-01" })
+  @IsOptional()
+  @IsDateString()
+  endDate?: string;
 }
