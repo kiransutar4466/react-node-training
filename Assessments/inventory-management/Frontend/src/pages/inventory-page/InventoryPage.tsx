@@ -8,48 +8,57 @@ import SearchBar from "../../components/SearchBar";
 import useDebounce from "../../hooks/useDebounce";
 import { useNavigate } from "react-router";
 
-
 const InventoryPage = () => {
+  const { inventories, isLoading, details } = useSelector(
+    (state: rootState) => state.inventory,
+  );
+  const [pageNum, setPageNum] = useState(1);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const {inventories, isLoading, details} = useSelector((state:rootState)=>state.inventory)
-  const [pageNum, setPageNum] = useState(1)
-  const [searchQuery, setSearchQuery] = useState<string>("")
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const columns = [
+    { name: "Sr no.", width: "100px" },
+    { name: "Inventory Name", width: "200px" },
+    { name: "City", width: "100px" },
+    { name: "Pincode", width: "100px" },
+    { name: "Vendor", width: "150px" },
+    { name: "Total Stocks", width: "100px" },
+  ];
+  const debounceValue = useDebounce({ value: searchQuery, delay: 1000 });
 
-  const columns = [{name:"Sr no.", width:"100px"}, {name:"Inventory Name", width:"200px"}, {name:"City", width:"100px"}, {name:"Pincode", width:"100px"}, {name:"Vendor", width:"150px"} ,{name:"Total Stocks", width:"100px"}]
-  const debounceValue = useDebounce({value:searchQuery, delay:1000})
-  
-  useEffect(()=>{
-    dispatch(fetchAllInventories({
-      page:pageNum,
-      perPage:10,
-      search:debounceValue
-    }))
-  },[pageNum, debounceValue])
-
-
-
+  useEffect(() => {
+    dispatch(
+      fetchAllInventories({
+        page: pageNum,
+        perPage: 10,
+        search: debounceValue,
+      }),
+    );
+  }, [pageNum, debounceValue]);
 
   return (
-   <>
-    <div className="w-full h-full max-h-full overflow-y-scroll px-5">
+    <>
+      <div className="w-full h-full max-h-full px-5">
         <div className="my-3">
-          <h1 className="font-bold text-[18px] text-startr">Inventories</h1>
-          <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/inventory')}>Inventory</span></p>
+          <h1 className="font-bold text-[18px] text-start">Inventories</h1>
+          <p className="text-sm cursor-pointer">
+            <span onClick={() => navigate("/")}>Home</span>/
+            <span onClick={() => navigate("/inventory")}>Inventory</span>
+          </p>
         </div>
 
         <div className="flex justify-start py-1 h-10 mt-12">
-        <SearchBar
-              onChangeCb={(e: { target: { value: SetStateAction<string>; }; }) =>
-                setSearchQuery(e.target.value)
-              }
-              id={"searchQuery"}
-              name={"searchQuery"}
-              placeholder={"Search inventory"}
-              value={searchQuery}
-              width="300px"
-            />
+          <SearchBar
+            onChangeCb={(e: { target: { value: SetStateAction<string> } }) =>
+              setSearchQuery(e.target.value)
+            }
+            id={"searchQuery"}
+            name={"searchQuery"}
+            placeholder={"Search inventory"}
+            value={searchQuery}
+            width="300px"
+          />
         </div>
 
         {inventories && (
@@ -75,10 +84,9 @@ const InventoryPage = () => {
             totolPages={details?.totalPages}
           />
         )}
-     </div>
-   
-   </>
-  )
-}
+      </div>
+    </>
+  );
+};
 
-export default InventoryPage
+export default InventoryPage;

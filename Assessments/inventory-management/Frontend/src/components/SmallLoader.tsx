@@ -1,5 +1,3 @@
-
-
 const SmallLoader = () => {
   return (
     <div className="flex-col gap-4 w-full flex items-center justify-center">
@@ -9,7 +7,7 @@ const SmallLoader = () => {
         <div className="w-5 h-5 border-4 border-transparent text-secondary-orange text-2xl animate-spin flex items-center justify-center border-t-secondary-orange rounded-full"></div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SmallLoader
+export default SmallLoader;

@@ -1,6 +1,6 @@
 export type tableControllersPropsTypes = {
-    nextPageCb:Function, 
-    prevPageCb:Function, 
-    pageNum:number,
-    totolPages:number
-}
+  nextPageCb: Function;
+  prevPageCb: Function;
+  pageNum: number;
+  totolPages: number;
+};

@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { rootState } from "../../store/store";
 import { useEffect, useState } from "react";
 import {
-
   fetchVendorById,
   patchVendor,
 } from "../manage-vendors-page/vendorSaga";
@@ -16,10 +15,10 @@ import Loader from "../../components/Loader";
 
 const SettingsPage = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const { isLoading, selectedVendor } = useSelector(
-    (state: rootState) => state.vendor
+    (state: rootState) => state.vendor,
   );
   const { userDetails } = useSelector((state: rootState) => state.auth);
   const [initialData, setInitialData] =
@@ -36,18 +35,21 @@ const SettingsPage = () => {
   return (
     <div className="px-5 ">
       <div className="my-3">
-          <h1 className="font-bold text-[18px] text-start">Settings</h1>
-          <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/settings')}>Settings</span></p>
-        </div>
+        <h1 className="font-bold text-[18px] text-start">Settings</h1>
+        <p className="text-sm cursor-pointer">
+          <span onClick={() => navigate("/")}>Home</span>/
+          <span onClick={() => navigate("/settings")}>Settings</span>
+        </p>
+      </div>
 
       <div className="flex justify-start gap-5 p-5 items-start min-h-[500px]  mt-12">
         <div className="flex items-start justify-start h-full">
-        {userDetails?.firstName && userDetails?.lastName && (
-          <span className="bg-primary-orange text-primary-white border-text-dark text-2xl rounded-full h-24 w-24 text-center flex justify-center items-center font-medium border-[1px] mb-2">
-            {userDetails.firstName[0] +
-              userDetails.lastName[0].toLocaleUpperCase()}
-          </span>
-        )}
+          {userDetails?.firstName && userDetails?.lastName && (
+            <span className="bg-primary-orange text-primary-white border-text-dark text-2xl rounded-full h-24 w-24 text-center flex justify-center items-center font-medium border-[1px] mb-2">
+              {userDetails.firstName[0] +
+                userDetails.lastName[0].toLocaleUpperCase()}
+            </span>
+          )}
         </div>
 
         {initialData ? (
@@ -70,7 +72,7 @@ const SettingsPage = () => {
                     id: userDetails?.id,
                     formData: values,
                     dispatchAction: () => {},
-                  })
+                  }),
                 );
             }}
           >
@@ -178,7 +180,7 @@ const SettingsPage = () => {
                   />
                 </div>
               </div>
-            
+
               <div className="flex gap-3 flex-col mb-4">
                 <div className="flex flex-col gap-1 max-w-62 w-62 h-20 max-h-20">
                   <label htmlFor="city">City</label>
@@ -214,23 +216,24 @@ const SettingsPage = () => {
                   />
                 </div>
                 <div className="flex gap-3 justify-start items-center  h-20">
-                {isLoading ? (
-                  <SmallLoader />
-                ) : (
-                  <Button
-                    type="submit"
-                    btnContent={"Update Profile"}
-                    color="primary-white"
-                    bgColor="dark-orange"
-                    width={"fit"}
-                  />
-                )}
+                  {isLoading ? (
+                    <SmallLoader />
+                  ) : (
+                    <Button
+                      type="submit"
+                      btnContent={"Update Profile"}
+                      color="primary-white"
+                      bgColor="dark-orange"
+                      width={"fit"}
+                    />
+                  )}
+                </div>
               </div>
-              </div>
-              
             </Form>
           </Formik>
-        ):<Loader/>}
+        ) : (
+          <Loader />
+        )}
       </div>
     </div>
   );

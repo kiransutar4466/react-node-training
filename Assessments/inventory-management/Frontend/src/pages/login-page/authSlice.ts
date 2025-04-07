@@ -33,11 +33,10 @@ const authSlice = createSlice({
       localStorage.setItem("token", action.payload.token);
 
       toast.success(
-        "Logged In Successfully! Welcome " + state.userDetails.firstName + " !"
+        "Logged In Successfully! Welcome " + state.userDetails.firstName + " !",
       );
     },
     authFailure: (state, action) => {
-    
       state.isLoading = false;
       state.error = action.payload[0];
       toast.error(state.error);
@@ -46,19 +45,16 @@ const authSlice = createSlice({
     setLogin: (state) => {
       state.isLoggedIn = true;
       const token = localStorage.getItem("token");
-      if(localStorage.getItem("token")){
-        state.userDetails = jwtDecode<jwtPayloadType>(token?token:'');
+      if (localStorage.getItem("token")) {
+        state.userDetails = jwtDecode<jwtPayloadType>(token ? token : "");
       }
-     
     },
 
-    logoutUser: (state,action) => {
-
-      
+    logoutUser: (state, action) => {
       state.isLoggedIn = false;
       state.userDetails = null;
       localStorage.removeItem("token");
-      action.payload.navigate('/login')
+      action.payload.navigate("/login");
 
       toast.success("Logged Out Successfully!!");
     },

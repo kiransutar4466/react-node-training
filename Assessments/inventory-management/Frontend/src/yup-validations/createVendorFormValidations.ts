@@ -1,7 +1,6 @@
 import * as Yup from "yup";
 
 export const createVendorFormValidations = Yup.object().shape({
-
   email: Yup.string()
     .email("Invalid email")
     .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, "Invalid email format")
@@ -9,7 +8,7 @@ export const createVendorFormValidations = Yup.object().shape({
 
   contactNumber: Yup.string()
     .matches(/^[0-9]+$/, "Must be only digits")
-    .min(10,"A Phone number must have at least than 10 digits")
+    .min(10, "A Phone number must have at least than 10 digits")
     .required("A phone number is required"),
 
   pinCode: Yup.string()

@@ -12,7 +12,7 @@ const Modal = ({
         onClick={(e: any) => {
           toggleIsVisibleCb(e);
         }}
-        className="absolute flex justify-center items-center w-full h-[100vh] min-h-[100vh] top-0 left-0 bg-secondary-gray/50 z-40 "
+        className="absolute flex justify-center items-center w-full h-[100vh] min-h-[100vh] top-[-20px] left-0 bg-secondary-gray/50 z-40 "
       >
         <div onClick={(e) => e.stopPropagation()} className="relative p-5">
           {childComponent}

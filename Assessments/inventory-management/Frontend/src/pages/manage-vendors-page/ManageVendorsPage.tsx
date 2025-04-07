@@ -25,20 +25,18 @@ const ManageVendorsPage = () => {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [selectedId, setSelectedId] = useState("");
 
-
-
   const dispatch = useDispatch();
   const { vendors, isLoading, details, selectedVendor } = useSelector(
-    (state: rootState) => state.vendor
+    (state: rootState) => state.vendor,
   );
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const debounceValue = useDebounce({value:searchQuery, delay:1000})
+  const debounceValue = useDebounce({ value: searchQuery, delay: 1000 });
 
   const tableData = vendors?.map((vendor) => {
     return {
       id: vendor?.id,
-      name: vendor?.firstName+" "+vendor?.lastName,
+      name: vendor?.firstName + " " + vendor?.lastName,
       email: vendor?.email,
       companyName: vendor?.companyName,
       contactNumber: vendor?.contactNumber,
@@ -61,19 +59,19 @@ const ManageVendorsPage = () => {
   };
 
   const handleRowClick = (id: string) => {
-    if(selectedId !== id){
+    if (selectedId !== id) {
       dispatch(deselectVendor());
       setSelectedId(id);
     }
-      setModalReason("viewVendorDetails");
-      setIsModalVisible(true);
-    };
+    setModalReason("viewVendorDetails");
+    setIsModalVisible(true);
+  };
 
-  useEffect(()=>{
-    if(selectedId.length>0){
-      dispatch(fetchVendorById(selectedId))
+  useEffect(() => {
+    if (selectedId.length > 0) {
+      dispatch(fetchVendorById(selectedId));
     }
-  },[selectedId])
+  }, [selectedId]);
 
   useEffect(() => {
     if (vendors && tableData) {
@@ -83,13 +81,19 @@ const ManageVendorsPage = () => {
 
   useEffect(() => {
     if (confirmDelete) {
-      dispatch(deleteVendor({id:selectedId , dispatchAction:()=>dispatch(
-        fetchAllVendors({
-          page: pageNum,
-          searchQuery:debounceValue,
-          perPage: 10,
-        })
-      )}));
+      dispatch(
+        deleteVendor({
+          id: selectedId,
+          dispatchAction: () =>
+            dispatch(
+              fetchAllVendors({
+                page: pageNum,
+                searchQuery: debounceValue,
+                perPage: 10,
+              }),
+            ),
+        }),
+      );
     }
     return () => {
       setConfirmDelete(false);
@@ -99,15 +103,13 @@ const ManageVendorsPage = () => {
   }, [confirmDelete]);
 
   useEffect(() => {
-   
-      dispatch(
-        fetchAllVendors({
-          page: pageNum,
-          searchQuery:debounceValue,
-          perPage: 10,
-        })
-      );
-  
+    dispatch(
+      fetchAllVendors({
+        page: pageNum,
+        searchQuery: debounceValue,
+        perPage: 10,
+      }),
+    );
   }, [debounceValue, pageNum, dispatch]);
 
   const [selectedData, setSelectedData] = useState<any>(selectedVendor);
@@ -115,7 +117,6 @@ const ManageVendorsPage = () => {
   useEffect(() => {
     setSelectedData(selectedVendor);
   }, [selectedVendor?.id]);
-
 
   return (
     <div>
@@ -165,7 +166,7 @@ const ManageVendorsPage = () => {
         />
       )}
 
-    {modalReason == "viewVendorDetails" && selectedData && (
+      {modalReason == "viewVendorDetails" && selectedData && (
         <Modal
           isVisible={isModalVisible}
           toggleIsVisibleCb={() => setIsModalVisible(false)}
@@ -180,32 +181,35 @@ const ManageVendorsPage = () => {
       <div className="w-full h-full max-h-full overflow-y-scroll px-5">
         <div className="my-3">
           <h1 className="font-bold text-[18px] text-start">Vendors</h1>
-          <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/manage-vendors')}>Manage Vendors</span></p>
+          <p className="text-sm cursor-pointer">
+            <span onClick={() => navigate("/")}>Home</span>/
+            <span onClick={() => navigate("/manage-vendors")}>
+              Manage Vendors
+            </span>
+          </p>
         </div>
         <div className="mb-1 flex justify-between  mt-12">
-          
-            <SearchBar
-              onChangeCb={(e: { target: { value: SetStateAction<string> } }) =>
-                setSearchQuery(e.target.value)
-              }
-              id={"searchQuery"}
-              name={"searchQuery"}
-              placeholder={"Enter search query"}
-              value={searchQuery}
-              width="300px"
-            />
+          <SearchBar
+            onChangeCb={(e: { target: { value: SetStateAction<string> } }) =>
+              setSearchQuery(e.target.value)
+            }
+            id={"searchQuery"}
+            name={"searchQuery"}
+            placeholder={"Enter search query"}
+            value={searchQuery}
+            width="300px"
+          />
 
-            <Button
-              btnContent={"Add Vendor"}
-              onClickCb={() => {
-                setModalReason("addVendor");
-                setIsModalVisible(true);
-              }}
-              color="primary-white"
-              bgColor="primary-orange"
-              width="fit"
-            />
-       
+          <Button
+            btnContent={"Add Vendor"}
+            onClickCb={() => {
+              setModalReason("addVendor");
+              setIsModalVisible(true);
+            }}
+            color="primary-white"
+            bgColor="primary-orange"
+            width="fit"
+          />
         </div>
 
         {data && (

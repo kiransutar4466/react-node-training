@@ -1,137 +1,134 @@
-import axios from "axios"
-import { fetchProductsPayoadType, ProductFormInputType } from "../types/slice-state-types/productStateTypes"
+import axios from "axios";
+import {
+  fetchProductsPayoadType,
+  ProductFormInputType,
+} from "../types/slice-state-types/productStateTypes";
 
-export const getAllProductsService = async(payload:fetchProductsPayoadType)=>{
+export const getAllProductsService = async (
+  payload: fetchProductsPayoadType,
+) => {
+  const token = localStorage.getItem("token");
 
-    const token = localStorage.getItem('token')
-     
-    try {
-        
-        const response = await axios.get( `${import.meta.env.VITE_SERVER_BASE_URL}products?page=${payload.page}&perPage=${payload.perPage}&name=${payload.name}&category=${payload.category}&inventoryId=${payload.inventoryId}`, { 
-            headers: {"Authorization" : `Bearer ${token}`,
-                "ngrok-skip-browser-warning": "69420",
-            }
-        })
-        
-       
-        return response;
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_BASE_URL}products?page=${payload.page}&perPage=${payload.perPage}&name=${payload.name}&category=${payload.category}&inventoryId=${payload.inventoryId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+      },
+    );
 
-    } catch (error:any) {
+    return response;
+  } catch (error: any) {
+    return error.response.data.message[0];
+  }
+};
 
-        return error.response.data.message[0];
-        
-    }
-}
+export const getAllCategoryService = async (payload: number) => {
+  const token = localStorage.getItem("token");
 
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_BASE_URL}categories?page=${payload}&perPage=10`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+      },
+    );
 
-export const getAllCategoryService = async(payload:number)=>{
+    return response;
+  } catch (error: any) {
+    return error.response.data.message[0];
+  }
+};
 
-    const token = localStorage.getItem('token')
-     
-    try {
+export const getProductByIdService = async (payload: string) => {
+  const token = localStorage.getItem("token");
 
-        const response = await axios.get( `${import.meta.env.VITE_SERVER_BASE_URL}categories?page=${payload}&perPage=10`, { 
-            headers: {"Authorization" : `Bearer ${token}`,
-                "ngrok-skip-browser-warning": "69420",
-            }
-        })
+  console.log(payload);
 
-        return response;
+  try {
+    const response = await axios.get(
+      `${import.meta.env.VITE_SERVER_BASE_URL}products/${payload}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+      },
+    );
 
-    } catch (error:any) {
+    return response;
+  } catch (error: any) {
+    return error.response.data.message[0];
+  }
+};
 
-        return error.response.data.message[0];
-        
-    }
-}
+export const postProductService = async (payload: ProductFormInputType) => {
+  const token = localStorage.getItem("token");
 
-export const getProductByIdService = async(payload:string)=>{
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_BASE_URL}products`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+      },
+    );
 
-    const token = localStorage.getItem('token')
+    return response;
+  } catch (error: any) {
+    return error.response.data.message[0];
+  }
+};
 
-    console.log(payload)
-     
-    try {
+export const patchProductService = async (payload: {
+  id: string;
+  formData: ProductFormInputType;
+}) => {
+  const token = localStorage.getItem("token");
 
-        const response = await axios.get( `${import.meta.env.VITE_SERVER_BASE_URL}products/${payload}`, { 
-            headers: {"Authorization" : `Bearer ${token}`,
-                "ngrok-skip-browser-warning": "69420",
-            }
-        })
+  try {
+    const response = await axios.patch(
+      `${import.meta.env.VITE_SERVER_BASE_URL}products/${payload.id}`,
+      payload.formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+      },
+    );
 
-        return response;
+    return response;
+  } catch (error: any) {
+    return error.response.data.message[0];
+  }
+};
 
-    } catch (error:any) {
+export const deleteProductByIdService = async (payload: string) => {
+  const token = localStorage.getItem("token");
 
-        return error.response.data.message[0];
-        
-    }
-}
+  try {
+    const response = await axios.delete(
+      `${import.meta.env.VITE_SERVER_BASE_URL}products/${payload}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "69420",
+        },
+      },
+    );
 
-export const postProductService = async(payload:ProductFormInputType)=>{
-
-    const token = localStorage.getItem('token')
-     
-    try {
-
-        const response = await axios.post( `${import.meta.env.VITE_SERVER_BASE_URL}products`, payload ,{ 
-            headers: {"Authorization" : `Bearer ${token}`,
-                "ngrok-skip-browser-warning": "69420",
-            }
-        })
-
-        return response;
-
-    } catch (error:any) {
-
-        return error.response.data.message[0];
-        
-    }
-}
-
-
-export const patchProductService = async(payload:{id:string, formData:ProductFormInputType})=>{
-
-    const token = localStorage.getItem('token')
-     
-    try {
-
-
-        const response = await axios.patch( `${import.meta.env.VITE_SERVER_BASE_URL}products/${payload.id}`, payload.formData ,{ 
-            headers: {"Authorization" : `Bearer ${token}`,
-                "ngrok-skip-browser-warning": "69420",
-            }
-        })
-
-        return response;
-
-    } catch (error:any) {
-
-        return error.response.data.message[0];
-        
-    }
-}
-
-
-export const deleteProductByIdService = async(payload:string)=>{
-
-    const token = localStorage.getItem('token')
-
-    
-     
-    try {
-
-        const response = await axios.delete( `${import.meta.env.VITE_SERVER_BASE_URL}products/${payload}`, { 
-            headers: {"Authorization" : `Bearer ${token}`,
-                "ngrok-skip-browser-warning": "69420",
-            }
-        })
-
-        return response;
-
-    } catch (error:any) {
-
-        return error.response.data.message[0];
-        
-    }
-}
+    return response;
+  } catch (error: any) {
+    return error.response.data.message[0];
+  }
+};

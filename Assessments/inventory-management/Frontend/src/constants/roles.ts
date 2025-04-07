@@ -1,2 +1,2 @@
 export const VENDOR = "VENDOR";
-export const ADMIN = "ADMIN"
+export const ADMIN = "ADMIN";

@@ -19,8 +19,8 @@ const DashboardPage = () => {
   // const [categoryStats, setCategoryStats] = useState<any>([]);
   // const [salesStats, setSalesStats] = useState<any>([]);
   const { userDetails } = useSelector((state: rootState) => state.auth);
-  const [tableData, setTableData] = useState([])
-  const navigate = useNavigate()
+  const [tableData, setTableData] = useState([]);
+  const navigate = useNavigate();
 
   const columns = [
     { name: "Sr no.", width: "60px" },
@@ -42,7 +42,7 @@ const DashboardPage = () => {
             Authorization: `Bearer ${token}`,
             "ngrok-skip-browser-warning": "69420",
           },
-        }
+        },
       );
 
       setStatistics(response.data);
@@ -97,61 +97,64 @@ const DashboardPage = () => {
     // getSalesStatistics ()
   }, []);
 
-  useEffect(()=>{
-    statistics?.bestSellers && setTableData(statistics.bestSellers?.map((vendor:any) => {
-      return {
-        id: vendor?.id,
-        name: vendor?.firstName+" "+vendor?.lastName,
-        email: vendor?.email,
-        city:vendor?.city,
-        companyName: vendor?.companyName,
-        contactNumber: vendor?.contactNumber,
-      };
-    }))
-  },[statistics])
-  
+  useEffect(() => {
+    statistics?.bestSellers &&
+      setTableData(
+        statistics.bestSellers?.map((vendor: any) => {
+          return {
+            id: vendor?.id,
+            name: vendor?.firstName + " " + vendor?.lastName,
+            email: vendor?.email,
+            city: vendor?.city,
+            companyName: vendor?.companyName,
+            contactNumber: vendor?.contactNumber,
+          };
+        }),
+      );
+  }, [statistics]);
 
   console.log(statistics);
 
   const pieData = statistics?.categoryWiseSoldCount?.map(
     (stat: { soldCount: any; category: any }, key: any) => {
       return { id: key, value: stat.soldCount, label: stat.category };
-    }
+    },
   );
   const barData = statistics?.salesPerMonthForCurrentYear?.reduce(
     (acc: any[], value: { totalSales: any }) => {
       acc.push(value.totalSales);
       return acc;
     },
-    []
+    [],
   );
   return (
     <div className="py-2 px-5 w-full overflow-y-scroll">
-      
-      
       <div className="my-3">
         <h1 className="font-bold text-[18px] text-start">Dashboard</h1>
-        <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/dashboard')}>Dashboard</span></p>
+        <p className="text-sm cursor-pointer">
+          <span onClick={() => navigate("/")}>Home</span>/
+          <span onClick={() => navigate("/dashboard")}>Dashboard</span>
+        </p>
       </div>
 
       <div className="flex justify-between gap-5 mb-5">
-      {userDetails?.role == VENDOR && <Card
-          width="270px"
-          onClickCb={()=>navigate('/products')}
-          title={statistics?.productStats.totalProducts}
-          subtitle="Total Products"
-          icon={
-            <span className="text-4xl text-green-600">
-              <FaBox />
-            </span>
-          }
-        />}
+        {userDetails?.role == VENDOR && (
+          <Card
+            width="270px"
+            onClickCb={() => navigate("/products")}
+            title={statistics?.productStats.totalProducts}
+            subtitle="Total Products"
+            icon={
+              <span className="text-4xl text-green-600">
+                <FaBox />
+              </span>
+            }
+          />
+        )}
 
-      
-        
         <Card
-          width={userDetails?.role == VENDOR ? '270px' : '380px'}
-          onClickCb={()=>navigate('/orders')}
+          width={userDetails?.role == VENDOR ? "270px" : "380px"}
+          onClickCb={() => navigate("/orders")}
           title={"$ " + statistics?.productStats.totalSales.toFixed(2)}
           subtitle="Total Sales"
           icon={
@@ -161,35 +164,37 @@ const DashboardPage = () => {
           }
         />
 
-        {userDetails?.role == ADMIN && <Card
-          width={'380px'}
-          onClickCb={()=>navigate('/inventory')}
-          title={statistics?.totalInventory
-             }
-          subtitle="Total Inventories"
-          icon={
-            <span className="text-4xl text-purple-600">
-              <MdInventory2 />
-            </span>
-          }
-        />}
+        {userDetails?.role == ADMIN && (
+          <Card
+            width={"380px"}
+            onClickCb={() => navigate("/inventory")}
+            title={statistics?.totalInventory}
+            subtitle="Total Inventories"
+            icon={
+              <span className="text-4xl text-purple-600">
+                <MdInventory2 />
+              </span>
+            }
+          />
+        )}
 
-     {userDetails?.role == VENDOR && <Card
-     width={'270px' }
-     onClickCb={()=>navigate('/orders')}
-          title={statistics?.totalOrders
-             }
-          subtitle="Total Orders"
-          icon={
-            <span className="text-4xl text-purple-600">
-              <MdAssignmentTurnedIn />
-            </span>
-          }
-        />}
+        {userDetails?.role == VENDOR && (
+          <Card
+            width={"270px"}
+            onClickCb={() => navigate("/orders")}
+            title={statistics?.totalOrders}
+            subtitle="Total Orders"
+            icon={
+              <span className="text-4xl text-purple-600">
+                <MdAssignmentTurnedIn />
+              </span>
+            }
+          />
+        )}
 
         <Card
-          width={userDetails?.role == VENDOR ? '270px' : '380px'}
-          onClickCb={()=>navigate('/orders')}
+          width={userDetails?.role == VENDOR ? "270px" : "380px"}
+          onClickCb={() => navigate("/orders")}
           title={"$ " + statistics?.productStats.salesThisMonth.toFixed(2)}
           subtitle="Sales this month"
           icon={
@@ -202,10 +207,13 @@ const DashboardPage = () => {
 
       <div className="flex justify-between gap-5">
         <div className="bg-primary-white  p-2 rounded-xl border-1 min-w-[560px] w-[60%] h-[400px]">
-          <div className="chart flex justify-center items-center flex-col">
-            <div className="w-full font-medium text-[15px] text-center">Sales per month </div>
-            {userDetails?.role == VENDOR  && barData? (
+          <div className="chart flex justify-center items-center flex-col ">
+            <div className="w-full font-medium text-[15px] text-center">
+              Sales per month{" "}
+            </div>
+            {userDetails?.role == VENDOR && barData ? (
               <BarChart
+              sx={{padding:'5px'}}
                 xAxis={[
                   {
                     id: "barCategories",
@@ -229,44 +237,51 @@ const DashboardPage = () => {
                 series={[
                   {
                     //data: barData,
-                    data:barData ,
+                    data: barData,
                   },
                 ]}
-                width={540}
+                width={580}
                 height={350}
               />
-            ) : userDetails?.role == ADMIN && barData? (
+            ) : userDetails?.role == ADMIN && barData ? (
               <LineChart
-              xAxis={[{ 
-                scaleType: "point",
-                data: [
-                "JAN",
-                "FEB",
-                "MAR",
-                "APR",
-                "MAY",
-                "JUN",
-                "JUL",
-                "AUG",
-                "SEP",
-                "OCT",
-                "NOV",
-                "DEC",
-              ], }]}
-              series={[
+              sx={{padding:'5px'}}
+                xAxis={[
                   {
-                 
-                    data:barData ,
+                    scaleType: "point",
+                    data: [
+                      "JAN",
+                      "FEB",
+                      "MAR",
+                      "APR",
+                      "MAY",
+                      "JUN",
+                      "JUL",
+                      "AUG",
+                      "SEP",
+                      "OCT",
+                      "NOV",
+                      "DEC",
+                    ],
                   },
                 ]}
-                width={540}
+                series={[
+                  {
+                    data: barData,
+                  },
+                ]}
+                width={580}
                 height={350}
               />
-            ) : <></>}
+            ) : (
+              <></>
+            )}
           </div>
         </div>
         <div className="bg-primary-white p-2 min-w-[350px] w-[40%] h-[400px] rounded-xl border-1 flex flex-col justify-start gap-5 items-center">
-          <div className="w-full text-center font-medium text-[15px]">Sales Category Wise</div>
+          <div className="w-full text-center font-medium text-[15px]">
+            Sales Category Wise
+          </div>
           <div className="chart ">
             {statistics?.categoryWiseSoldCount?.length > 0 && (
               <PieChart
@@ -284,27 +299,28 @@ const DashboardPage = () => {
                     itemMarkHeight: 10,
                   },
                 }}
-                width={500}
+                width={490}
                 height={300}
               />
             )}
           </div>
         </div>
-
-
       </div>
-      
-      <div className="my-5">
-      { statistics?.bestSellers && tableData.length>0 && <h1 className="font-medium text-[15px] text-start mb-2">Top 5 Sellers</h1>}
 
-      { statistics?.bestSellers && tableData.length>0 &&  <Table
+      <div className="my-5">
+        {statistics?.bestSellers && tableData.length > 0 && (
+          <h1 className="font-medium text-[15px] text-start mb-2">
+            Top 5 Sellers
+          </h1>
+        )}
+
+        {statistics?.bestSellers && tableData.length > 0 && (
+          <Table
             // onClickRowCb={handleRowClick}
             isLoading={false}
             tableData={tableData}
             columns={columns}
-            isActions={
-              false
-            }
+            isActions={false}
             // actions={[
             //   {
             //     content: <MdEdit />,
@@ -321,11 +337,9 @@ const DashboardPage = () => {
             // ]}
             pageNum={1}
             perPage={5}
-          /> }
-
-
+          />
+        )}
       </div>
-      
     </div>
   );
 };

@@ -22,9 +22,20 @@ import {
   watchFetchCart,
   watchPatchCart,
 } from "../pages/cart-page/cartSaga";
-import { watchFetchAllInventories, watchFetchInventroyById, watchPatchInventory } from "../pages/inventory-page/inventorySaga";
+import {
+  watchFetchAllInventories,
+  watchFetchInventroyById,
+  watchPatchInventory,
+} from "../pages/inventory-page/inventorySaga";
 import { watchFetchAllLowStocks } from "../pages/low-stocks-page/lowStocksSaga";
-import { watchFetchAllInventoryOrders, watchFetchAllOrders, watchFetchOrderById, watchPatchInventoryOrder, watchPatchOrder, watchPlaceOrder } from "../pages/orders-page/ordersSaga";
+import {
+  watchFetchAllInventoryOrders,
+  watchFetchAllOrders,
+  watchFetchOrderById,
+  watchPatchInventoryOrder,
+  watchPatchOrder,
+  watchPlaceOrder,
+} from "../pages/orders-page/ordersSaga";
 
 export default function* rootSaga() {
   yield all([
@@ -45,13 +56,15 @@ export default function* rootSaga() {
     watchPatchCart(),
     watchFetchCart(),
     watchEmptyCart(),
-    watchPatchInventory(), watchFetchInventroyById(), watchFetchAllInventories(),
+    watchPatchInventory(),
+    watchFetchInventroyById(),
+    watchFetchAllInventories(),
     watchFetchAllLowStocks(),
     watchFetchAllOrders(),
     watchFetchAllInventoryOrders(),
     watchPlaceOrder(),
     watchFetchOrderById(),
     watchPatchOrder(),
-    watchPatchInventoryOrder()
+    watchPatchInventoryOrder(),
   ]);
 }

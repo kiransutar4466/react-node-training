@@ -23,15 +23,12 @@ import StatusComponent from "../../components/StatusComponent";
 import useDebounce from "../../hooks/useDebounce";
 import { useNavigate } from "react-router";
 
-
 const ProductListPage = () => {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
   const [selectedId, setSelectedId] = useState<string>("");
   const [modalReason, setModalReason] = useState<string>("");
-  const { userDetails} = useSelector(
-    (state: rootState) => state.auth
-  );
+  const { userDetails } = useSelector((state: rootState) => state.auth);
 
   const [pageNum, setPageNum] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -39,7 +36,7 @@ const ProductListPage = () => {
   const [category, setCategory] = useState<string>("");
   const [inventoryId, setInventoryId] = useState<string | undefined>("");
   const [data, setData] = useState<any>();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -63,15 +60,15 @@ const ProductListPage = () => {
             product.stockStatus == "IN_STOCK"
               ? "#c0fcbd"
               : product.stockStatus == "LOW_STOCK"
-              ? "#fdff93"
-              : "#fcd6d6"
+                ? "#fdff93"
+                : "#fcd6d6"
           }`}
           color={`${
             product.stockStatus == "IN_STOCK"
               ? "#029300"
               : product.stockStatus == "LOW_STOCK"
-              ? "#8a8e00"
-              : "#d10606"
+                ? "#8a8e00"
+                : "#d10606"
           }`}
           content={product.stockStatus
             .replace(/_/g, " ")
@@ -99,7 +96,7 @@ const ProductListPage = () => {
   ];
 
   const [selectedData, setSelectedData] = useState<any>(selectedProduct);
-  const debounceValue = useDebounce({value:searchTerm, delay:1000})
+  const debounceValue = useDebounce({ value: searchTerm, delay: 1000 });
   useEffect(() => {
     setSelectedData(selectedProduct);
   }, [selectedProduct?.id]);
@@ -108,7 +105,7 @@ const ProductListPage = () => {
     e.stopPropagation();
     setIsModalVisible((prev) => !prev);
     setModalReason("");
-    setSelectedId("")
+    setSelectedId("");
   };
 
   const openDeleteModal = (id: string) => {
@@ -142,11 +139,10 @@ const ProductListPage = () => {
   const handleRowClick = (id: string) => {
     dispatch(deselectProduct());
     setSelectedId(id);
-    navigate(`/products/${id}`)
+    navigate(`/products/${id}`);
     // setModalReason("viewProductDetails");
     // setIsModalVisible(true);
   };
-
 
   useEffect(() => {
     if (selectedId) {
@@ -154,29 +150,30 @@ const ProductListPage = () => {
     }
   }, [selectedId]);
 
-
-
   useEffect(() => {
     if (confirmDelete) {
-      dispatch(deleteProduct({id:selectedId, dispatchAction:()=> dispatch(
-        fetchAllProducts({
-          page: pageNum,
-          perPage: 10,
-          name: debounceValue,
-          category,
-          inventoryId: inventoryId,
-        })
-      )}));
-     
+      dispatch(
+        deleteProduct({
+          id: selectedId,
+          dispatchAction: () =>
+            dispatch(
+              fetchAllProducts({
+                page: pageNum,
+                perPage: 10,
+                name: debounceValue,
+                category,
+                inventoryId: inventoryId,
+              }),
+            ),
+        }),
+      );
     }
     return () => {
       setConfirmDelete(false);
       setModalReason("");
-      setSelectedId("")
+      setSelectedId("");
     };
   }, [confirmDelete]);
-
-
 
   useEffect(() => {
     dispatch(
@@ -186,15 +183,13 @@ const ProductListPage = () => {
         name: debounceValue,
         category,
         inventoryId: inventoryId,
-      })
+      }),
     );
   }, [pageNum, inventoryId, debounceValue, category]);
-  
 
   useEffect(() => {
     dispatch(fetchAllCategories(1));
   }, []);
-
 
   return (
     <>
@@ -268,15 +263,17 @@ const ProductListPage = () => {
         />
       )}
 
-
       <div className="w-full h-full max-h-full px-5">
         <div className="my-3">
           <h1 className="font-bold text-[18px] text-start">Products</h1>
-          <p className="text-sm cursor-pointer"><span onClick={()=>navigate('/')}>Home</span>/<span onClick={()=>navigate('/products')}>Products</span></p>
+          <p className="text-sm cursor-pointer">
+            <span onClick={() => navigate("/")}>Home</span>/
+            <span onClick={() => navigate("/products")}>Products</span>
+          </p>
         </div>
         <div className="mb-1 flex justify-between gap-2  mt-12">
           <div className="flex gap-2 ">
-          <SearchBar
+            <SearchBar
               placeholder="Search by name"
               onChangeCb={(e: any) => setSearchTerm(e.target.value)}
               id="searchProduct"
@@ -285,9 +282,9 @@ const ProductListPage = () => {
               width="300px"
             />
 
-          {/* <FilterComponent/> */}
+            {/* <FilterComponent/> */}
 
-          {userDetails?.role == VENDOR && (
+            {userDetails?.role == VENDOR && (
               <select
                 onChange={(e) => handleInventoryChange(e)}
                 defaultValue={"allProducts"}
@@ -311,13 +308,10 @@ const ProductListPage = () => {
                 </option>
               ))}
             </select>
-
-           
           </div>
-        
+
           <div className="flex gap-2">
-          
-          {userDetails?.role == VENDOR && (
+            {userDetails?.role == VENDOR && (
               <Button
                 btnContent={"Add Product"}
                 onClickCb={() => {
@@ -328,8 +322,6 @@ const ProductListPage = () => {
                 width="fit"
               />
             )}
-          
-            
           </div>
         </div>
         {data && (

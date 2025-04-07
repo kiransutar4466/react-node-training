@@ -11,23 +11,21 @@ import { setLogin } from "./pages/login-page/authSlice";
 function App() {
   const { isSidebarOpen } = useSelector((state: rootState) => state.navs);
   const { isLoggedIn } = useSelector((state: rootState) => state.auth);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-
-  useEffect(()=>{
-     const token = localStorage.getItem('token')
-     if(token && !isLoggedIn){
-        dispatch(setLogin())
-     }
-  })
- 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token && !isLoggedIn) {
+      dispatch(setLogin());
+    }
+  });
 
   return (
     <>
-      <Header/>
+      <Header />
       <div className="h-[10vh]"></div>
       <div className="flex h-[90vh]">
-       <Sidebar/>
+        <Sidebar />
         <div
           className={` duration-300 ease-in-out overflow-y-scroll overflow-x-hidden h-[90vh] ${
             isSidebarOpen && isLoggedIn
@@ -35,9 +33,12 @@ function App() {
               : "translate-x-[-250px] min-w-[100vw]"
           }  `}
         >
-       {isLoggedIn &&  <div className="h-24 bg-primary-orange w-[104%] translate-x-[-20px] "></div>}
-        <div className="translate-y-[-100px] h-full"><Router/></div>
-         
+          {isLoggedIn && (
+            <div className="h-24 bg-primary-orange w-[104%] translate-x-[-20px] "></div>
+          )}
+          <div className="translate-y-[-100px] h-[calc(100%-96px)]">
+            <Router />
+          </div>
         </div>
       </div>
       <ToastContainer position="bottom-right" theme="dark" />

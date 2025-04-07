@@ -1,5 +1,5 @@
 import { buttonPropsTypes } from "../types/components-props-types/buttonPropsTypes";
-import {clsx} from 'clsx'
+import { clsx } from "clsx";
 
 const Button = ({
   btnContent,
@@ -14,13 +14,15 @@ const Button = ({
     <button
       type={type}
       style={{
-        color:color,
-        backgroundColor:bgColor
+        color: color,
+        backgroundColor: bgColor,
       }}
       onClick={(e) => onClickCb && onClickCb(e)}
-      className={clsx(`text-${color} bg-${bgColor} h-fit cursor-pointer  px-2 py-1 rounded-[5px] w-${width}  ${
-        classNames && classNames
-      }`)}
+      className={clsx(
+        `text-${color} bg-${bgColor} h-fit cursor-pointer  px-2 py-1 rounded-[5px] w-${width}  ${
+          classNames && classNames
+        }`,
+      )}
     >
       {btnContent}
     </button>

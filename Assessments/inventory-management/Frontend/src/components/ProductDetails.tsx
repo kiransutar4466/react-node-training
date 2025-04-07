@@ -7,22 +7,18 @@ import { addToCart, fetchCart, patchCart } from "../pages/cart-page/cartSaga";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { useEffect } from "react";
 
-
 const ProductDetails = ({ productDetails }: { productDetails: any }) => {
   const { userDetails } = useSelector((state: rootState) => state.auth);
   const { cart } = useSelector((state: rootState) => state.cart);
 
   const cartItem = cart?.filter(
-    (item) => item.productId == productDetails.id
+    (item) => item.productId == productDetails.id,
   )[0];
-
- 
 
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(fetchCart({ page: 1, perPage: 10 }));
-   
   }, []);
 
   return (
@@ -46,15 +42,15 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
               productDetails.stockStatus == "IN_STOCK"
                 ? "#c0fcbd"
                 : productDetails.stockStatus == "LOW_STOCK"
-                ? "#fdff93"
-                : "#fcd6d6"
+                  ? "#fdff93"
+                  : "#fcd6d6"
             }`}
             color={`${
               productDetails.stockStatus == "IN_STOCK"
                 ? "#029300"
                 : productDetails.stockStatus == "LOW_STOCK"
-                ? "#8a8e00"
-                : "#d10606"
+                  ? "#8a8e00"
+                  : "#d10606"
             }`}
             content={productDetails.stockStatus
               .replace(/_/g, " ")
@@ -66,12 +62,12 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
           <span className="font-medium">Sold Count: </span>{" "}
           {productDetails.soldCount}
         </p>
-        {productDetails.inventoryId == userDetails?.inventoryId &&
+        {productDetails.inventoryId == userDetails?.inventoryId && (
           <p>
-          <span className="font-medium">Quantity: </span>{" "}
-          {productDetails.quantity}
-        </p>
-        }
+            <span className="font-medium">Quantity: </span>{" "}
+            {productDetails.quantity}
+          </p>
+        )}
         <p>
           <span className="font-medium">Vendor: </span>{" "}
           {productDetails.inventoryName}
@@ -97,7 +93,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                         dispatchAction: () => {
                           dispatch(fetchCart({ page: 1, perPage: 10 }));
                         },
-                      })
+                      }),
                     );
                 }}
               >
@@ -114,7 +110,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                       dispatchAction: () => {
                         dispatch(fetchCart({ page: 1, perPage: 10 }));
                       },
-                    })
+                    }),
                   );
                 }}
               >
@@ -134,7 +130,7 @@ const ProductDetails = ({ productDetails }: { productDetails: any }) => {
                     quantity: 1,
                     dispatchAction: () =>
                       dispatch(fetchCart({ page: 1, perPage: 10 })),
-                  })
+                  }),
                 )
               }
             />

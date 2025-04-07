@@ -16,7 +16,7 @@ export const getCartService = async (payload: {
           Authorization: `Bearer ${token}`,
           "ngrok-skip-browser-warning": "69420",
         },
-      }
+      },
     );
 
     return response.data;
@@ -40,7 +40,7 @@ export const postCartItemService = async (payload: {
           Authorization: `Bearer ${token}`,
           "ngrok-skip-browser-warning": "69420",
         },
-      }
+      },
     );
 
     return response;
@@ -49,10 +49,9 @@ export const postCartItemService = async (payload: {
   }
 };
 
-
 export const patchCartService = async (payload: {
   itemId: string;
-  data: {quantity:number};
+  data: { quantity: number };
 }) => {
   const token = localStorage.getItem("token");
 
@@ -65,15 +64,14 @@ export const patchCartService = async (payload: {
           Authorization: `Bearer ${token}`,
           "ngrok-skip-browser-warning": "69420",
         },
-      }
+      },
     );
     return response;
   } catch (error: any) {
-    console.log(error)
+    console.log(error);
     return error.response.data.message[0];
   }
 };
-
 
 export const deleteCartItemService = async (payload: string) => {
   const token = localStorage.getItem("token");
@@ -86,7 +84,7 @@ export const deleteCartItemService = async (payload: string) => {
           Authorization: `Bearer ${token}`,
           "ngrok-skip-browser-warning": "69420",
         },
-      }
+      },
     );
 
     return response;
@@ -94,7 +92,6 @@ export const deleteCartItemService = async (payload: string) => {
     return error.response.data.message[0];
   }
 };
-
 
 export const emptyCartService = async () => {
   const token = localStorage.getItem("token");
@@ -107,7 +104,7 @@ export const emptyCartService = async () => {
           Authorization: `Bearer ${token}`,
           "ngrok-skip-browser-warning": "69420",
         },
-      }
+      },
     );
 
     return response;

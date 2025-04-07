@@ -22,7 +22,7 @@ const TableControllers = ({
               onClickCb={pageNum > 1 ? prevPageCb : () => {}}
               width="fit"
               color="text-dark"
-              bgColor={pageNum==1?"header-bg":"primary-orange"}
+              bgColor={pageNum == 1 ? "header-bg" : "primary-orange"}
               classNames="text-sm rounded-[10px] overflow-hidden"
             />
 
@@ -39,10 +39,9 @@ const TableControllers = ({
               onClickCb={pageNum < totolPages ? nextPageCb : () => {}}
               width="fit"
               color="text-dark"
-              bgColor={pageNum == totolPages ? "header-bg" :"primary-orange"}
+              bgColor={pageNum == totolPages ? "header-bg" : "primary-orange"}
               classNames="text-sm rounded-[10px] overflow-hidden"
             />
-
           </>
         )}
       </div>

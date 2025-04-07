@@ -1,7 +1,7 @@
-import { ReactNode } from "react"
+import { ReactNode } from "react";
 
 export type modalPropsTypes = {
-    isVisible:boolean,
-    childComponent:ReactNode,
-    toggleIsVisibleCb:Function
-}
+  isVisible: boolean;
+  childComponent: ReactNode;
+  toggleIsVisibleCb: Function;
+};

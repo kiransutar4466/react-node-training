@@ -1,6 +1,6 @@
-import { ReactNode } from "react"
+import { ReactNode } from "react";
 
 export type protectedRotesPropsTypes = {
-  page:ReactNode,
-  allowedRoles:string[],
-}
+  page: ReactNode;
+  allowedRoles: string[];
+};

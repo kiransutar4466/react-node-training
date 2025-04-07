@@ -1,21 +1,17 @@
-import { ReactNode, useEffect } from "react"
-import { useNavigate } from "react-router"
+import { ReactNode, useEffect } from "react";
+import { useNavigate } from "react-router";
 
+const RedirectComponent = ({ page }: { page: ReactNode }) => {
+  const token = localStorage.getItem("token");
+  const navigate = useNavigate();
 
-const RedirectComponent = ({page}:{page:ReactNode}) => {
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, []);
 
-   const token =  localStorage.getItem('token')
-   const navigate = useNavigate()
-   
-   useEffect(()=>{
-       if(token){
-        navigate('/')
-       }
-   },[])
+  return !token && page;
+};
 
-    return (
-        !token && page
-  )
-}
-
-export default RedirectComponent
+export default RedirectComponent;
