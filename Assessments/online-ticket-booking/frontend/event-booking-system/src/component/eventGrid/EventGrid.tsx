@@ -9,11 +9,11 @@ import NoDataFound from "../no-data-found/NoDataFound";
 const EventGrid = ({ data, loading, heading, handleNavigation }:any) => {
 
   return (
-    <div className="bg-[#f5f5f5]">
+    <div className="bg-[#f6f5f5]">
 
       <div className="w-[80%] mx-auto">
       {loading ? <LinearProgress className="w-[50%]" /> : <div />}
-      <div className="flex items-center justify-center my-4 p-5   ">
+      <div className="flex items-center justify-between my-4 p-5   ">
        
         <h2 className="text-[1.8rem]  mx-4 text-[black] font-black  mt-2">{heading}</h2>
        

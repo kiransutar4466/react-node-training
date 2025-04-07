@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDebounceHook } from "../../utils/useDebounceHook";
 import { useDispatch } from "react-redux";
 import { getAllEvents } from "../../pages/displayAllEvents/getAllEventsSaga";
 import { FaUserAlt } from "react-icons/fa";
 import { IoMdLogOut } from "react-icons/io";
 import { IoIosSearch } from "react-icons/io";
-import { GiTicket } from "react-icons/gi"; // Ticket icon for logo
+import { GiTicket } from "react-icons/gi";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -24,11 +24,7 @@ const Navbar = () => {
   const value = useDebounceHook(searchText);
 
 
-  const handleChange=(e:any)=>{
 
-    setSearchText(e.target.value);
- 
-  }
  
 
   useEffect(() => {

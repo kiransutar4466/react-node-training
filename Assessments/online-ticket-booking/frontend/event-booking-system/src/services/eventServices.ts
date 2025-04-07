@@ -106,9 +106,10 @@ export const getAllEventsApi = async (payload: any) => {
 
     return {response};
   } catch (error: any) {
-    if(error?.response?.statusCode==401)
+    if(error?.response?.data?.statusCode==401)
     {
-      toast.error(error.response?.data?.message)
+      // toast.error(`Your session ${error.response?.data?.message} '. Please log in again.'`)
+
     }
     throw new Error(error.response?.data?.message || "Something went wrong");
   }

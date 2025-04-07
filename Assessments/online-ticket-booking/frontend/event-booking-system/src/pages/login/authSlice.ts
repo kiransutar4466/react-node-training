@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { authTypes } from '../../types/types'
-import { toast } from 'react-toastify'
+
 
 
 const initialState: authTypes = {
@@ -27,9 +27,10 @@ const authSlice = createSlice({
             state.error = action.payload
         },
         logoutAdmin:(state,action)=>{
+            state.error=action.payload
             localStorage.removeItem('token')
             const naviagte=action.payload
-            toast.success("loged out sucessfully")
+
             naviagte('/login')
             
         }
