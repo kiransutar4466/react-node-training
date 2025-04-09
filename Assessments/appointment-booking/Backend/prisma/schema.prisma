@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Provider {
+  id             String   @id @default(uuid()) @db.Uuid
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  firstName      String   @map("first_name") @db.VarChar(20)
+  lastName       String   @map("last_name") @db.VarChar(20)
+  email          String   @unique @db.VarChar(30)
+  password       String
+  gender         String?  @db.VarChar(10)
+  contactNo      String?  @unique @map("contact_no") @db.VarChar(15)
+  role           String   @db.VarChar(10)
+  address        String?  @db.VarChar(30)
+  specialization String?
+  experience     Int?     @db.Integer
+  degree         String?  @db.VarChar(40)
+  isDeleted      Boolean  @default(false) @map("is_deleted")
+
+  patients     Patient[]
+  appointments Appointment[]
+  avalibility  Avalibility[]
+  slots        Slots[]
+}
+
+model Avalibility {
+  id         String    @id @default(uuid()) @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  providerId String?   @map("provider_id") @db.Uuid
+  date       DateTime?
+  start      String?   @db.VarChar(50)
+  end        String?   @db.VarChar(50)
+  duration   String?   @db.VarChar(50)
+
+  slots    Slots[]
+  provider Provider? @relation(fields: [providerId], references: [id])
+}
+
+model Slots {
+  id            String   @id @default(uuid()) @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  avalibilityId String   @map("avalibility_id") @db.Uuid
+  providerId    String   @map("provider_id") @db.Uuid
+  start         String?  @db.VarChar(50)
+  end           String?  @db.VarChar(50)
+  status        String?  @db.VarChar(50)
+
+  appointment Appointment[]
+  avalibility Avalibility?  @relation(fields: [avalibilityId], references: [id])
+  provider    Provider?     @relation(fields: [providerId], references: [id])
+}
+
+model Patient {
+  id          String   @id @default(uuid()) @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  firstName   String   @map("first_name") @db.VarChar(20)
+  lastName    String   @map("last_name") @db.VarChar(20)
+  email       String   @unique @db.VarChar(50)
+  gender      String?  @db.VarChar(10)
+  contactNo   String?  @map("contact_no") @db.VarChar(15)
+  dateOfBirth DateTime @map("date_of_birth")
+  remark      String?
+  address     String?
+  providerId  String?  @map("provider_id") @db.Uuid
+  isDeleted   Boolean  @default(false) @map("is_deleted")
+
+  provider     Provider?     @relation(fields: [providerId], references: [id])
+  appointments Appointment[]
+}
+
+model Appointment {
+  id         String    @id @default(uuid()) @db.Uuid
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  providerId String    @map("provider_id") @db.Uuid
+  patientId  String    @map("patient_id") @db.Uuid
+  date       DateTime?
+  start      String?   @db.VarChar(20)
+  end        String?   @db.VarChar(20)
+  status     String?   @db.VarChar(10)
+  slotId     String    @map("slot_id") @db.Uuid
+
+  patient  Patient  @relation(fields: [patientId], references: [id])
+  provider Provider @relation(fields: [providerId], references: [id])
+  slot     Slots    @relation(fields: [slotId], references: [id])
+}
